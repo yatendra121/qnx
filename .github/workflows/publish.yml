@@ -28,6 +28,8 @@ jobs:
 
       - run: pnpm install
 
+      - run: npx nx run core-helpers:build
+
       - run: npx nx run core-helpers:publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

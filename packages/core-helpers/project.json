@@ -13,22 +13,16 @@
           }
         ],
         "cwd": "packages/core-helpers",
-        "outputPath": "dist"
+        "outputPath": "packages/core-helpers/dist"
       }
     },
 
     "publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "packages/core-helpers",
+        "outputPath": "dist",
         "command": "node tools/scripts/publish.mjs core-helpers 0.1.2 "
-      },
-      "dependsOn": [
-        {
-          "projects": "self",
-          "target": "build"
-        }
-      ]
+      }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
