@@ -20,7 +20,7 @@
     "publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "outputPath": "packages/core-helpers/dist",
+        "outputPath": "packages/core-helpers",
         "command": "node tools/scripts/publish.mjs core-helpers 0.1.2 "
       },
       "dependsOn": [
