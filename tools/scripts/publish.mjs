@@ -57,7 +57,6 @@ try {
     chalk.bold.red(`Error reading package.json file from library build output.`)
   );
 }
-console.log(outputPath);
 
 // Execute "npm publish" to publish
 let command = 'npm publish --access public';
@@ -65,5 +64,3 @@ let command = 'npm publish --access public';
 execSync(`${command} --tag ${tag}`, {
   stdio: 'inherit',
 });
-
-execSync('git  status');

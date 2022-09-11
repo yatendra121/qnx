@@ -2,7 +2,10 @@
   "name": "qnx",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "affected:build": "npx nx run-many --target=build --projects=core-helpers,test4 --parallel=2",
+    "affected:publish": "npx nx run-many --target=publish --projects=core-helpers,test4 --parallel=2"
+  },
   "private": true,
   "dependencies": {
     "postcss": "^8.4.16",

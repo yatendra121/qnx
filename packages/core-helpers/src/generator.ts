@@ -15,4 +15,6 @@ async function* asyncSubArrayGenerator(
   return [];
 }
 
+console.log('1234');
+
 export { asyncSubArrayGenerator };
