@@ -1,0 +1,51 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/core-helpers/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "pnpm build",
+            "forwardAllArgs": true
+          }
+        ],
+        "cwd": "packages/core-helpers",
+        "outputPath": "dist"
+      }
+    },
+
+    "publish": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "packages/core-helpers/dist",
+        "command": "node tools/scripts/publish.mjs core-helpers 0.1.2 "
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/core-helpers/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/core-helpers"],
+      "options": {
+        "jestConfig": "packages/core-helpers/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
+
+// "dependsOn": [
+//   {
+//     "projects": "self",
+//     "target": "build"
+//   }
+// ]

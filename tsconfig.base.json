@@ -14,7 +14,13 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@qnx/core-helpers": ["packages/core-helpers/src/index.ts"],
+      "@qnx/test": ["packages/test/src/index.ts"],
+      "@qnx/test2": ["packages/test2/src/index.ts"],
+      "@qnx/test4": ["packages/test4/src/index.ts"],
+      "@qnx/xyz": ["packages/xyz/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
