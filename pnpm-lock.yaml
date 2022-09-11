@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@nrwl/cli': 14.7.3
+  '@nrwl/devkit': ^14.7.3
   '@nrwl/eslint-plugin-nx': 14.7.3
   '@nrwl/jest': 14.7.3
   '@nrwl/js': 14.7.3
@@ -38,6 +39,7 @@ dependencies:
 
 devDependencies:
   '@nrwl/cli': 14.7.3
+  '@nrwl/devkit': 14.7.3_nx@14.7.3+typescript@4.7.4
   '@nrwl/eslint-plugin-nx': 14.7.3_4wwiq4urgv3byifrsiezylzwwq
   '@nrwl/jest': 14.7.3_6gtbeueccuilpsjygwzreo66su
   '@nrwl/js': 14.7.3_5a243ezrqcrrl5ehgmdprmwjke
