@@ -5,6 +5,7 @@
   "scripts": {},
   "private": true,
   "dependencies": {
+    "postcss": "^8.4.16",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
