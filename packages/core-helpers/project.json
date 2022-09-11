@@ -22,7 +22,13 @@
       "options": {
         "outputPath": "packages/core-helpers/dist",
         "command": "node tools/scripts/publish.mjs core-helpers 0.1.2 "
-      }
+      },
+      "dependsOn": [
+        {
+          "projects": "self",
+          "target": "build"
+        }
+      ]
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -42,10 +48,3 @@
   },
   "tags": []
 }
-
-// "dependsOn": [
-//   {
-//     "projects": "self",
-//     "target": "build"
-//   }
-// ]

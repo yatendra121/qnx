@@ -61,11 +61,7 @@ try {
 // Execute "npm publish" to publish
 let command = 'npm publish --access public';
 
-try {
-  execSync(command, {
-    stdio: 'inherit',
-    cwd: path.join('packages', 'core-helpers', 'dist'),
-  });
-} catch (e) {
-  console.log(e.message);
-}
+execSync(command, {
+  stdio: 'inherit',
+  cwd: path.join('packages', 'core-helpers'),
+});
