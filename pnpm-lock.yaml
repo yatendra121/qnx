@@ -14,6 +14,7 @@ specifiers:
   '@types/node': 16.11.7
   '@typescript-eslint/eslint-plugin': ~5.33.1
   '@typescript-eslint/parser': ~5.33.1
+  chalk: ^5.0.1
   dts-bundle-generator: ^6.13.0
   eslint: ~8.15.0
   eslint-config-prettier: 8.1.0
@@ -51,6 +52,7 @@ devDependencies:
   '@types/node': 16.11.7
   '@typescript-eslint/eslint-plugin': 5.33.1_m7xvcpf4u5pta577mmcxmrpwhu
   '@typescript-eslint/parser': 5.33.1_4hx5bygx4rxgd7xwyndf6ymwce
+  chalk: 5.0.1
   dts-bundle-generator: 6.13.0
   eslint: 8.15.0
   eslint-config-prettier: 8.1.0_eslint@8.15.0
@@ -1692,6 +1694,11 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+    dev: true
+
+  /chalk/5.0.1:
+    resolution: {integrity: sha512-Fo07WOYGqMfCWHOzSXOt2CxDbC6skS/jO9ynEcmpANMoPrD+W1r1K6Vx7iNm+AQmETU1Xr2t+n8nzkV9t6xh3w==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
     dev: true
 
   /char-regex/1.0.2:
