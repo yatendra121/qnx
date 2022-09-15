@@ -20,7 +20,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "outputPath": "dist",
-        "command": "node tools/scripts/publish.mjs interfaces 0.1.2 "
+        "command": "node tools/scripts/publish.mjs interfaces"
       }
     },
     "lint": {
