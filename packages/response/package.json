@@ -1,5 +1,5 @@
 {
-  "name": "@qnx/core-helpers",
+  "name": "@qnx/response",
   "description": "Collection of core functions",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
   "version": "0.1.6",
@@ -9,15 +9,15 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yatendra121/qnx-core-helpers.git"
+    "url": "https://github.com/yatendra121/qnx-response.git"
   },
-  "main": "./dist/core-helpers.cjs",
-  "module": "./dist/core-helpers.mjs",
-  "types": "./dist/core-helpers.d.ts",
+  "main": "./dist/response.cjs",
+  "module": "./dist/response.mjs",
+  "types": "./dist/response.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/core-helpers.cjs",
-      "import": "./dist/core-helpers.mjs"
+      "require": "./dist/response.cjs",
+      "import": "./dist/response.mjs"
     }
   },
   "unpkg": "./index.iife.js",

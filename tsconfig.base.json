@@ -16,10 +16,9 @@
     "baseUrl": ".",
     "paths": {
       "@qnx/core-helpers": ["packages/core-helpers/src/index.ts"],
-      "@qnx/test": ["packages/test/src/index.ts"],
-      "@qnx/test2": ["packages/test2/src/index.ts"],
-      "@qnx/test4": ["packages/test4/src/index.ts"],
-      "@qnx/xyz": ["packages/xyz/src/index.ts"]
+      "@qnx/errors": ["packages/errors/src/index.ts"],
+      "@qnx/interfaces": ["packages/interfaces/src/index.ts"],
+      "@qnx/response": ["packages/response/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

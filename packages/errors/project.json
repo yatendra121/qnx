@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/core-helpers/src",
+  "sourceRoot": "packages/errors/src",
   "projectType": "library",
   "targets": {
     "build": {
@@ -12,29 +12,29 @@
             "forwardAllArgs": true
           }
         ],
-        "cwd": "packages/core-helpers",
-        "outputPath": "packages/core-helpers/dist"
+        "cwd": "packages/errors",
+        "outputPath": "packages/errors/dist"
       }
     },
     "publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "outputPath": "dist",
-        "command": "node tools/scripts/publish.mjs core-helpers 0.1.2 "
+        "command": "node tools/scripts/publish.mjs errors 0.1.2 "
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/core-helpers/**/*.ts"]
+        "lintFilePatterns": ["packages/errors/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/core-helpers"],
+      "outputs": ["coverage/packages/errors"],
       "options": {
-        "jestConfig": "packages/core-helpers/jest.config.ts",
+        "jestConfig": "packages/errors/jest.config.ts",
         "passWithNoTests": true
       }
     }
