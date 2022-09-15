@@ -9,7 +9,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yatendra121/qnx-errors.git"
+    "url": "https://github.com/yatendra121/qnx.git"
   },
   "main": "./dist/errors.cjs",
   "module": "./dist/errors.mjs",

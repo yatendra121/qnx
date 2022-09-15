@@ -49,7 +49,7 @@ process.chdir(outputPath)
 // Updating the version in "package.json" before publishing
 try {
   const json = JSON.parse(readFileSync(`package.json`).toString())
-  json.version = version
+  json.version = version ?? `${Number(json.version) + 0.01}`
   writeFileSync(`package.json`, JSON.stringify(json, null, 2))
 } catch (e) {
   console.error(chalk.bold.red(`Error reading package.json file from library build output.`))

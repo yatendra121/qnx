@@ -8,7 +8,7 @@
       "options": {
         "commands": [
           {
-            "command": "pnpm  build",
+            "command": "pnpm build",
             "forwardAllArgs": true
           }
         ],
