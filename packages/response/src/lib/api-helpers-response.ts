@@ -1,14 +1,14 @@
 import {
-  SERVER_ERROR_CODE,
-  UnauthenticateUserError,
-  UNAUTHENTICATE_USER_ERROR_CODE,
-  ValidationError,
-  VALIDATION_ERROR_CODE,
-} from '@qnx/errors';
-import { ApiResponse } from './apiResponse';
-import { Response } from 'express';
-import { ApiResponseErrors } from '@qnx/interfaces';
-import { ApiResponseErrorsValue } from './api-response-errors-value';
+    SERVER_ERROR_CODE,
+    UnauthenticateUserError,
+    UNAUTHENTICATE_USER_ERROR_CODE,
+    ValidationError,
+    VALIDATION_ERROR_CODE
+} from '@qnx/errors'
+import { ApiResponse } from './apiResponse'
+import { Response } from '@qnx/interfaces'
+import { ApiResponseErrors } from '@qnx/interfaces'
+import { ApiResponseErrorsValue } from './api-response-errors-value'
 
 /**
  * Return unauthenticate api response
@@ -16,10 +16,10 @@ import { ApiResponseErrorsValue } from './api-response-errors-value';
  * @returns
  */
 export function unauthenticateApiResponse(response: Response) {
-  return ApiResponse.getInstance()
-    .setMessage('Unauthenticated')
-    .setErrorCode('unauthenticated')
-    .response(response, UNAUTHENTICATE_USER_ERROR_CODE);
+    return ApiResponse.getInstance()
+        .setMessage('Unauthenticated')
+        .setErrorCode('unauthenticated')
+        .response(response, UNAUTHENTICATE_USER_ERROR_CODE)
 }
 
 /**
@@ -31,12 +31,12 @@ export function unauthenticateApiResponse(response: Response) {
  * @returns
  */
 export function errorApiResponse(response: Response, error: unknown) {
-  if (error instanceof ValidationError) {
-    return invalidApiResponse(response, error.getErrorResponse()?.errors);
-  } else if (error instanceof UnauthenticateUserError) {
-    return unauthenticateApiResponse(response);
-  }
-  return serverErrorApiResponse(response, error);
+    if (error instanceof ValidationError) {
+        return invalidApiResponse(response, error.getErrorResponse()?.errors)
+    } else if (error instanceof UnauthenticateUserError) {
+        return unauthenticateApiResponse(response)
+    }
+    return serverErrorApiResponse(response, error)
 }
 
 /**
@@ -46,9 +46,7 @@ export function errorApiResponse(response: Response, error: unknown) {
  * @returns
  */
 export function serverErrorApiResponse(response: Response, error: unknown) {
-  return ApiResponse.getInstance()
-    .setServerError(error)
-    .response(response, SERVER_ERROR_CODE);
+    return ApiResponse.getInstance().setServerError(error).response(response, SERVER_ERROR_CODE)
 }
 
 /**
@@ -57,13 +55,10 @@ export function serverErrorApiResponse(response: Response, error: unknown) {
  * @param errors
  * @returns
  */
-export function invalidApiResponse(
-  response: Response,
-  errors: ApiResponseErrors | undefined
-) {
-  const apiRes = ApiResponse.getInstance();
-  if (errors) apiRes.setErrors(errors);
-  return apiRes.response(response, VALIDATION_ERROR_CODE);
+export function invalidApiResponse(response: Response, errors: ApiResponseErrors | undefined) {
+    const apiRes = ApiResponse.getInstance()
+    if (errors) apiRes.setErrors(errors)
+    return apiRes.response(response, VALIDATION_ERROR_CODE)
 }
 
 /**
@@ -74,11 +69,11 @@ export function invalidApiResponse(
  * @returns
  */
 export function invalidValueApiResponse(
-  response: Response,
-  errorKey: string,
-  errorMessage: string
+    response: Response,
+    errorKey: string,
+    errorMessage: string
 ) {
-  return invalidApiResponse(response, { [errorKey]: [errorMessage] });
+    return invalidApiResponse(response, { [errorKey]: [errorMessage] })
 }
 
 /**
@@ -87,12 +82,9 @@ export function invalidValueApiResponse(
  * @param errorMessage
  * @returns
  */
-export function throwInvalidValueApiResponse(
-  errorKey: string,
-  errorMessage: string
-): never {
-  const errorResponse = new ApiResponseErrorsValue()
-    .setError(errorKey, errorMessage)
-    .getErrorResponse();
-  throw new ValidationError('Error', errorResponse);
+export function throwInvalidValueApiResponse(errorKey: string, errorMessage: string): never {
+    const errorResponse = new ApiResponseErrorsValue()
+        .setError(errorKey, errorMessage)
+        .getErrorResponse()
+    throw new ValidationError('Error', errorResponse)
 }
