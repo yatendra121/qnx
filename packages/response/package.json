@@ -2,7 +2,7 @@
   "name": "@qnx/response",
   "description": "Collection of core functions",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "license": "MIT",
   "files": [
     "dist"
