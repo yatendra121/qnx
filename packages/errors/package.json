@@ -2,7 +2,7 @@
   "name": "@qnx/errors",
   "description": "Collection of core functions",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "license": "MIT",
   "files": [
     "dist"
@@ -13,7 +13,7 @@
   },
   "main": "./dist/errors.cjs",
   "module": "./dist/errors.mjs",
-  "types": "./dist/errors.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "require": "./dist/errors.cjs",
