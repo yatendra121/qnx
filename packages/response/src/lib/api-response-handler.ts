@@ -3,7 +3,11 @@ import { errorApiResponse } from './api-helpers-response'
 import { ApiResponse } from './apiResponse'
 
 export function asyncValidatorHandler(
-    func: (req: Request, res?: Response, next?: NextFunction) => Promise<void | ApiResponse>
+    func: (
+        req: Request,
+        res?: Response,
+        next?: NextFunction
+    ) => Promise<ApiResponse> | Promise<void>
 ) {
     const handler = async (req: Request, res: Response, next: NextFunction) => {
         try {
