@@ -2,7 +2,7 @@
   "name": "@qnx/interfaces",
   "description": "Collection of core functions",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "license": "MIT",
   "files": [
     "dist"
