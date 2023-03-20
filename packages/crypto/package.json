@@ -1,8 +1,8 @@
 {
-  "name": "@qnx/response",
-  "description": "Collection of core functions",
+  "name": "@qnx/crypto",
+  "description": "Crypto functions",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.3.0",
+  "version": "0.0.1",
   "license": "MIT",
   "files": [
     "dist"
@@ -11,13 +11,13 @@
     "type": "git",
     "url": "https://github.com/yatendra121/qnx.git"
   },
-  "main": "./dist/response.cjs",
-  "module": "./dist/response.mjs",
+  "main": "./dist/crypto.cjs",
+  "module": "./dist/crypto.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/response.cjs",
-      "import": "./dist/response.mjs"
+      "require": "./dist/crypto.cjs",
+      "import": "./dist/crypto.mjs"
     }
   },
   "unpkg": "./index.iife.js",
@@ -49,7 +49,7 @@
     "vite": "^3.1.0"
   },
   "peerDependencies": {
-    "express": "*",
-    "@qnx/interfaces": "*"
+    "jose": "*",
+    "uuid": "*"
   }
 }

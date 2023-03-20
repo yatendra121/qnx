@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@qnx/core-helpers": ["packages/core-helpers/src/index.ts"],
+      "@qnx/crypto": ["packages/crypto/src/index.ts"],
       "@qnx/errors": ["packages/errors/src/index.ts"],
       "@qnx/interfaces": ["packages/interfaces/src/index.ts"],
       "@qnx/response": ["packages/response/src/index.ts"]

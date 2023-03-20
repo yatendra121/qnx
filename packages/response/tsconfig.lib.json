@@ -27,6 +27,7 @@
   "include": ["**/*.ts"],
   "exclude": [
     "**/*.test.ts",
+    "**/*.ts",
     "node_modules",
     "test/**",
     ".history/**",
