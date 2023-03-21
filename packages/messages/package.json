@@ -1,5 +1,5 @@
 {
-  "name": "@qnx/response",
+  "name": "@qnx/messages",
   "description": "Collection of messages & message functions ",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
   "version": "0.0.2",
@@ -11,13 +11,13 @@
     "type": "git",
     "url": "https://github.com/yatendra121/qnx.git"
   },
-  "main": "./dist/response.cjs",
-  "module": "./dist/response.mjs",
+  "main": "./dist/messages.cjs",
+  "module": "./dist/messages.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/response.cjs",
-      "import": "./dist/response.mjs"
+      "require": "./dist/messages.cjs",
+      "import": "./dist/messages.mjs"
     }
   },
   "unpkg": "./index.iife.js",
