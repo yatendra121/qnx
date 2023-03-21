@@ -2,7 +2,7 @@
   "name": "@qnx/errors",
   "description": "Collection of core functions",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "license": "MIT",
   "files": [
     "dist"
