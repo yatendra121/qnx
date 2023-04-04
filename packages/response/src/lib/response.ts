@@ -6,7 +6,7 @@ import {
     VALIDATION_ERROR_CODE
 } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
-import { Response } from '@qnx/interfaces'
+import { Response } from 'express'
 import { ApiResponseErrors } from '@qnx/interfaces'
 import { ApiResponseErrorsValue } from './apiResponseErrorsValue'
 import type { Logger } from 'winston'
@@ -36,7 +36,10 @@ export function unauthenticateApiResponse(response: Response) {
  * @param error
  * @returns
  */
-export function errorApiResponse(response: Response, error: unknown) {
+export function errorApiResponse(
+    response: Response,
+    error: ValidationError | UnauthenticateUserError | Error
+) {
     if (error instanceof ValidationError) {
         return invalidApiResponse(response, error.getErrorResponse()?.errors)
     } else if (error instanceof UnauthenticateUserError) {
@@ -58,9 +61,7 @@ export function errorApiResponse(response: Response, error: unknown) {
  * @returns
  */
 export function serverErrorApiResponse(response: Response, error: unknown) {
-    return ApiResponse.getInstance()
-        .setServerError(error)
-        .response(response, SERVER_ERROR_CODE)
+    return ApiResponse.getInstance().setServerError(error).response(response, SERVER_ERROR_CODE)
 }
 
 /**
@@ -69,10 +70,7 @@ export function serverErrorApiResponse(response: Response, error: unknown) {
  * @param errors
  * @returns
  */
-export function invalidApiResponse(
-    response: Response,
-    errors: ApiResponseErrors | undefined
-) {
+export function invalidApiResponse(response: Response, errors: ApiResponseErrors | undefined) {
     const apiRes = ApiResponse.getInstance()
     if (errors) apiRes.setErrors(errors)
     return apiRes.response(response, VALIDATION_ERROR_CODE)
@@ -99,10 +97,7 @@ export function invalidValueApiResponse(
  * @param errorMessage
  * @returns
  */
-export function throwInvalidValueApiResponse(
-    errorKey: string,
-    errorMessage: string
-): never {
+export function throwInvalidValueApiResponse(errorKey: string, errorMessage: string): never {
     const errorResponse = new ApiResponseErrorsValue()
         .setError(errorKey, errorMessage)
         .getErrorResponse()
@@ -118,8 +113,7 @@ const collectErrorsFromZodError = (error: any) => {
 const removeErrorKeyFromZodError = (error: any) => {
     for (const key in error) {
         if (Object.prototype.hasOwnProperty.call(error, key)) {
-            if (Array.isArray(error[key]) && !error[key].length)
-                delete error[key]
+            if (Array.isArray(error[key]) && !error[key].length) delete error[key]
             else error[key] = error[key]._errors
         }
     }

@@ -1,8 +1,8 @@
 {
   "name": "@qnx/response",
-  "description": "Collection of core functions",
+  "description": "Collection of async functions for express response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "license": "MIT",
   "files": [
     "dist"

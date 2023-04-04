@@ -1,18 +1,18 @@
 import { ApiResponseErrors } from '@qnx/interfaces'
-import { Response } from '@qnx/interfaces'
+import { Response } from 'express'
 
 const SHOW_SERVER_ERROR = true
 
 /**
  * This class is useful for send api response
  */
-export class ApiResponse {
-    protected data: unknown | null = null
-    protected errorCode: string | null = null
-    protected errors: ApiResponseErrors | null = null
-    protected error: string | null = null
-    protected message: string | null = null
-    protected serverError: unknown = null
+export class ApiResponse<T = unknown> {
+    protected data?: T
+    protected errorCode?: string
+    protected errors?: ApiResponseErrors
+    protected error?: string
+    protected message?: string
+    protected serverError?: unknown
 
     //Get new instance
     static getInstance(): ApiResponse {
@@ -93,8 +93,7 @@ export class ApiResponse {
      * @returns
      */
     response(response: Response, status = 200) {
-        if (this.errors)
-            this.error = this.errors[Object.keys(this.errors)[0]][0]
+        if (this.errors) this.error = this.errors[Object.keys(this.errors)[0]][0]
         return response.status(status).send({ ...this })
     }
 }
