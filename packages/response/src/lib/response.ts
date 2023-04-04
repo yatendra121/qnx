@@ -7,9 +7,9 @@ import {
 } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
 import { Response } from 'express'
-import { ApiResponseErrors } from '@qnx/interfaces'
 import { ApiResponseErrorsValue } from './apiResponseErrorsValue'
 import type { Logger } from 'winston'
+import type { ApiResponseErrors } from '@qnx/errors'
 
 let logger: Logger | undefined = undefined
 export function setLoggerInstance(instance: Logger) {

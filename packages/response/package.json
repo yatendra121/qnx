@@ -50,6 +50,6 @@
   },
   "peerDependencies": {
     "express": "*",
-    "@qnx/interfaces": "*"
+    "@qnx/errors": "0.4.*"
   }
 }

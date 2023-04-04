@@ -1,5 +1,5 @@
-import { ApiResponseErrors } from '@qnx/interfaces'
-import { Response } from 'express'
+import type { Response } from 'express'
+import type { ApiResponseErrors } from '@qnx/errors'
 
 const SHOW_SERVER_ERROR = true
 

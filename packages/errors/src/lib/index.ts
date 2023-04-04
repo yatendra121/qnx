@@ -1,8 +1,11 @@
-import { ErrorResponse } from '@qnx/interfaces'
-
 export const VALIDATION_ERROR_CODE = 400
 export const UNAUTHENTICATE_USER_ERROR_CODE = 401
 export const SERVER_ERROR_CODE = 500
+
+export type ApiResponseErrors = Record<string, string[]>
+export interface ErrorResponse {
+    errors?: ApiResponseErrors
+}
 
 /**
  * Used for create custom error instance
