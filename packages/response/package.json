@@ -9,7 +9,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yatendra121/qnx.git"
+    "url": "https://github.com/yatendra121/qnx.git",
+    "directory": "packages/response"
   },
   "main": "./dist/response.cjs",
   "module": "./dist/response.mjs",
