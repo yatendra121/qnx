@@ -1,4 +1,4 @@
-# @qnx/errors
+# @qnx/response
 
 @qnx/response is a library for handling HTTP responses in Express.js applications. It provides a standardized way of formatting and sending responses, with built-in support for error handling and validation.
 

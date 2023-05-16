@@ -2,8 +2,13 @@ import { errorApiResponse } from './response'
 import { ApiResponse, initializeApiResponse } from './apiResponse'
 import type { NextFunction, Request, Response, Router } from 'express'
 
-type ExecuteFun<T = Request> = (req: T) => Promise<ApiResponse> | Promise<void> | Promise<unknown>
+type ExecuteFun<T> = (req: T) => Promise<ApiResponse> | Promise<void> | Promise<unknown>
 
+/**
+ * This function is providing an async function that will handle response as well as any type of error
+ * @param func
+ * @returns handler
+ */
 export function asyncValidatorHandler<T = Request>(func: ExecuteFun<T>) {
     const handler = async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -33,11 +38,17 @@ type ResourceRoutes = {
         url: string
     }
 }
-type ResourceController = {
-    [key in functionNames]?: ExecuteFun
+type ResourceController<T> = {
+    [key in functionNames]?: ExecuteFun<T>
 }
 
-export function resourceRoute(router: Router, controller: ResourceController) {
+/**
+ * This function will create resource route based on functions of provided controller
+ * @param router
+ * @param controller
+ * @returns void
+ */
+export function resourceRoute<T = Request>(router: Router, controller: ResourceController<T>) {
     const resourceRoutes: ResourceRoutes = {
         changeStatus: { method: 'put', url: '/change-status/:id' },
         create: { method: 'post', url: '/' },
@@ -49,8 +60,8 @@ export function resourceRoute(router: Router, controller: ResourceController) {
 
     for (const funName in resourceRoutes) {
         const functionVal = resourceRoutes[funName as keyof ResourceRoutes]
-        const executeFun = controller[funName as keyof ResourceController]
+        const executeFun = controller[funName as keyof ResourceController<T>]
         if (executeFun)
-            router.route(functionVal.url)[functionVal.method](asyncValidatorHandler(executeFun))
+            router.route(functionVal.url)[functionVal.method](asyncValidatorHandler<T>(executeFun))
     }
 }
