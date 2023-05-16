@@ -1,10 +1,11 @@
 {
+  "name": "interfaces",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/interfaces/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx/workspace:run-commands",
       "options": {
         "commands": [
           {
@@ -17,21 +18,21 @@
       }
     },
     "publish": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx/workspace:run-commands",
       "options": {
         "outputPath": "dist",
         "command": "node tools/scripts/publish.mjs interfaces"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["packages/interfaces/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/packages/interfaces"],
       "options": {
         "jestConfig": "packages/interfaces/jest.config.ts",
