@@ -1,10 +1,11 @@
 {
+  "name": "crypto",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/crypto/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx/workspace:run-commands",
       "options": {
         "commands": [
           {
@@ -17,21 +18,21 @@
       }
     },
     "publish": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx/workspace:run-commands",
       "options": {
         "outputPath": "dist",
         "command": "node tools/scripts/publish.mjs crypto"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["packages/crypto/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/packages/crypto"],
       "options": {
         "jestConfig": "packages/crypto/jest.config.ts",

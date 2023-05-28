@@ -2,10 +2,15 @@
   "name": "@qnx/response",
   "description": "Collection of async functions for express response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "license": "MIT",
   "files": [
     "dist"
+  ],
+  "keywords": [
+    "response",
+    "errors handler",
+    "validation handler"
   ],
   "repository": {
     "type": "git",
