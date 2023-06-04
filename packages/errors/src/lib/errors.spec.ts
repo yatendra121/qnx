@@ -1,17 +1,10 @@
-import { vitest } from 'vitest'
-import {
-    ValidationError,
-    UnauthenticateUserError,
-    ServerError,
-    ApiResponseErrors,
-    ErrorResponse
-} from './' // Replace with the actual file path
-
-const { test, expect, describe } = vitest()
+import { it, expect, describe } from 'vitest'
+import { ValidationError, UnauthenticateUserError, ServerError, ApiError } from './' // Replace with the actual file path
+import type { ErrorResponse } from './types'
 
 // Test cases for ApiError
 describe('ApiError', () => {
-    test('should have correct error code and response', () => {
+    it('should have correct error code and response', () => {
         const errorMessage = 'API error'
         const errorCode = 400
         const errorResponse: ErrorResponse = {
@@ -31,7 +24,7 @@ describe('ApiError', () => {
 
 // Test cases for ValidationError
 describe('ValidationError', () => {
-    test('should have correct error code and response', () => {
+    it('should have correct error code and response', () => {
         const errorMessage = 'Validation error'
         const errorResponse: ErrorResponse = {
             errors: {
@@ -51,7 +44,7 @@ describe('ValidationError', () => {
 
 // Test cases for UnauthenticateUserError
 describe('UnauthenticateUserError', () => {
-    test('should have correct error code and response', () => {
+    it('should have correct error code and response', () => {
         const errorMessage = 'Unauthenticated user error'
         const unauthenticateUserError = new UnauthenticateUserError(errorMessage)
 
@@ -63,9 +56,9 @@ describe('UnauthenticateUserError', () => {
     })
 })
 
-// Test cases for ServerError
+// it cases for ServerError
 describe('ServerError', () => {
-    test('should have correct error code and response', () => {
+    it('should have correct error code and response', () => {
         const errorMessage = 'Server error'
         const serverError = new ServerError(errorMessage)
 
@@ -76,6 +69,3 @@ describe('ServerError', () => {
         expect(serverError.message).toBe(errorMessage)
     })
 })
-
-// Run the tests
-test.run()

@@ -12,7 +12,8 @@
     "jose": "^4.14.4",
     "postcss": "^8.4.24",
     "tslib": "^2.5.3",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "vitest": "^0.31.4"
   },
   "devDependencies": {
     "@nx/devkit": "16.3.2",

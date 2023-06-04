@@ -1,14 +1,10 @@
 import { errorCodes } from './codes'
-export * from './codes'
-export type ApiResponseErrors = Record<string, string[]>
-export interface ErrorResponse {
-    errors?: ApiResponseErrors
-}
+import type { ErrorResponse } from './types'
 
 /**
  * Used for create custom error instance
  */
-class ApiError extends Error {
+export class ApiError extends Error {
     errorCode: number
     errorResponse: ErrorResponse | undefined
     constructor(m: string, code: number, errRes?: ErrorResponse) {

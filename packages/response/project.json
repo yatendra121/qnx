@@ -38,6 +38,18 @@
         "jestConfig": "packages/response/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "vitest": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "pnpm test",
+            "forwardAllArgs": true
+          }
+        ],
+        "cwd": "packages/response"
+      }
     }
   },
   "tags": []
