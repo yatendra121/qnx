@@ -1,7 +1,5 @@
-export const VALIDATION_ERROR_CODE = 400
-export const UNAUTHENTICATE_USER_ERROR_CODE = 401
-export const SERVER_ERROR_CODE = 500
-
+import { errorCodes } from './codes'
+export * from './codes'
 export type ApiResponseErrors = Record<string, string[]>
 export interface ErrorResponse {
     errors?: ApiResponseErrors
@@ -34,7 +32,7 @@ class ApiError extends Error {
  */
 export class ValidationError extends ApiError {
     constructor(m: string, errRes: ErrorResponse) {
-        super(m, VALIDATION_ERROR_CODE, errRes)
+        super(m, errorCodes.VALIDATION_ERROR_CODE, errRes)
         Object.setPrototypeOf(this, ValidationError.prototype)
     }
 }
@@ -44,7 +42,7 @@ export class ValidationError extends ApiError {
  */
 export class UnauthenticateUserError extends ApiError {
     constructor(m: string) {
-        super(m, UNAUTHENTICATE_USER_ERROR_CODE)
+        super(m, errorCodes.UNAUTHENTICATED_USER_ERROR_CODE)
         Object.setPrototypeOf(this, UnauthenticateUserError.prototype)
     }
 }
@@ -54,7 +52,7 @@ export class UnauthenticateUserError extends ApiError {
  */
 export class ServerError extends ApiError {
     constructor(m: string) {
-        super(m, SERVER_ERROR_CODE)
+        super(m, errorCodes.SERVER_ERROR_CODE)
         Object.setPrototypeOf(this, ServerError.prototype)
     }
 }

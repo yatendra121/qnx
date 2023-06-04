@@ -1,15 +1,8 @@
-import {
-    SERVER_ERROR_CODE,
-    UnauthenticateUserError,
-    UNAUTHENTICATE_USER_ERROR_CODE,
-    ValidationError,
-    VALIDATION_ERROR_CODE
-} from '@qnx/errors'
+import { errorCodes } from '@qnx/errors'
+import { ApiResponseErrors, ValidationError, UnauthenticateUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
 import { Response } from 'express'
-import { ApiResponseErrorsValue } from './apiResponseErrorsValue'
 import type { Logger } from 'winston'
-import type { ApiResponseErrors } from '@qnx/errors'
 
 let logger: Logger | undefined = undefined
 export function setLoggerInstance(instance: Logger) {
@@ -25,7 +18,7 @@ export function unauthenticateApiResponse(response: Response) {
     return ApiResponse.getInstance()
         .setMessage('Unauthenticated')
         .setErrorCode('unauthenticated')
-        .response(response, UNAUTHENTICATE_USER_ERROR_CODE)
+        .response(response, errorCodes.UNAUTHENTICATED_USER_ERROR_CODE)
 }
 
 /**
@@ -61,7 +54,9 @@ export function errorApiResponse(
  * @returns
  */
 export function serverErrorApiResponse(response: Response, error: unknown) {
-    return ApiResponse.getInstance().setServerError(error).response(response, SERVER_ERROR_CODE)
+    return ApiResponse.getInstance()
+        .setServerError(error)
+        .response(response, errorCodes.SERVER_ERROR_CODE)
 }
 
 /**
@@ -73,7 +68,7 @@ export function serverErrorApiResponse(response: Response, error: unknown) {
 export function invalidApiResponse(response: Response, errors: ApiResponseErrors | undefined) {
     const apiRes = ApiResponse.getInstance()
     if (errors) apiRes.setErrors(errors)
-    return apiRes.response(response, VALIDATION_ERROR_CODE)
+    return apiRes.response(response, errorCodes.VALIDATION_ERROR_CODE)
 }
 
 /**
@@ -91,22 +86,8 @@ export function invalidValueApiResponse(
     return invalidApiResponse(response, { [errorKey]: [errorMessage] })
 }
 
-/**
- * To send validation api response and that is useful when you want single validation error
- * @param errorKey
- * @param errorMessage
- * @returns
- */
-export function throwInvalidValueApiResponse(errorKey: string, errorMessage: string): never {
-    const errorResponse = new ApiResponseErrorsValue()
-        .setError(errorKey, errorMessage)
-        .getErrorResponse()
-    throw new ValidationError('Error', errorResponse)
-}
-
 const collectErrorsFromZodError = (error: any) => {
     const test = error.format()
-    console.log({ test })
     return removeErrorKeyFromZodError(test)
 }
 
