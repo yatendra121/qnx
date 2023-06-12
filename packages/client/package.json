@@ -1,31 +1,29 @@
 {
-  "name": "@qnx/errors",
-  "description": "Collection for handle express error response",
+  "name": "@qnx/client",
+  "description": "QNX client for handling response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.4.4",
+  "version": "0.0.1",
   "license": "MIT",
   "files": [
     "dist"
   ],
-  "keywords": [
-    "errors",
-    "error codes"
-  ],
+  "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yatendra121/qnx.git"
+    "url": "https://github.com/yatendra121/qnx.git",
+    "directory": "packages/client"
   },
-  "main": "./dist/errors.cjs",
-  "module": "./dist/errors.mjs",
+  "main": "./dist/client.cjs",
+  "module": "./dist/client.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/errors.cjs",
-      "import": "./dist/errors.mjs"
+      "require": "./dist/client.cjs",
+      "import": "./dist/client.mjs"
     }
   },
-  "unpkg": "./errors.iife.js",
-  "jsdelivr": "./errors.iife.js",
+  "unpkg": "./client.iife.js",
+  "jsdelivr": "./client.iife.js",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",

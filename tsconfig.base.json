@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@qnx/client": ["packages/client/src/index.ts"],
       "@qnx/core-helpers": ["packages/core-helpers/src/index.ts"],
       "@qnx/crypto": ["packages/crypto/src/index.ts"],
       "@qnx/errors": ["packages/errors/src/index.ts"],

@@ -2,7 +2,7 @@
   "name": "@qnx/response",
   "description": "Collection of async functions for express response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.4.5",
+  "version": "0.4.8",
   "license": "MIT",
   "files": [
     "dist"
@@ -10,7 +10,8 @@
   "keywords": [
     "response",
     "errors handler",
-    "validation handler"
+    "validation handler",
+    "zod handler"
   ],
   "repository": {
     "type": "git",
@@ -26,8 +27,8 @@
       "import": "./dist/response.mjs"
     }
   },
-  "unpkg": "./index.iife.js",
-  "jsdelivr": "./index.iife.js",
+  "unpkg": "./response.iife.js",
+  "jsdelivr": "./response.iife.js",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",

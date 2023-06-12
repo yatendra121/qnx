@@ -1,8 +1,13 @@
 import { errorApiResponse } from './response'
 import { ApiResponse, initializeApiResponse } from './apiResponse'
+import { ServerResponse } from 'http'
 import type { NextFunction, Request, Response, Router } from 'express'
 
-type ExecuteFun<T> = (req: T) => Promise<ApiResponse> | Promise<void> | Promise<unknown>
+type ExecuteFun<T> = (
+    req: T,
+    res?: Response,
+    next?: NextFunction
+) => Promise<ApiResponse> | Promise<void> | Promise<unknown>
 
 /**
  * This function is providing an async function that will handle response as well as any type of error
@@ -14,9 +19,11 @@ export function asyncValidatorHandler<T = Request>(func: ExecuteFun<T>) {
         try {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
-            const apiRes = await func(req)
+            const apiRes = await func(req, res, next)
             if (apiRes instanceof ApiResponse) {
                 return apiRes.response(res)
+            } else if (apiRes instanceof ServerResponse) {
+                return apiRes
             } else if (!apiRes) {
                 return next()
             } else {

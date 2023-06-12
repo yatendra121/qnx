@@ -93,7 +93,7 @@ export class ApiResponse<T = unknown> {
      * @returns
      */
     response(response: Response, status = 200) {
-        if (this.errors) this.error = this.errors[Object.keys(this.errors)[0]][0]
+        if (this.errors) this.error = this.errors[Object.keys(this.errors)?.[0]]?.[0]
         return response.status(status).send({ ...this })
     }
 }

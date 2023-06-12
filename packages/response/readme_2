@@ -41,7 +41,7 @@ pnpm install @qnx/response
 #### Basic Example
 
 ```javascript
-import { asyncValidatorHandler } from '@qnx/response'
+const { asyncValidatorHandler } = require('@qnx/response')
 
 express.get(
   '/',
@@ -57,7 +57,7 @@ Without @qnx/response
 express.get('/', async (req, res, next) => {
   try {
     const data = await Model.findAll()
-    res.send({ data })
+    res.send(data)
   } catch (error) {
     // handle error response
   }
@@ -68,35 +68,24 @@ express.get('/', async (req, res, next) => {
 
 To use @qnx/response, you first need to import it into your Node.js application:
 
-```javascript
-import { ApiResponse, asyncValidatorHandler } from '@qnx/response'
+```
+import { ApiResponse } from '@qnx/response';
 ```
 
 #### Creating an API response
 
 To create an API response, you can use the ApiResponse class. You can create a new instance of the class and set the response properties using the various methods available:
 
-```javascript
-express.get(
-  '/',
-  asyncValidatorHandler(async (req, res) => {
-    const response = new ApiResponse()
+```
+express.get('/', asyncValidatorHandler(async(req, res) => {
 
-    return response
-      .setData({ user: { name: 'Foo' } })
-      .setMessage('Success')
-      .response(res)
-  })
-)
+   const response = new ApiResponse();
 
-/*
-{
-  data: {
-    user: { name: 'Foo' }
-  },
-  message: 'Success'
-}
-*/
+   return response.setData({ user: {name:'Foo'} })
+             .setMessage('Success')
+             .response(res);
+}))
+
 ```
 
 The above code creates a new ApiResponse instance, sets the data property to an object with a message property, sets the message property to 'Success', and sends the response using the response method.
@@ -105,52 +94,38 @@ The above code creates a new ApiResponse instance, sets the data property to an 
 
 @qnx/response also provides a way to handle errors in your API responses. You can define a single error response using the **invalidValueApiResponse** function.
 
-```javascript
-express.get(
-  '/',
-  asyncValidatorHandler(async (req, res) => {
-    const errorKey = 'foo'
-    const errorMessage = 'Foo is required.'
-    return invalidValueApiResponse(res, errorKey, errorMessage)
-  })
-)
+```
+express.get('/', asyncValidatorHandler(async(req, res) => {
 
-/*
-{
-  errors: {
-    foo: ['Foo is required.']
-  },
-  error: 'Foo is required.'
-}
-*/
+   const errorKey = 'foo';
+   const errorMessage = 'Foo is required.';
+   return invalidValueApiResponse(res, errorKey, errorMessage);
+
+}))
 ```
 
 You can use the **ApiResponseErrors** interface to define an object that contains the errors.
 
-```javascript
-import { asyncValidatorHandler, invalidApiResponse, ApiResponseErrorsValue } from '@qnx/response'
+```
+import { asyncValidatorHandler, invalidApiResponse, ApiResponseErrorsValue } from '@qnx/response';
 
-express.get(
-  '/',
-  asyncValidatorHandler(async (req, res) => {
-    const errors = ApiResponseErrorsValue.getInstance()
-      .addError('foo', 'Foo is required.')
-      .addError('bar', 'Bar is required.')
-      .getErrors()
+express.get('/', asyncValidatorHandler(async(req, res) => {
 
-    return invalidApiResponse(res, errors)
-  })
-)
+   const errors = ApiResponseErrorsValue.getInstance()
+        .addError(
+          "foo",
+          "Boo is required."
+        )
+        .addError(
+          "bar",
+          "Bar is required."
+        )
+        .getErrors();
 
-/*
-{
-  errors: {
-    foo: ['Foo is required.'],
-    bar: ['Bar is required.']
-  },
-  error: 'Foo is required.'
-}
-*/
+   return invalidApiResponse(res, errors);
+
+}))
+
 ```
 
 #### Alternatives ways to Handling errors
@@ -159,74 +134,30 @@ You can use @qnx/error with @qnx/response to throw the exceptions and pass data 
 
 You can define error response using the **ValidationError** function.
 
-```javascript
-import { asyncValidatorHandler, ValidationError, ApiResponseErrorsValue } from '@qnx/response'
-
-express.get(
-  '/',
-  asyncValidatorHandler(async (req, res) => {
-    const errors = ApiResponseErrorsValue.getInstance()
-      .addError('foo', 'Foo is required.')
-      .addError('bar', 'Bar is required.')
-      .getErrors()
-
-    throw new ValidationError('Errors', { errors })
-  })
-)
-
-/*
-{
-  errors: {
-    foo: ['Foo is required.'],
-    bar: ['Bar is required.']
-  },
-  error: 'Foo is required.'
-}
-*/
 ```
+import { asyncValidatorHandler, ValidationError, ApiResponseErrorsValue } from '@qnx/response';
 
-#### Zod Built-in
+express.get('/', asyncValidatorHandler(async(req, res) => {
 
-The below code shows an example of how @qnx/response is handling Zod errors in an API response. In this example, we define a UserRequest and use Zod to validate the request body. If the request is invalid, the Zod will throw an error with the validation errors, which will be caught by asyncValidatorHandler.
+    const errors = ApiResponseErrorsValue.getInstance()
+        .addError(
+          "foo",
+          "Boo is required."
+        )
+        .addError(
+          "bar",
+          "Bar is required."
+        )
+        .getErrors();
 
-```javascript
-import { asyncValidatorHandler, initializeApiResponse } from '@qnx/response';
-import { z } from "zod";
-
-express.post('/create-user', asyncValidatorHandler(async(req, res) => {
-
-    export const UserSchema = z.object({
-       name: z.string(),
-       email: z.string(),
-    });
-
-    const userData = UserSchema.parse(this.req.body);
-
-    const user = UserModel.create(userData);
-
-    return initializeApiResponse()
-        .setData(user)
-        .setMessage('User created successfully.');
+    throw new ValidationError("Errors", {errors});
 }))
 
-/*
-=> { name: 'foo', email:'foo@abc.com' }
-{
-  data: {
-    user: { name: 'foo', email: 'foo@abc.com' }
-  },
-  message: 'User created successfully.'
-}
-
-=> { email:'foo@abc.com' }
-{
-  errors: {
-    name: ['Name is required.'],
-  },
-  error: 'Name is required.'
-}
-/*
 ```
+
+The above code shows an example of how to handle errors in an API response using @qnx/response. In this example, we define a LoginRequest interface and use zod to validate the request body. If the request is invalid, the validateRequest middleware will throw an error with the validation errors, which will be caught by asyncValidatorHandler.
+
+Inside asyncValidatorHandler, we check if the user exists and if the password is correct. If not, we create a new ApiResponseError instance and throw a new ApiResponseErrors instance with the error inside.
 
 ## Contributing
 
