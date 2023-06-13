@@ -12,6 +12,11 @@ interface ApiResponseInterface<T> {
     getError(): ApiError | undefined
 }
 
+/**
+ * Represents the response value returned by the API.
+ *
+ * @template T - The type of the response data.
+ */
 export interface ApiResponseValue<T = any> {
     readonly data?: T
     readonly errorCode?: ApiErrorCode
@@ -53,6 +58,12 @@ interface ApiSuccessResponseInterface<T> {
     getMessage: () => ApiMessage
 }
 
+/**
+ * Represents a successful API response value.
+ * It includes the response data and a message.
+ *
+ * @template T - The type of the response data.
+ */
 export type ApiSuccessResponseValue<T> = Pick<Required<ApiResponseValue<T>>, 'data' | 'message'>
 
 /**
@@ -76,6 +87,10 @@ interface ApiErrorResponseInterface {
     getErrorCode: () => string | undefined
 }
 
+/**
+ * Represents an error API response value.
+ * It includes error details such as error messages and error codes.
+ */
 export type ApiErrorResponseValue = Pick<Required<ApiResponseValue<unknown>>, 'errors' | 'error'> &
     Pick<ApiResponseValue<unknown>, 'errorCode'>
 
