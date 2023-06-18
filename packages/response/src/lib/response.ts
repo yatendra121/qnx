@@ -1,8 +1,9 @@
 import { errorCodes } from '@qnx/errors'
-import { ApiResponseErrors, ValidationError, UnauthenticateUserError } from '@qnx/errors'
+import { ValidationError, UnauthenticateUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
 import { Response } from 'express'
 import type { Logger } from 'winston'
+import { invalidApiResponse } from './errorResponse'
 
 let logger: Logger | undefined = undefined
 export function setLoggerInstance(instance: Logger) {
@@ -10,18 +11,7 @@ export function setLoggerInstance(instance: Logger) {
 }
 
 /**
- * Return unauthenticate api response
- * @param response
- * @returns
- */
-export function unauthenticateApiResponse(response: Response) {
-    return ApiResponse.getInstance()
-        .setMessage('Unauthenticated')
-        .setErrorCode('unauthenticated')
-        .response(response, errorCodes.UNAUTHENTICATED_USER_ERROR_CODE)
-}
-
-/**
+ * Using for internal uses
  * This is useful when you want collect all errors into a single try catch block
  * If you using this function in catch block then you don't need define additional try catch block
  * for api response
@@ -48,6 +38,20 @@ export function errorApiResponse(
 }
 
 /**
+ * Using for internal uses
+ * Return unauthenticate api response
+ * @param response
+ * @returns
+ */
+export function unauthenticateApiResponse(response: Response) {
+    return ApiResponse.getInstance()
+        .setMessage('Unauthenticated')
+        .setErrorCode('unauthenticated')
+        .response(response, errorCodes.UNAUTHENTICATED_USER_ERROR_CODE)
+}
+
+/**
+ * Using for internal uses
  * This is useful to collect any errors that will be consider as server error
  * @param response
  * @param error
@@ -60,37 +64,20 @@ export function serverErrorApiResponse(response: Response, error: unknown) {
 }
 
 /**
- * To send validation api response and can send multiple validation errors
- * @param response
- * @param errors
+ * Using for internal uses
+ * @param error
  * @returns
  */
-export function invalidApiResponse(response: Response, errors: ApiResponseErrors | undefined) {
-    const apiRes = ApiResponse.getInstance()
-    if (errors) apiRes.setErrors(errors)
-    return apiRes.response(response, errorCodes.VALIDATION_ERROR_CODE)
-}
-
-/**
- * To send validation api response and that is useful when you want single validation error
- * @param response
- * @param errorKey
- * @param errorMessage
- * @returns
- */
-export function invalidValueApiResponse(
-    response: Response,
-    errorKey: string,
-    errorMessage: string
-) {
-    return invalidApiResponse(response, { [errorKey]: [errorMessage] })
-}
-
 const collectErrorsFromZodError = (error: any) => {
     const test = error.format()
     return removeErrorKeyFromZodError(test)
 }
 
+/**
+ * Using for internal uses
+ * @param error
+ * @returns
+ */
 const removeErrorKeyFromZodError = (error: any) => {
     for (const key in error) {
         if (Object.prototype.hasOwnProperty.call(error, key)) {

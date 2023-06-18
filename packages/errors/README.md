@@ -1,138 +1,77 @@
-# @qnx/client
+# @qnx/errors
 
-@qnx/client is providing components to simplify your codes.
+@qnx/errors is providing components to simplify your codes.
 
 ## Installation
 
-Use the package manager [npm](https://www.npmjs.com/) to install @qnx/client.
+Use the package manager [npm](https://www.npmjs.com/) to install @qnx/errors.
 
 ```bash
-npm install @qnx/client
+npm install @qnx/errors
 ```
 
 You can also use [yarn](https://yarnpkg.com/) & [pnpm](https://pnpm.io/)
 
 ```bash
-yarn add @qnx/client
+yarn add @qnx/errors
 ```
 
 ```bash
-pnpm install @qnx/client
+pnpm install @qnx/errors
 ```
 
 ## Usage
 
 ```javascript
-import { ApiResponse } from '@qnx/client'
+import { ApiError, ValidationError, UnauthenticateUserError, ServerError } from '@qnx/errors';
 
-const res = {
-  data: 10,
-  errorCode: 'ERR002',
-  error: 'An error occurred',
-  errors: {
-    field1: ['Error message 1', 'Error message 2'],
-    field2: ['Error message 3']
-  },
-  message: 'Request successful.',
-  serverError: {
-    code: 500,
-    message: 'Internal server error'
-  }
+# Creating a custom error instance
+const customError = new ApiError('Custom error message', 400, { errors: { email: ['Invalid email'] } });
+
+Handling validation errors
+try {
+  // ... perform validation
+} catch (err) {
+  const validationError = new ValidationError('Validation failed', { errors: err.errors });
+  // ... handle validation error
 }
 
-const apiRes = ApiResponse(res)
-
-const data = apiRes.getData()
-const message = apiRes.getMessage()
-const errors = apiRes.getErrors()
-const error = apiRes.getError()
-const errorCode = apiRes.getErrorCode()
-```
-
-```javascript
-import { ApiSuccessResponse } from '@qnx/client'
-
-const res = {
-  data: 10,
-  message: 'Request successful.'
+Handling server errors
+try {
+  // ... perform server action
+} catch (err) {
+  const serverError = new ServerError('Server error occurred');
+  // ... handle server error
 }
 
-const apiRes = ApiSuccessResponse(res)
 
-const data = apiRes.getData()
-const message = apiRes.getMessage()
 ```
 
-```javascript
-import { ApiErrorResponse } from '@qnx/client'
+ApiError: An optional object that contains additional information about the error. This object should follow the structure of the ErrorResponse interface.
+This class provides two methods:
 
-const res = {
-  errorCode: 'ERR002',
-  error: 'An error occurred',
-  errors: {
-    field1: ['Error message 1', 'Error message 2'],
-    field2: ['Error message 3']
-  }
-}
+getCode(): Returns the HTTP error code.
+getErrorResponse(): Returns the error response object.
+ValidationError
+This class is used to represent validation errors. It inherits from the ApiError class and takes two parameters:
 
-const apiRes = ApiErrorResponse(res)
+message: A string that describes the validation error.
+errorResponse: An object that contains validation error messages. This object should follow the structure of the ApiResponseErrors type.
+UnauthenticateUserError
+This class is used to represent errors that occur when a user is not authenticated. It inherits from the ApiError class and takes one parameter:
 
-const errors = apiRes.getErrors()
-const error = apiRes.getError()
-const errorCode = apiRes.getErrorCode()
-```
+message: A string that describes the unauthenticated user error.
+ServerError
+This class is used to represent errors that occur on the server side. It inherits from the ApiError class and takes one parameter:
 
-```javascript
-// ApiResponseValue
-import type { ApiResponseValue } from '@qnx/client'
-
-const response: ApiResponseValue<number> = {
-  data: 10,
-  errorCode: 'ERR002',
-  error: 'An error occurred',
-  errors: {
-    field1: ['Error message 1', 'Error message 2'],
-    field2: ['Error message 3']
-  },
-  message: 'Request successful.',
-  serverError: {
-    code: 500,
-    message: 'Internal server error'
-  }
-}
-```
-
-```javascript
-// ApiResponseValue
-import type { ApiSuccessResponseValue } from '@qnx/client'
-
-const successResponse: ApiSuccessResponseValue<number> = {
-  data: 10,
-  message: 'Request successful.'
-}
-```
-
-```javascript
-// ApiErrorResponseValue
-import type { ApiErrorResponseValue } from '@qnx/client'
-
-const errorResponse: ApiErrorResponseValue = {
-  errors: {
-    field1: ['Error message 1', 'Error message 2'],
-    field2: ['Error message 3']
-  },
-  error: 'An error occurred',
-  errorCode: 'ERR002'
-}
-```
+message: A string that describes the server error.
 
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
 to discuss what you would like to change.
-
 Please make sure to update tests as appropriate.
 
 ## License
 
-[MIT License](https://github.com/yatendra121/client/blob/main/LICENSE.md) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)
+[MIT License](https://github.com/yatendra121/qnx/blob/main/LICENSE.md) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)

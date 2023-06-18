@@ -20,8 +20,9 @@
     "publish": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist",
-        "command": "node tools/scripts/publish.mjs response"
+        "command": "node tools/scripts/publish.mjs response",
+        "cwd": "packages/response",
+        "outputPath": "packages/response/dist"
       }
     },
     "lint": {
