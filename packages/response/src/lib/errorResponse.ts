@@ -12,7 +12,7 @@ import type { Response } from 'express'
 export function invalidApiResponse(response: Response, errors: ApiResponseErrors | undefined) {
     const apiRes = ApiResponse.getInstance()
     if (errors) apiRes.setErrors(errors)
-    return apiRes.response(response, errorCodes.VALIDATION_ERROR_CODE)
+    return apiRes.setStatusCode(errorCodes.VALIDATION_ERROR_CODE).response(response)
 }
 
 /**

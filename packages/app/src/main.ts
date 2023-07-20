@@ -10,8 +10,10 @@ import {
     initializeApiResponse,
     invalidApiResponse,
     invalidValueApiResponse,
-    throwInvalidValueApiResponse
+    throwInvalidValueApiResponse,
+    unauthenticateApiResponse
 } from '@qnx/response'
+import { setErrorCodes } from '@qnx/errors'
 import express, { urlencoded } from 'express'
 import z from 'zod'
 import * as path from 'path'
@@ -91,10 +93,25 @@ app.post(
     })
 )
 
+app.get(
+    '/unauthenticated',
+    asyncValidatorHandler(async () => {
+        return initializeApiResponse().setStatusCode(500)
+    })
+)
+
+app.get(
+    '/unauthenticated-error',
+    asyncValidatorHandler(async (_req, res) => {
+        return unauthenticateApiResponse(res)
+    })
+)
+
 const port = process.env.PORT || 3333
 const server = app.listen(port, () => {
     console.log(`Listening at http://localhost:${port}/api`)
 })
 server.on('error', console.error)
-
 export default app
+setErrorCodes({ UNAUTHENTICATED_USER_ERROR_CODE: 200, SERVER_ERROR_CODE: 200 })
+export { setErrorCodes }

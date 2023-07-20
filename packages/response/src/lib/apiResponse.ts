@@ -7,6 +7,7 @@ const SHOW_SERVER_ERROR = true
  * This class is useful for send api response
  */
 export class ApiResponse<T = unknown> {
+    #statusCode = 200
     protected data?: T
     protected errorCode?: string
     protected errors?: ApiResponseErrors
@@ -71,6 +72,16 @@ export class ApiResponse<T = unknown> {
     }
 
     /**
+     * Set status code
+     * @param message
+     * @returns
+     */
+    setStatusCode(statusCode: number) {
+        this.#statusCode = statusCode
+        return this
+    }
+
+    /**
      * Set server error
      * @param error
      * @returns
@@ -92,9 +103,9 @@ export class ApiResponse<T = unknown> {
      * @param status
      * @returns
      */
-    response(response: Response, status = 200) {
+    response(response: Response) {
         if (this.errors) this.error = this.errors[Object.keys(this.errors)?.[0]]?.[0]
-        return response.status(status).send({ ...this })
+        return response.status(this.#statusCode).send({ ...this })
     }
 }
 

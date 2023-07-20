@@ -47,7 +47,8 @@ export function unauthenticateApiResponse(response: Response) {
     return ApiResponse.getInstance()
         .setMessage('Unauthenticated')
         .setErrorCode('unauthenticated')
-        .response(response, errorCodes.UNAUTHENTICATED_USER_ERROR_CODE)
+        .setStatusCode(errorCodes.UNAUTHENTICATED_USER_ERROR_CODE)
+        .response(response)
 }
 
 /**
@@ -60,7 +61,8 @@ export function unauthenticateApiResponse(response: Response) {
 export function serverErrorApiResponse(response: Response, error: unknown) {
     return ApiResponse.getInstance()
         .setServerError(error)
-        .response(response, errorCodes.SERVER_ERROR_CODE)
+        .setStatusCode(errorCodes.SERVER_ERROR_CODE)
+        .response(response)
 }
 
 /**
