@@ -1,0 +1,36 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ESNext"],
+    "moduleResolution": "Node",
+    "strict": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"],
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "skipLibCheck": false,
+    "skipDefaultLibCheck": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.ts",
+    "node_modules",
+    "test/**",
+    ".history/**",
+    "jest.config.ts",
+    "vite.config.ts",
+    "**/*.spec.ts"
+  ]
+}

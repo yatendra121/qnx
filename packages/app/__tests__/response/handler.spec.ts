@@ -111,6 +111,13 @@ describe('Response Integration Testing', function () {
             .set('Accept', 'application/json')
         expect(response.status).toEqual(500)
     })
+
+    it('generateErrorLog', async function () {
+        const response = await request(app).get('/generate-log').set('Accept', 'application/json')
+        expect(response.status).toEqual(200)
+
+        expect('Logger testing.').toEqual(response.body.serverError.message)
+    })
 })
 
 describe('Response Integration Testing With Change Codes', function () {
@@ -159,5 +166,12 @@ describe('Response Integration Testing With Change Codes', function () {
 
         expect('unauthenticated').toEqual(response.body.errorCode)
         expect('Unauthenticated').toEqual(response.body.message)
+    })
+
+    it('generateErrorLog', async function () {
+        const response = await request(app).get('/generate-log').set('Accept', 'application/json')
+        expect(response.status).toEqual(200)
+
+        expect('Logger testing.').toEqual(response.body.serverError.message)
     })
 })

@@ -11,9 +11,11 @@ import {
     invalidApiResponse,
     invalidValueApiResponse,
     throwInvalidValueApiResponse,
-    unauthenticateApiResponse
+    unauthenticateApiResponse,
+    setLoggerInstance
 } from '@qnx/response'
 import { setErrorCodes } from '@qnx/errors'
+import { logger } from '@qnx/winston'
 import express, { urlencoded } from 'express'
 import z from 'zod'
 import * as path from 'path'
@@ -24,6 +26,8 @@ const app = express()
 app.use('/assets', express.static(path.join(__dirname, 'assets')))
 app.use(urlencoded({ extended: true }))
 app.use(json())
+
+setLoggerInstance(logger)
 
 app.get(
     '/object',
@@ -104,6 +108,13 @@ app.get(
     '/unauthenticated-error',
     asyncValidatorHandler(async (_req, res) => {
         return unauthenticateApiResponse(res)
+    })
+)
+
+app.get(
+    '/generate-log',
+    asyncValidatorHandler(async () => {
+        throw new Error('Logger testing.')
     })
 )
 

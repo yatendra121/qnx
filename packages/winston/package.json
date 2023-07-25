@@ -1,0 +1,47 @@
+{
+  "name": "@qnx/winston",
+  "description": "Logger instance for express error response",
+  "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
+  "version": "0.0.1",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "logger",
+    "errors response logger",
+    "error log"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yatendra121/qnx.git",
+    "directory": "packages/winston"
+  },
+  "main": "./dist/winston.cjs",
+  "module": "./dist/winston.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/winston.cjs",
+      "import": "./dist/winston.mjs"
+    }
+  },
+  "unpkg": "./winston.iife.js",
+  "jsdelivr": "./winston.iife.js",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
+    "test": "vitest",
+    "test:coverage": "jest --runInBand --coverage",
+    "lint:scripts": "eslint . --ext .ts",
+    "format:scripts": "prettier . --write",
+    "format": "npm run format:scripts"
+  },
+  "peerDependencies": {
+    "express": "*",
+    "@qnx/response": "0.4.*",
+    "@qnx/errors": "0.4.*",
+    "winston": "*",
+    "winston-daily-rotate-file": "*"
+  }
+}
