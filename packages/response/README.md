@@ -165,7 +165,7 @@ express.get(
 
 You can use @qnx/error with @qnx/response to throw the exceptions and pass data to the end user.
 
-You can define error response using the **ValidationError** function.
+You can define error response using the **ValidationError** class.
 
 ```javascript
 import { asyncValidatorHandler, ValidationError, ApiResponseErrorsValue } from '@qnx/response'
@@ -178,7 +178,7 @@ express.get(
       .addError('bar', 'Bar is required.')
       .getErrors()
 
-    throw new ValidationError('Errors', { errors })
+    throw new ValidationError('Errors', { errRes: { errors } })
   })
 )
 
@@ -187,6 +187,28 @@ express.get(
   errors: {
     foo: ['Foo is required.'],
     bar: ['Bar is required.']
+  },
+  error: 'Foo is required.'
+}
+*/
+```
+
+You can define error response using the **InvalidValueError** class for a single error response.
+
+```javascript
+import { asyncValidatorHandler, InvalidValueError } from '@qnx/response'
+
+express.get(
+  '/',
+  asyncValidatorHandler(async (req, res) => {
+    throw new InvalidValueError('Foo is required.', { key: 'foo' })
+  })
+)
+
+/*
+{
+  errors: {
+    foo: ['Foo is required.']
   },
   error: 'Foo is required.'
 }
