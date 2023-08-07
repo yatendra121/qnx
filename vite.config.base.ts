@@ -31,7 +31,7 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
         base: './',
         plugins: [
             viteTsConfigPaths({
-                root: '../../'
+                root: '../../' //this path is using from packages/LIB_NAME/vite.config.ts
             })
             // dts()
         ],

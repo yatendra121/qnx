@@ -40,5 +40,5 @@ export function throwInvalidValueApiResponse(errorKey: string, errorMessage: str
     const errorResponse = new ApiResponseErrorsValue()
         .setError(errorKey, errorMessage)
         .getErrorResponse()
-    throw new ValidationError('Error', errorResponse)
+    throw new ValidationError('Error', { errRes: errorResponse })
 }

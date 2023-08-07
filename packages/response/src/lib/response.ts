@@ -1,5 +1,5 @@
 import { errorCodes } from '@qnx/errors'
-import { ValidationError, UnauthenticateUserError } from '@qnx/errors'
+import { ValidationError, UnauthenticatedUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
 import { Response } from 'express'
 import type { Logger } from 'winston'
@@ -21,11 +21,11 @@ export function setLoggerInstance(instance: Logger) {
  */
 export function errorApiResponse(
     response: Response,
-    error: ValidationError | UnauthenticateUserError | Error
+    error: ValidationError | UnauthenticatedUserError | Error
 ) {
     if (error instanceof ValidationError) {
         return invalidApiResponse(response, error.getErrorResponse()?.errors)
-    } else if (error instanceof UnauthenticateUserError) {
+    } else if (error instanceof UnauthenticatedUserError) {
         return unauthenticateApiResponse(response)
     } else if (error instanceof Error && error.name === 'ZodError') {
         return invalidApiResponse(response, collectErrorsFromZodError(error))

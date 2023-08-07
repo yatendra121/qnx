@@ -1,5 +1,5 @@
 import { it, expect, describe } from 'vitest'
-import { ValidationError, UnauthenticateUserError, ServerError, ApiError } from './' // Replace with the actual file path
+import { ValidationError, UnauthenticatedUserError, ServerError, ApiError } from './' // Replace with the actual file path
 import type { ErrorResponse } from './types'
 
 // Test cases for ApiError
@@ -42,17 +42,17 @@ describe('ValidationError', () => {
     })
 })
 
-// Test cases for UnauthenticateUserError
-describe('UnauthenticateUserError', () => {
+// Test cases for UnauthenticatedUserError
+describe('UnauthenticatedUserError', () => {
     it('should have correct error code and response', () => {
         const errorMessage = 'Unauthenticated user error'
-        const unauthenticateUserError = new UnauthenticateUserError(errorMessage)
+        const UnauthenticatedUserError = new UnauthenticatedUserError(errorMessage)
 
-        expect(unauthenticateUserError).toBeInstanceOf(UnauthenticateUserError)
-        expect(unauthenticateUserError).toBeInstanceOf(ApiError)
-        expect(unauthenticateUserError.getCode()).toBe(401)
-        expect(unauthenticateUserError.getErrorResponse()).toBeUndefined()
-        expect(unauthenticateUserError.message).toBe(errorMessage)
+        expect(UnauthenticatedUserError).toBeInstanceOf(UnauthenticatedUserError)
+        expect(UnauthenticatedUserError).toBeInstanceOf(ApiError)
+        expect(UnauthenticatedUserError.getCode()).toBe(401)
+        expect(UnauthenticatedUserError.getErrorResponse()).toBeUndefined()
+        expect(UnauthenticatedUserError.message).toBe(errorMessage)
     })
 })
 

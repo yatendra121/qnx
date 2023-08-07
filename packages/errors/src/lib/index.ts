@@ -7,11 +7,11 @@ import type { ErrorResponse } from './types'
 export class ApiError extends Error {
     errorCode: number
     errorResponse: ErrorResponse | undefined
-    constructor(m: string, code: number, errRes?: ErrorResponse) {
+    constructor(m: string, code: number, option?: { errRes?: ErrorResponse }) {
         super(m)
         Object.setPrototypeOf(this, ApiError.prototype)
         this.errorCode = code
-        this.errorResponse = errRes
+        this.errorResponse = option?.errRes
     }
 
     getCode() {
@@ -27,19 +27,29 @@ export class ApiError extends Error {
  * Validation error class
  */
 export class ValidationError extends ApiError {
-    constructor(m: string, errRes: ErrorResponse) {
-        super(m, errorCodes.VALIDATION_ERROR_CODE, errRes)
+    constructor(m: string, option: { errRes: ErrorResponse }) {
+        super(m, errorCodes.VALIDATION_ERROR_CODE, option)
         Object.setPrototypeOf(this, ValidationError.prototype)
+    }
+}
+
+/**
+ * Invalid value error class
+ */
+export class InvalidValueError extends ValidationError {
+    constructor(m: string, { key }: { key: string }) {
+        super(m, { errRes: { errors: { [key]: [m] } } })
+        Object.setPrototypeOf(this, InvalidValueError.prototype)
     }
 }
 
 /**
  * Unauthenticate user error class
  */
-export class UnauthenticateUserError extends ApiError {
+export class UnauthenticatedUserError extends ApiError {
     constructor(m: string) {
         super(m, errorCodes.UNAUTHENTICATED_USER_ERROR_CODE)
-        Object.setPrototypeOf(this, UnauthenticateUserError.prototype)
+        Object.setPrototypeOf(this, UnauthenticatedUserError.prototype)
     }
 }
 

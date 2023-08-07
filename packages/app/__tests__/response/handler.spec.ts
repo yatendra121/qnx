@@ -44,12 +44,28 @@ describe('Response Integration Testing', function () {
         const response = await request(app)
             .get('/validation-error')
             .set('Accept', 'application/json')
+
         expect(response.status).toEqual(400)
         expect('Foo is required.').toEqual(response.body.error)
         expect({
             errors: {
                 foo: ['Foo is required.'],
                 bar: ['Bar is required.']
+            },
+            error: 'Foo is required.'
+        }).toEqual(response.body)
+    })
+
+    it('InvalidValueValidationErrorResponse', async function () {
+        const response = await request(app)
+            .get('/invalid-value-validation-error')
+            .set('Accept', 'application/json')
+
+        expect(response.status).toEqual(400)
+        expect('Foo is required.').toEqual(response.body.error)
+        expect({
+            errors: {
+                foo: ['Foo is required.']
             },
             error: 'Foo is required.'
         }).toEqual(response.body)
@@ -144,6 +160,21 @@ describe('Response Integration Testing With Change Codes', function () {
 
         expect('Required').toEqual(response.body.error)
         expect({ errors: { email: ['Required'] }, error: 'Required' }).toEqual(response.body)
+    })
+
+    it('InvalidValueValidationErrorResponse', async function () {
+        const response = await request(app)
+            .get('/invalid-value-validation-error')
+            .set('Accept', 'application/json')
+
+        expect(response.status).toEqual(200)
+        expect('Foo is required.').toEqual(response.body.error)
+        expect({
+            errors: {
+                foo: ['Foo is required.']
+            },
+            error: 'Foo is required.'
+        }).toEqual(response.body)
     })
 
     it('invalidValueApiResponse', async function () {

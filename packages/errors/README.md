@@ -23,10 +23,14 @@ pnpm install @qnx/errors
 ## Usage
 
 ```javascript
-import { ApiError, ValidationError, UnauthenticateUserError, ServerError } from '@qnx/errors';
+import { ApiError, ValidationError, InvalidValueError, UnauthenticatedUserError, ServerError } from '@qnx/errors';
 
 # Creating a custom error instance
-const customError = new ApiError('Custom error message', 400, { errors: { email: ['Invalid email'] } });
+const validationError = new ValidationError('Custom error message', { errRes: { errors: { email: ['Invalid email'] } } });
+
+# Creating a single error instance
+const invalidValueError = new InvalidValueError('Invalid email address.', { key:'email' });
+
 
 Handling validation errors
 try {
@@ -57,8 +61,8 @@ This class is used to represent validation errors. It inherits from the ApiError
 
 message: A string that describes the validation error.
 errorResponse: An object that contains validation error messages. This object should follow the structure of the ApiResponseErrors type.
-UnauthenticateUserError
-This class is used to represent errors that occur when a user is not authenticated. It inherits from the ApiError class and takes one parameter:
+UnauthenticatedUserError
+This class represents errors that occur when a user is not authenticated. It inherits from the ApiError class and takes one parameter:
 
 message: A string that describes the unauthenticated user error.
 ServerError

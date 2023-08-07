@@ -20,6 +20,7 @@ import express, { urlencoded } from 'express'
 import z from 'zod'
 import * as path from 'path'
 import { json } from 'body-parser'
+import { InvalidValueError } from '@qnx/errors'
 
 const app = express()
 
@@ -66,13 +67,20 @@ app.get(
 
 app.get(
     '/validation-error',
-    asyncValidatorHandler(async () => {
+    asyncValidatorHandler(() => {
         const errors = ApiResponseErrorsValue.getInstance()
             .addError('foo', 'Foo is required.')
             .addError('bar', 'Bar is required.')
             .getErrors()
 
-        throw new ValidationError('Errors', { errors })
+        throw new ValidationError('Errors', { errRes: { errors } })
+    })
+)
+
+app.get(
+    '/invalid-value-validation-error',
+    asyncValidatorHandler(async () => {
+        throw new InvalidValueError('Foo is required.', { key: 'foo' })
     })
 )
 
