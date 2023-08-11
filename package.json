@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "affected:build": "npx nx run-many affected --target=build",
-    "affected:publish": "npx nx run-many affected --target=publish"
+    "affected:build": "npx nx affected --target=build",
+    "affected:publish": "npx nx affected --target=publish",
+    "affected:deploy": "npm run affected:build && npm run affected:publish"
   },
   "private": true,
   "dependencies": {

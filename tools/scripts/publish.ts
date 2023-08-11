@@ -71,8 +71,6 @@ try {
 // Execute "npm publish" to publish
 let command = 'npm publish --access public'
 
-console.log({ command, name })
-
-// execSync(`${command} --tag ${tag}`, {
-//     stdio: 'inherit'
-// })
+execSync(`${command} --tag ${tag}`, {
+    stdio: 'inherit'
+})

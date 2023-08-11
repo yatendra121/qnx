@@ -12,7 +12,7 @@ import {
     invalidValueApiResponse,
     throwInvalidValueApiResponse,
     unauthenticateApiResponse,
-    setLoggerInstance,
+    setCallback,
     ApiResponse
 } from '@qnx/response'
 import { setErrorCodes } from '@qnx/errors'
@@ -29,7 +29,11 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')))
 app.use(urlencoded({ extended: true }))
 app.use(json())
 
-setLoggerInstance(logger)
+setCallback({
+    logger: {
+        serverError: (error) => logger.error('API Handler:', error)
+    }
+})
 
 app.get(
     '/object',

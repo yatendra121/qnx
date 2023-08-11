@@ -2,12 +2,15 @@ import { errorCodes } from '@qnx/errors'
 import { ValidationError, UnauthenticatedUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
 import { Response } from 'express'
-import type { Logger } from 'winston'
 import { invalidApiResponse } from './errorResponse'
 
-let logger: Logger | undefined = undefined
-export function setLoggerInstance(instance: Logger) {
-    logger = instance
+type CallbackObj = { logger?: { serverError: (error: Error) => void | undefined } }
+export const callbackObj: CallbackObj = {
+    logger: undefined
+}
+
+export const setCallback = ({ logger }: Partial<CallbackObj>) => {
+    if (logger) callbackObj.logger = logger
 }
 
 /**
@@ -31,7 +34,7 @@ export function errorApiResponse(
         return invalidApiResponse(response, collectErrorsFromZodError(error))
     } else {
         setTimeout(() => {
-            logger?.error('API Handler:', error)
+            callbackObj.logger?.serverError(error)
         }, 100)
         return serverErrorApiResponse(response, error)
     }
