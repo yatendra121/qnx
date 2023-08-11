@@ -2,7 +2,7 @@
   "name": "@qnx/winston",
   "description": "Logger instance for express error response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "license": "MIT",
   "files": [
     "dist"
@@ -39,8 +39,7 @@
   },
   "peerDependencies": {
     "express": "*",
-    "@qnx/response": "0.4.*",
-    "@qnx/errors": "0.4.*",
+    "@qnx/response": "*",
     "winston": "*",
     "winston-daily-rotate-file": "*"
   }

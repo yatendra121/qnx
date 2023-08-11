@@ -128,6 +128,14 @@ describe('Response Integration Testing', function () {
         expect(response.status).toEqual(500)
     })
 
+    it('ChangeStatusCode', async function () {
+        const response = await request(app)
+            .get('/change-status-code')
+            .set('Accept', 'application/json')
+        expect(response.status).toEqual(400)
+        expect('this is string!').toEqual(response.body.message)
+    })
+
     it('generateErrorLog', async function () {
         const response = await request(app).get('/generate-log').set('Accept', 'application/json')
         expect(response.status).toEqual(200)

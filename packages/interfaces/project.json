@@ -21,7 +21,7 @@
       "executor": "nx:run-commands",
       "options": {
         "outputPath": "dist",
-        "command": "node tools/scripts/publish.mjs interfaces"
+        "command": "tsx tools/scripts/publish.ts interfaces "
       }
     },
     "lint": {

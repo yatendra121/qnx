@@ -12,7 +12,8 @@ import {
     invalidValueApiResponse,
     throwInvalidValueApiResponse,
     unauthenticateApiResponse,
-    setLoggerInstance
+    setLoggerInstance,
+    ApiResponse
 } from '@qnx/response'
 import { setErrorCodes } from '@qnx/errors'
 import { logger } from '@qnx/winston'
@@ -102,6 +103,13 @@ app.post(
         const userData = UserSchema.parse(req.body)
 
         return initializeApiResponse().setData(userData).setMessage('User created successfully.')
+    })
+)
+
+app.get(
+    '/change-status-code',
+    asyncValidatorHandler(async () => {
+        return ApiResponse.getInstance().setStatusCode(400).setMessage('this is string!')
     })
 )
 

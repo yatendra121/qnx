@@ -21,7 +21,7 @@
       "executor": "nx:run-commands",
       "options": {
         "outputPath": "dist",
-        "command": "node tools/scripts/publish.mjs core-helpers"
+        "command": "tsx tools/scripts/publish.ts core-helpers "
       }
     },
     "lint": {
