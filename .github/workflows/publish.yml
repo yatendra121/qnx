@@ -2,9 +2,8 @@ name: Publish Package
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    tags:
+      - v*
 
 jobs:
   publish-npm:
@@ -18,7 +17,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2.0.1
         with:
-          version: 7.11.0
+          version: 8.6.11
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
@@ -28,9 +27,7 @@ jobs:
 
       - run: pnpm install
 
-      - run: pnpm affected:build
-
-      - run: pnpm affected:publish
+      - run: pnpm affected:deploy
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NODE_OPTIONS: '--max-old-space-size=6144'

@@ -60,8 +60,7 @@ function collectVersion(version) {
 // Updating the version in "package.json" before publishing
 try {
     const json = JSON.parse(readFileSync(`../package.json`).toString())
-    console.log(version)
-    json.version = version || collectVersion(json.version)
+    version = json.version = version || collectVersion(json.version)
     writeFileSync(`../package.json`, JSON.stringify(json, null, 2))
 } catch (e) {
     console.error(e.message)
@@ -74,3 +73,5 @@ let command = 'npm publish --access public'
 execSync(`${command} --tag ${tag}`, {
     stdio: 'inherit'
 })
+
+console.log(chalk.bold.green(`${name} package published with version ${version}`))

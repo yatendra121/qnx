@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "app:test": "npx nx run app:test",
     "affected:build": "npx nx affected --target=build",
     "affected:publish": "npx nx affected --target=publish",
-    "affected:deploy": "npm run affected:build && npm run affected:publish"
+    "affected:test": "npx nx affected --target=test",
+    "affected:deploy": "npm run affected:test && npm run app:test && npm run affected:build && npm run affected:publish"
   },
   "private": true,
   "dependencies": {
@@ -15,8 +17,7 @@
     "postcss": "^8.4.27",
     "tslib": "^2.6.0",
     "uuid": "^9.0.0",
-    "vitest": "~0.32.0",
-    "winston-daily-rotate-file": "^4.7.1"
+    "vitest": "~0.32.0"
   },
   "devDependencies": {
     "@nx/devkit": "16.5.5",
@@ -67,6 +68,7 @@
     "vite-plugin-eslint": "^1.8.1",
     "vite-tsconfig-paths": "^4.2.0",
     "winston": "^3.10.0",
+    "winston-daily-rotate-file": "^4.7.1",
     "zod": "^3.21.4"
   },
   "workspaces": [
