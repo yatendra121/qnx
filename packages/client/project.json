@@ -31,7 +31,7 @@
         "lintFilePatterns": ["packages/client/**/*.ts"]
       }
     },
-    "test": {
+    "jest": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
@@ -43,6 +43,14 @@
           "ci": true,
           "codeCoverage": true
         }
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["coverage/packages/response"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/packages/response"
       }
     },
     "vitest": {

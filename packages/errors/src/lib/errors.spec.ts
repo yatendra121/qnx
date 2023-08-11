@@ -1,4 +1,3 @@
-import { it, expect, describe } from 'vitest'
 import { ValidationError, UnauthenticatedUserError, ServerError, ApiError } from './' // Replace with the actual file path
 import type { ErrorResponse } from './types'
 
@@ -13,7 +12,7 @@ describe('ApiError', () => {
                 field2: ['Error message 2']
             }
         }
-        const apiError = new ApiError(errorMessage, errorCode, errorResponse)
+        const apiError = new ApiError(errorMessage, errorCode, { errRes: errorResponse })
 
         expect(apiError).toBeInstanceOf(ApiError)
         expect(apiError.getCode()).toBe(errorCode)
@@ -32,7 +31,7 @@ describe('ValidationError', () => {
                 field2: ['Error message 2']
             }
         }
-        const validationError = new ValidationError(errorMessage, errorResponse)
+        const validationError = new ValidationError(errorMessage, { errRes: errorResponse })
 
         expect(validationError).toBeInstanceOf(ValidationError)
         expect(validationError).toBeInstanceOf(ApiError)
@@ -46,13 +45,13 @@ describe('ValidationError', () => {
 describe('UnauthenticatedUserError', () => {
     it('should have correct error code and response', () => {
         const errorMessage = 'Unauthenticated user error'
-        const UnauthenticatedUserError = new UnauthenticatedUserError(errorMessage)
+        const unauthenticatedUserError = new UnauthenticatedUserError(errorMessage)
 
-        expect(UnauthenticatedUserError).toBeInstanceOf(UnauthenticatedUserError)
-        expect(UnauthenticatedUserError).toBeInstanceOf(ApiError)
-        expect(UnauthenticatedUserError.getCode()).toBe(401)
-        expect(UnauthenticatedUserError.getErrorResponse()).toBeUndefined()
-        expect(UnauthenticatedUserError.message).toBe(errorMessage)
+        expect(unauthenticatedUserError).toBeInstanceOf(UnauthenticatedUserError)
+        expect(unauthenticatedUserError).toBeInstanceOf(ApiError)
+        expect(unauthenticatedUserError.getCode()).toBe(401)
+        expect(unauthenticatedUserError.getErrorResponse()).toBeUndefined()
+        expect(unauthenticatedUserError.message).toBe(errorMessage)
     })
 })
 
