@@ -138,11 +138,12 @@ app.get(
     })
 )
 
+app.get('/check-invalid-function-value', asyncValidatorHandler(undefined))
+
 const port = process.env.PORT || 3333
 const server = app.listen(port, () => {
     console.log(`Listening at http://localhost:${port}/api`)
 })
 server.on('error', console.error)
 export default app
-setErrorCodes({ UNAUTHENTICATED_USER_ERROR_CODE: 200, SERVER_ERROR_CODE: 200 })
 export { setErrorCodes }

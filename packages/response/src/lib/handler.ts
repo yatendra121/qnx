@@ -9,6 +9,12 @@ type ExecuteFun<T> = (
     next?: NextFunction
 ) => Promise<ApiResponse> | Promise<void> | Promise<unknown>
 
+export function isFunction(functionToCheck: unknown): boolean {
+    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]'
+        ? true
+        : false
+}
+
 /**
  * This function is providing an async function that will handle response as well as any type of error
  * @param func
@@ -17,6 +23,9 @@ type ExecuteFun<T> = (
 export function asyncValidatorHandler<T = Request>(func: ExecuteFun<T>) {
     const handler = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            if (!isFunction(func))
+                throw new TypeError('Provided parameter value is not a function.')
+
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
             const apiRes = await func(req, res, next)

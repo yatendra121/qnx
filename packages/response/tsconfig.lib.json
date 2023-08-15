@@ -17,12 +17,10 @@
     "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["vite/client", "node", "jest"],
-
     "strictNullChecks": true,
     "strictFunctionTypes": true,
-
     "skipLibCheck": false,
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": false
   },
   "include": ["**/*.ts"],
   "exclude": [

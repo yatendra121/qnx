@@ -138,9 +138,20 @@ describe('Response Integration Testing', function () {
 
     it('generateErrorLog', async function () {
         const response = await request(app).get('/generate-log').set('Accept', 'application/json')
-        expect(response.status).toEqual(200)
+        expect(response.status).toEqual(500)
 
         expect('Logger testing.').toEqual(response.body.serverError.message)
+    })
+
+    it('checkInvalidFunctionValue', async function () {
+        const response = await request(app)
+            .get('/check-invalid-function-value')
+            .set('Accept', 'application/json')
+        expect(response.status).toEqual(500)
+
+        expect('Provided parameter value is not a function.').toEqual(
+            response.body.serverError.message
+        )
     })
 })
 

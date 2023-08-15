@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src",
+    "rootDir": ".",
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -16,11 +16,16 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["vite/client", "node", "jest"]
+    "types": ["vite/client", "node", "jest"],
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "skipLibCheck": false,
+    "skipDefaultLibCheck": true
   },
   "include": ["**/*.ts"],
   "exclude": [
     "**/*.test.ts",
+    "**/*.ts",
     "node_modules",
     "test/**",
     ".history/**",
