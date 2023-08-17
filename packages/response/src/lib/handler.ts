@@ -9,10 +9,8 @@ type ExecuteFun<T> = (
     next?: NextFunction
 ) => Promise<ApiResponse> | Promise<void> | Promise<unknown>
 
-export function isFunction(functionToCheck: unknown): boolean {
-    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]'
-        ? true
-        : false
+function isFunction(value: unknown): boolean {
+    return typeof value === 'function'
 }
 
 /**
