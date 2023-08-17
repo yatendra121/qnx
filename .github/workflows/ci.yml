@@ -32,6 +32,7 @@ jobs:
           node-version: ${{ matrix.node }}
           registry-url: 'https://registry.npmjs.org'
           scope: caniuse-lite
+          cache-dependency-path: '**/package-lock.json'
           cache: pnpm
 
       - name: Package Install
