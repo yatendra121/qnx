@@ -8,6 +8,7 @@ const SHOW_SERVER_ERROR = true
  */
 export class ApiResponse<T = unknown> {
     #statusCode = 200
+    #additionalData = {}
     protected data?: T
     protected errorCode?: string
     protected errors?: ApiResponseErrors
@@ -98,6 +99,16 @@ export class ApiResponse<T = unknown> {
     }
 
     /**
+     * Set additional data
+     * @param data
+     * @returns
+     */
+    setAdditional(data: { [key: string]: unknown }) {
+        this.#additionalData = data
+        return this
+    }
+
+    /**
      * Return api response
      * @param response
      * @param status
@@ -105,7 +116,7 @@ export class ApiResponse<T = unknown> {
      */
     response(response: Response) {
         if (this.errors) this.error = this.errors[Object.keys(this.errors)?.[0]]?.[0]
-        return response.status(this.#statusCode).send({ ...this })
+        return response.status(this.#statusCode).send({ ...this.#additionalData, ...this })
     }
 }
 

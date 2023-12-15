@@ -2,7 +2,7 @@
   "name": "@qnx/crypto",
   "description": "Crypto functions",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "license": "MIT",
   "files": [
     "dist"
@@ -11,6 +11,7 @@
     "type": "git",
     "url": "https://github.com/yatendra121/qnx.git"
   },
+  "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/crypto",
   "main": "./dist/crypto.cjs",
   "module": "./dist/crypto.mjs",
   "types": "./dist/index.d.ts",

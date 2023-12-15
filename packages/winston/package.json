@@ -2,7 +2,7 @@
   "name": "@qnx/winston",
   "description": "Logger instance for express error response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "license": "MIT",
   "files": [
     "dist"
@@ -17,6 +17,7 @@
     "url": "https://github.com/yatendra121/qnx.git",
     "directory": "packages/winston"
   },
+  "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/winston",
   "main": "./dist/winston.cjs",
   "module": "./dist/winston.mjs",
   "types": "./dist/index.d.ts",

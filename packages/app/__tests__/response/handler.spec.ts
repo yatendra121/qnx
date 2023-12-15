@@ -15,6 +15,22 @@ describe('Response Integration Testing', function () {
         expect('this is string!').toEqual(response.body.data)
     })
 
+    it('Success Additional data without main data', async function () {
+        const response = await request(app)
+            .get('/additional-data')
+            .set('Accept', 'application/json')
+        expect(response.status).toEqual(200)
+        expect({ data: { foo: 'additional' }, test: 'ok' }).toEqual(response.body)
+    })
+
+    it('Success Additional data with main data', async function () {
+        const response = await request(app)
+            .get('/additional-data-with-data')
+            .set('Accept', 'application/json')
+        expect(response.status).toEqual(200)
+        expect({ data: { foo: 'bar' }, test: 'ok' }).toEqual(response.body)
+    })
+
     it('invalidValueApiResponse', async function () {
         const response = await request(app).get('/invalid-value').set('Accept', 'application/json')
         expect(response.status).toEqual(400)

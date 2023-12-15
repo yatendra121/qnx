@@ -14,6 +14,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    "strict": true,
     "paths": {
       "@qnx/client": ["packages/client/src/index.ts"],
       "@qnx/core-helpers": ["packages/core-helpers/src/index.ts"],

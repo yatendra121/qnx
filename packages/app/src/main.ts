@@ -31,7 +31,9 @@ app.use(json())
 
 setCallback({
     logger: {
-        serverError: (error) => logger.error('API Handler:', error)
+        serverError: (error) => {
+            logger.error('API Handler:', error)
+        }
     }
 })
 
@@ -46,6 +48,22 @@ app.get(
     '/string',
     asyncValidatorHandler(async () => {
         return 'this is string!'
+    })
+)
+
+app.get(
+    '/additional-data',
+    asyncValidatorHandler(async () => {
+        return ApiResponse.getInstance().setAdditional({ data: { foo: 'additional' }, test: 'ok' })
+    })
+)
+
+app.get(
+    '/additional-data-with-data',
+    asyncValidatorHandler(async () => {
+        return ApiResponse.getInstance()
+            .setData({ foo: 'bar' })
+            .setAdditional({ data: { foo: 'additional' }, test: 'ok' })
     })
 )
 

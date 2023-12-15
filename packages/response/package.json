@@ -2,7 +2,7 @@
   "name": "@qnx/response",
   "description": "Collection of async functions for express response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "license": "MIT",
   "files": [
     "dist"
@@ -18,6 +18,7 @@
     "url": "https://github.com/yatendra121/qnx.git",
     "directory": "packages/response"
   },
+  "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/response",
   "main": "./dist/response.cjs",
   "module": "./dist/response.mjs",
   "types": "./dist/index.d.ts",
