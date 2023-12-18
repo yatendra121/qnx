@@ -13,9 +13,11 @@
             "forwardAllArgs": true
           }
         ],
-        "cwd": "packages/errors",
-        "outputPath": "packages/errors/dist"
-      }
+        "cwd": "packages/errors"
+      },
+      "outputs": [
+        "{workspaceRoot}/packages/errors/dist"
+      ]
     },
     "publish": {
       "executor": "nx:run-commands",
@@ -26,14 +28,20 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["packages/errors/**/*.ts"]
+        "lintFilePatterns": [
+          "packages/errors/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/packages/errors"],
+      "outputs": [
+        "{workspaceRoot}/coverage/packages/errors"
+      ],
       "options": {
         "jestConfig": "packages/errors/jest.config.ts",
         "passWithNoTests": true

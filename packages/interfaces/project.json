@@ -13,9 +13,11 @@
             "forwardAllArgs": true
           }
         ],
-        "cwd": "packages/interfaces",
-        "outputPath": "packages/interfaces/dist"
-      }
+        "cwd": "packages/interfaces"
+      },
+      "outputs": [
+        "{workspaceRoot}/packages/interfaces/dist"
+      ]
     },
     "publish": {
       "executor": "nx:run-commands",
@@ -26,14 +28,20 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["packages/interfaces/**/*.ts"]
+        "lintFilePatterns": [
+          "packages/interfaces/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/packages/interfaces"],
+      "outputs": [
+        "{workspaceRoot}/coverage/packages/interfaces"
+      ],
       "options": {
         "jestConfig": "packages/interfaces/jest.config.ts",
         "passWithNoTests": true

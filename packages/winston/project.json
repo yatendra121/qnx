@@ -13,13 +13,17 @@
             "forwardAllArgs": true
           }
         ],
-        "cwd": "packages/winston",
-        "outputPath": "packages/winston/dist"
-      }
+        "cwd": "packages/winston"
+      },
+      "outputs": [
+        "{workspaceRoot}/packages/winston/dist"
+      ]
     },
     "build-nx": {
       "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/packages/winston"
       }
@@ -33,7 +37,9 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["coverage/packages/winston"],
+      "outputs": [
+        "{workspaceRoot}/coverage/packages/winston"
+      ],
       "options": {
         "passWithNoTests": true,
         "reportsDirectory": "../../coverage/packages/winston"
@@ -41,9 +47,13 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["packages/winston/**/*.ts"]
+        "lintFilePatterns": [
+          "packages/winston/**/*.ts"
+        ]
       }
     }
   },

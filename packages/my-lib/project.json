@@ -6,14 +6,18 @@
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/packages/my-lib"
       }
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["coverage/packages/my-lib"],
+      "outputs": [
+        "{workspaceRoot}/coverage/packages/my-lib"
+      ],
       "options": {
         "passWithNoTests": true,
         "reportsDirectory": "../../coverage/packages/my-lib"
@@ -21,9 +25,13 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["packages/my-lib/**/*.ts"]
+        "lintFilePatterns": [
+          "packages/my-lib/**/*.ts"
+        ]
       }
     }
   },

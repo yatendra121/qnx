@@ -13,9 +13,11 @@
             "forwardAllArgs": true
           }
         ],
-        "cwd": "packages/core-helpers",
-        "outputPath": "packages/core-helpers/dist"
-      }
+        "cwd": "packages/core-helpers"
+      },
+      "outputs": [
+        "{workspaceRoot}/packages/core-helpers/dist"
+      ]
     },
     "publish": {
       "executor": "nx:run-commands",
@@ -26,14 +28,20 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["packages/core-helpers/**/*.ts"]
+        "lintFilePatterns": [
+          "packages/core-helpers/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/packages/core-helpers"],
+      "outputs": [
+        "{workspaceRoot}/coverage/packages/core-helpers"
+      ],
       "options": {
         "jestConfig": "packages/core-helpers/jest.config.ts",
         "passWithNoTests": true
