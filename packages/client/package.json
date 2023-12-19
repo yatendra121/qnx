@@ -2,7 +2,7 @@
   "name": "@qnx/client",
   "description": "QNX client for handling response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "license": "MIT",
   "files": [
     "dist"

@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "app:test": "npx nx run app:test",
+    "release:version": "nx release version",
     "affected:build": "npx nx affected --target=build  --exclude='app,my-lib'",
     "affected:publish": "npx nx affected --target=publish --exclude='app,my-lib'",
     "affected:test": "npx nx affected --target=test",
