@@ -32,15 +32,15 @@ jobs:
         run: pnpm affected:test --base=origin/main
 
       - name: App Test
-        run: pnpm app:test
+        run: pnpm app:test --base=origin/main
 
       - name: Build
-        run: pnpm affected:build
+        run: pnpm affected:build --base=origin/main
 
       - name: Build
-        run: pnpm affected:build
+        run: pnpm affected:build --base=origin/main
 
-      - run: pnpm affected:publish
+      - run: pnpm affected:publish --base=origin/main
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NODE_OPTIONS: '--max-old-space-size=6144'
