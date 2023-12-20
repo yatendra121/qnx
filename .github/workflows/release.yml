@@ -31,6 +31,6 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - run: npx changelogithub
+      - run: pnpx changelogithub
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
