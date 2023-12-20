@@ -258,6 +258,33 @@ express.post(
 */
 ```
 
+### Helper Methods
+
+**setData(data: any):** Sets the response data.
+
+**setErrorCode(errorCode: string):**
+Sets an error code for the response.
+
+**setError(error: string):**
+Sets a general error for the response.
+
+**setErrors(errors: ApiResponseErrors):**
+Sets multiple errors for the response.
+
+**setMessage(message: string):**
+Sets a message for the response.
+
+**setStatusCode(statusCode: number):**
+Sets the status code for the response.
+
+**setAdditional(data: { [key: string]: unknown }):**
+Sets additional data for the response.
+
+### Static Method
+
+**getInstance():**
+Retrieves a new instance of ApiResponse.
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first

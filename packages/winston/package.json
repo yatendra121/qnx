@@ -2,7 +2,7 @@
   "name": "@qnx/winston",
   "description": "Logger instance for express error response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.0.6",
+  "version": "0.5.10",
   "license": "MIT",
   "files": [
     "dist"
