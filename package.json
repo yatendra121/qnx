@@ -1,6 +1,6 @@
 {
   "name": "qnx",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "license": "MIT",
   "scripts": {
     "release": "standard-version",
