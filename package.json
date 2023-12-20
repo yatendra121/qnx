@@ -3,9 +3,7 @@
   "version": "0.0.8",
   "license": "MIT",
   "scripts": {
-    "release": "standard-version",
     "app:test": "npx nx run app:test",
-    "release:version": "nx release version",
     "affected:build": "npx nx affected --target=build  --exclude='app,my-lib'",
     "affected:publish": "npx nx affected --target=publish --exclude='app,my-lib'",
     "affected:test": "npx nx affected --target=test",
@@ -57,7 +55,6 @@
     "lint-staged": "^15.2.0",
     "nx": "17.2.5",
     "prettier": "^3.1.1",
-    "standard-version": "^9.5.0",
     "stylelint": "^16.0.2",
     "stylelint-config-recommended": "^14.0.0",
     "stylelint-config-sass-guidelines": "^10.0.0",

@@ -2,7 +2,7 @@
   "name": "@qnx/messages",
   "description": "Collection of messages & message functions ",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.5.10",
+  "version": "0.6.0",
   "license": "MIT",
   "files": [
     "dist"

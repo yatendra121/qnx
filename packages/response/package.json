@@ -2,7 +2,7 @@
   "name": "@qnx/response",
   "description": "Collection of async functions for express response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.5.9",
+  "version": "1.0.0-0",
   "license": "MIT",
   "files": [
     "dist"
