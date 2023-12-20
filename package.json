@@ -1,8 +1,9 @@
 {
   "name": "qnx",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "scripts": {
+    "release": "standard-version",
     "app:test": "npx nx run app:test",
     "release:version": "nx release version",
     "affected:build": "npx nx affected --target=build  --exclude='app,my-lib'",
