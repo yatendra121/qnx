@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -20,14 +20,27 @@ jobs:
           version: 8.6.11
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: https://registry.npmjs.org/
 
-      - run: pnpm install
+      - name: Pnpm Install
+        run: pnpm install
 
-      - run: pnpm affected:deploy
+      - name: Unit Test
+        run: pnpm affected:test
+
+      - name: App Test
+        run: pnpm app:test
+
+      - name: Build
+        run: pnpm affected:build
+
+      - name: Build
+        run: pnpm affected:build
+
+      - run: pnpm affected:publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NODE_OPTIONS: '--max-old-space-size=6144'
