@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -34,16 +34,19 @@ jobs:
       - name: Pnpm Install
         run: pnpm install
 
+      - name: Branch Track
+        run: git branch --track main origin/main
+
       - name: Unit Test
-        run: pnpm affected:test --base=origin/main
+        run: pnpm affected:test -t --base=origin/main
 
       - name: App Test
         run: pnpm app:test --base=origin/main
 
       - name: Build
-        run: pnpm affected:build --base=origin/main
+        run: pnpm affected:build -t --base=origin/main
 
-      - run: pnpm affected:publish --base=origin/main
+      - run: pnpm affected:publish -t --base=origin/main
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NODE_OPTIONS: '--max-old-space-size=6144'
