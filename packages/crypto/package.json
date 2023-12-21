@@ -2,7 +2,7 @@
   "name": "@qnx/crypto",
   "description": "Crypto functions",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.6.1",
+  "version": "0.6.0",
   "license": "MIT",
   "files": [
     "dist"
