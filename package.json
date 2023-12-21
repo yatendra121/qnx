@@ -1,7 +1,8 @@
 {
   "name": "qnx",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "license": "MIT",
+  "description": "An Ecosystem of Utilities for Node.js",
   "scripts": {
     "app:test": "npx nx run app:test",
     "affected:build": "npx nx affected --target=build  --exclude='app,my-lib'",
