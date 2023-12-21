@@ -1,4 +1,5 @@
 import { importPKCS8, compactDecrypt, KeyLike, SignJWT, CompactEncrypt, jwtVerify } from 'jose'
+import type { ProduceJWT } from 'jose'
 import { v4 as uuidv4 } from 'uuid'
 
 const spki = process.env['ENCRYPTION_SECRET_JWT']
@@ -22,7 +23,7 @@ const init = async () => {
     ecJwePublicKey = await importPKCS8(spki2, 'ECDH-ES+A128KW')
 }
 
-init()
+init().then(() => console.log('@qnx/crypto initiated.'))
 
 /**
  * Generate Token that used for authentication
