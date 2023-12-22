@@ -13,35 +13,27 @@
             "forwardAllArgs": true
           }
         ],
-        "cwd": "packages/crypto"
+        "cwd": "packages/crypto",
+        "outputPath": "packages/crypto/dist"
       },
-      "outputs": [
-        "{workspaceRoot}/packages/crypto/dist"
-      ]
+      "outputs": ["{workspaceRoot}/packages/crypto/dist"]
     },
     "publish": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist",
         "command": "tsx tools/scripts/publish.ts crypto "
       }
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "packages/crypto/**/*.ts"
-        ]
+        "lintFilePatterns": ["packages/crypto/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/packages/crypto"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/packages/crypto"],
       "options": {
         "jestConfig": "packages/crypto/jest.config.ts",
         "passWithNoTests": true
