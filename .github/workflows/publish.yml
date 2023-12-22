@@ -54,7 +54,7 @@ jobs:
       - name: Build
         run: pnpm affected:build 
 
-      - run: pnpm affected:publish -t --base=origin/main
+      - run: pnpm affected:publish 
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NODE_OPTIONS: '--max-old-space-size=6144'
