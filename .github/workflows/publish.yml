@@ -2,12 +2,8 @@ name: Publish Package
 
 on:
   push:
-    branches:
-      - main
-
-  pull_request:
-    branches:
-      - main
+    tags:
+      - v*
 
 jobs:
   publish-npm:
@@ -46,15 +42,15 @@ jobs:
           echo "HEAD: ${{ env.NX_HEAD }}"
 
       - name: Unit Test
-        run: pnpm affected:test 
+        run: pnpm affected:test
 
       - name: App Test
-        run: pnpm app:test 
+        run: pnpm app:test
 
       - name: Build
-        run: pnpm affected:build 
+        run: pnpm affected:build
 
-      - run: pnpm affected:publish 
+      - run: pnpm affected:publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NODE_OPTIONS: '--max-old-space-size=6144'
