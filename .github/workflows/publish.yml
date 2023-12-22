@@ -40,9 +40,6 @@ jobs:
 
       - uses: nrwl/nx-set-shas@v3
 
-      - name: Branch Track
-        run: git branch --track main origin/main
-
       - name: Unit Test
         run: pnpm affected:test -t --base=origin/main
 
