@@ -1,9 +1,12 @@
 name: Publish Package
 
-on:
-  push:
-    tags:
-      - v*
+push:
+    branches:
+      - main
+
+   pull_request:
+      branches:
+        - main
 
 jobs:
   publish-npm:
@@ -35,6 +38,10 @@ jobs:
         run: pnpm install
 
       - uses: nrwl/nx-set-shas@v3
+
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
 
       - name: Branch Track
         run: git branch --track main origin/main
