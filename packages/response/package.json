@@ -4,6 +4,8 @@
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
   "version": "0.6.0",
   "license": "MIT",
+  "funding": "https://github.com/sponsors/yatendra121",
+  "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/response",
   "files": [
     "dist"
   ],
@@ -18,7 +20,6 @@
     "url": "https://github.com/yatendra121/qnx.git",
     "directory": "packages/response"
   },
-  "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/response",
   "main": "./dist/response.cjs",
   "module": "./dist/response.mjs",
   "types": "./dist/index.d.ts",

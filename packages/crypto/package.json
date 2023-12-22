@@ -4,6 +4,8 @@
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
   "version": "0.6.0",
   "license": "MIT",
+  "funding": "https://github.com/sponsors/yatendra121",
+  "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/crypto",
   "files": [
     "dist"
   ],
@@ -11,7 +13,6 @@
     "type": "git",
     "url": "https://github.com/yatendra121/qnx.git"
   },
-  "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/crypto",
   "main": "./dist/crypto.cjs",
   "module": "./dist/crypto.mjs",
   "types": "./dist/index.d.ts",

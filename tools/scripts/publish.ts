@@ -70,8 +70,8 @@ try {
 // Execute "npm publish" to publish
 let command = 'npm publish --access public'
 
-// execSync(`${command} --tag ${tag}`, {
-//     stdio: 'inherit'
-// })
+execSync(`${command} --tag ${tag}`, {
+    stdio: 'inherit'
+})
 
 console.log(chalk.bold.green(`${name} package published with version ${version}`))
