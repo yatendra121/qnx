@@ -42,7 +42,7 @@ jobs:
           echo "HEAD: ${{ env.NX_HEAD }}"
 
       - name: Unit Test
-        run: pnpm affected:test
+        run: pnpm affected:test --base=main --head=HEAD
 
       - name: App Test
-        run: pnpm app:test
+        run: pnpm app:test --base=main --head=HEAD
