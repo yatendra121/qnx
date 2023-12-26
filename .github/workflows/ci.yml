@@ -19,7 +19,10 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
@@ -42,7 +45,7 @@ jobs:
           echo "HEAD: ${{ env.NX_HEAD }}"
 
       - name: Unit Test
-        run: pnpm affected:test --base=main --head=HEAD
+        run: pnpm affected:test
 
       - name: App Test
-        run: pnpm app:test --base=main --head=HEAD
+        run: pnpm app:test
