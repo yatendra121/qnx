@@ -2,7 +2,7 @@
   "name": "@qnx/response",
   "description": "Collection of async functions for express response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "license": "MIT",
   "funding": "https://github.com/sponsors/yatendra121",
   "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/response",
@@ -42,6 +42,6 @@
   },
   "peerDependencies": {
     "express": "*",
-    "@qnx/errors": "0.5.*"
+    "@qnx/errors": "0.6.*"
   }
 }

@@ -9,6 +9,7 @@ const SHOW_SERVER_ERROR = true
 export class ApiResponse<T = unknown> {
     #statusCode = 200
     #additionalData = {}
+
     protected data?: T
     protected errorCode?: string
     protected errors?: ApiResponseErrors
