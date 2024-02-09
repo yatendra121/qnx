@@ -137,6 +137,53 @@ describe('Response Integration Testing', function () {
         }).toEqual(response.body)
     })
 
+
+    it('ValidationErrorResponse without values using Zod for Array', async function () {
+        const response = await request(app)
+            .post('/zod-validation-error/array')
+            .send()
+            .set('Accept', 'application/json')
+        expect(response.status).toEqual(400)
+
+        expect({
+            "errors": {
+                "addresses": [
+                    "Required"
+                ],
+                "posts": [
+                    "Required"
+                ]
+            },
+            "error": "Required"
+        }).toEqual(response.body)
+    })
+    it('ValidationErrorResponse with values using Zod for Array', async function () {
+        const response = await request(app)
+            .post('/zod-validation-error/array')
+            .send({
+                "addresses": [ "foo",5 ],
+                "posts":{
+                    "title":"foo",
+                    "tagUsers": ["foo","bar",1]
+                }
+            })
+            .set('Accept', 'application/json')
+        expect(response.status).toEqual(400)
+
+        expect({
+            "errors": {
+                "addresses.1": [
+                    "Expected string, received number"
+                ],
+                "posts.tagUsers.2": [
+                    "Expected string, received number"
+                ]
+            },
+            "error": "Expected string, received number"
+        }).toEqual(response.body)
+    })
+
+
     it('Unauthenticated', async function () {
         const response = await request(app)
             .get('/unauthenticated')
