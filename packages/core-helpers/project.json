@@ -14,13 +14,13 @@
           }
         ],
         "cwd": "packages/core-helpers",
-        "outputPath": "packages/core-helpers/dist"
-      }
+        "outputPath": "packages/errors/dist"
+      },
+      "outputs": ["{workspaceRoot}/packages/core-helpers/dist"]
     },
     "publish": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist",
         "command": "tsx tools/scripts/publish.ts core-helpers "
       }
     },

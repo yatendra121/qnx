@@ -15,12 +15,12 @@
         ],
         "cwd": "packages/interfaces",
         "outputPath": "packages/interfaces/dist"
-      }
+      },
+      "outputs": ["{workspaceRoot}/packages/interfaces/dist"]
     },
     "publish": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist",
         "command": "tsx tools/scripts/publish.ts interfaces "
       }
     },

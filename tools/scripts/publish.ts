@@ -59,9 +59,9 @@ function collectVersion(version) {
 
 // Updating the version in "package.json" before publishing
 try {
-    const json = JSON.parse(readFileSync(`../package.json`).toString())
-    version = json.version = version || collectVersion(json.version)
-    writeFileSync(`../package.json`, JSON.stringify(json, null, 2))
+    //const json = JSON.parse(readFileSync(`../package.json`).toString())
+    //version = json.version = version || collectVersion(json.version)
+    //  writeFileSync(`../package.json`, JSON.stringify(json, null, 2))
 } catch (e) {
     console.error(e.message)
     console.error(chalk.bold.red(`Error reading package.json file from library build output.`))

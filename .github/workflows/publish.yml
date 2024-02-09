@@ -8,26 +8,49 @@ on:
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node: [18.x]
+      fail-fast: false
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2.0.1
         with:
-          version: 8.6.11
+          version: latest
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ matrix.node }}
           registry-url: https://registry.npmjs.org/
 
-      - run: pnpm install
+      - name: Pnpm Install
+        run: pnpm install
 
-      - run: pnpm affected:deploy
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+
+      - name: Unit Test
+        run: pnpm affected:test
+
+      - name: App Test
+        run: pnpm app:test
+
+      - name: Build
+        run: pnpm affected:build
+
+      - run: pnpm affected:publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NODE_OPTIONS: '--max-old-space-size=6144'

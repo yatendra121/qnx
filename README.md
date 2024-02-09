@@ -1,6 +1,4 @@
-
-
-# Qnx
+# qnx
 
 This project was generated using [Nx](https://nx.dev).
 
@@ -79,11 +77,9 @@ Run `nx graph` to see a diagram of the dependencies of your projects.
 
 Visit the [Nx Documentation](https://nx.dev) to learn more.
 
-
-
 ## ☁ Nx Cloud
 
-### Distributed Computation Caching & Distributed Task Execution
+### Distributed Computation Caching & Distributed Task Execution 
 
 <p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
 

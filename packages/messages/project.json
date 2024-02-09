@@ -15,12 +15,12 @@
         ],
         "cwd": "packages/messages",
         "outputPath": "packages/messages/dist"
-      }
+      },
+      "outputs": ["{workspaceRoot}/packages/messages/dist"]
     },
     "publish": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist",
         "command": "tsx tools/scripts/publish.ts messages "
       }
     },

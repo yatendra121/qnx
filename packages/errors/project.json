@@ -15,12 +15,12 @@
         ],
         "cwd": "packages/errors",
         "outputPath": "packages/errors/dist"
-      }
+      },
+      "outputs": ["{workspaceRoot}/packages/errors/dist"]
     },
     "publish": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist",
         "command": "tsx tools/scripts/publish.ts errors "
       }
     },

@@ -15,12 +15,12 @@
         ],
         "cwd": "packages/crypto",
         "outputPath": "packages/crypto/dist"
-      }
+      },
+      "outputs": ["{workspaceRoot}/packages/crypto/dist"]
     },
     "publish": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist",
         "command": "tsx tools/scripts/publish.ts crypto "
       }
     },
