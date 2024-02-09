@@ -33,7 +33,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/packages/core-helpers"],
+      "outputs": ["{workspaceRoot}/coverage/packages/core-helpers"],
       "options": {
         "jestConfig": "packages/core-helpers/jest.config.ts",
         "passWithNoTests": true

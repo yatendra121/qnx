@@ -33,7 +33,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/packages/errors"],
+      "outputs": ["{workspaceRoot}/coverage/packages/errors"],
       "options": {
         "jestConfig": "packages/errors/jest.config.ts",
         "passWithNoTests": true

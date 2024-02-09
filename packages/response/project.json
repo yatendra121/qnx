@@ -33,7 +33,7 @@
     },
     "test2": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/packages/response"],
+      "outputs": ["{workspaceRoot}/coverage/packages/response"],
       "options": {
         "jestConfig": "packages/response/jest.config.ts",
         "passWithNoTests": true
@@ -41,7 +41,7 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["coverage/packages/response"],
+      "outputs": ["{workspaceRoot}/coverage/packages/response"],
       "options": {
         "passWithNoTests": true,
         "reportsDirectory": "../../coverage/packages/response"

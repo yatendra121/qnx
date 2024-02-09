@@ -33,7 +33,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/packages/interfaces"],
+      "outputs": ["{workspaceRoot}/coverage/packages/interfaces"],
       "options": {
         "jestConfig": "packages/interfaces/jest.config.ts",
         "passWithNoTests": true

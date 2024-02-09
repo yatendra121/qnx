@@ -33,7 +33,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["coverage/packages/crypto"],
+      "outputs": ["{workspaceRoot}/coverage/packages/crypto"],
       "options": {
         "jestConfig": "packages/crypto/jest.config.ts",
         "passWithNoTests": true
