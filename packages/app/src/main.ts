@@ -38,6 +38,13 @@ setCallback({
 })
 
 app.get(
+    '/',
+    asyncValidatorHandler(async () => {
+        return { message: 'Server is running!' }
+    })
+)
+
+app.get(
     '/object',
     asyncValidatorHandler(async () => {
         return { message: 'Welcome to app!' }
@@ -120,6 +127,23 @@ app.post(
         const UserSchema = z.object({
             name: z.string(),
             email: z.string()
+        })
+
+        const userData = UserSchema.parse(req.body)
+
+        return initializeApiResponse().setData(userData).setMessage('User created successfully.')
+    })
+)
+
+app.post(
+    '/zod-validation-error/array',
+    asyncValidatorHandler(async (req) => {
+        const UserSchema = z.object({
+            addresses: z.array(z.string()),
+            posts: z.object({
+                title: z.string(),
+                tagUsers: z.array(z.string())
+            })
         })
 
         const userData = UserSchema.parse(req.body)

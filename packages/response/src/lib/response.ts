@@ -3,6 +3,7 @@ import { ValidationError, UnauthenticatedUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
 import { Response } from 'express'
 import { invalidApiResponse } from './errorResponse'
+import { ZodError } from 'zod'
 
 type CallbackObj = { logger?: { serverError: (error: Error) => void | undefined } }
 export const callbackObj: CallbackObj = {
@@ -30,7 +31,7 @@ export function errorApiResponse(
         return invalidApiResponse(response, error.getErrorResponse()?.errors)
     } else if (error instanceof UnauthenticatedUserError) {
         return unauthenticateApiResponse(response)
-    } else if (error instanceof Error && error.name === 'ZodError') {
+    } else if (error instanceof ZodError && error.name === 'ZodError') {
         return invalidApiResponse(response, collectErrorsFromZodError(error))
     } else {
         setTimeout(() => {
@@ -73,23 +74,16 @@ export function serverErrorApiResponse(response: Response, error: unknown) {
  * @param error
  * @returns
  */
-const collectErrorsFromZodError = (error: any) => {
-    const test = error.format()
-    return removeErrorKeyFromZodError(test)
-}
+const collectErrorsFromZodError = (error: ZodError) => {
+    return error.issues.reduce((errors, item) => {
+        const path = item.path.join('.')
 
-/**
- * Using for internal uses
- * @param error
- * @returns
- */
-const removeErrorKeyFromZodError = (error: any) => {
-    for (const key in error) {
-        if (Object.prototype.hasOwnProperty.call(error, key)) {
-            if (Array.isArray(error[key]) && !error[key].length) delete error[key]
-            else error[key] = error[key]._errors
+        // Check if errors[path] exists, if not, initialize it as an array
+        if (!errors[path]) {
+            errors[path] = []
         }
-    }
 
-    return error
+        errors[path].push(item.message)
+        return errors
+    }, {} as Record<string, string[]>)
 }
