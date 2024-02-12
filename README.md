@@ -1,9 +1,5 @@
 
-# QNX
-
-A brief description of what this project does and who it's for
-
-# @qnx Monorepo
+# @qnx
 
 Welcome to the @qnx monorepository! This collection of libraries is designed to simplify various aspects of web development. Each library serves a specific purpose, providing essential tools for handling HTTP responses, errors, cryptographic tasks and much more.
 
