@@ -6,24 +6,18 @@
   },
   "targetDefaults": {
     "lint": {
-      "inputs": [
-        "default",
-        "{workspaceRoot}/.eslintrc.json"
-      ],
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
       "cache": true
     },
     "test": {
-      "inputs": [
-        "default",
-        "^default",
-        "{workspaceRoot}/jest.preset.js"
-      ],
+      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"],
       "cache": true
     },
     "build": {
       "cache": true
     },
-    "e2e": {
+    "@nx/vite:test": {
+      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"],
       "cache": true
     }
   },

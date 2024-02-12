@@ -1,4 +1,4 @@
-import { importPKCS8 as s, SignJWT as w, CompactEncrypt as p, compactDecrypt as E, jwtVerify as d } from "jose";
+import { importPKCS8 as s, SignJWT as p, CompactEncrypt as w, compactDecrypt as E, jwtVerify as d } from "jose";
 import { v4 as y } from "uuid";
 const i = process.env.ENCRYPTION_SECRET_JWT, a = process.env.ENCRYPTION_SECRET_JWE;
 let t, n;
@@ -11,10 +11,10 @@ const T = async () => {
     t = await s(i, "ES256"), n = await s(a, "ECDH-ES+A128KW");
   }
 };
-T();
+T().then(() => console.log("@qnx/crypto initiated."));
 const C = async (o) => {
-  const e = y(), r = await new w({}).setProtectedHeader({ typ: "JWT", alg: "ES256" }).setIssuedAt().setExpirationTime("30d").setIssuer("https://mysite.com").setSubject(o).setJti(e).sign(t);
-  return { token: await new p(new TextEncoder().encode(r)).setProtectedHeader({ alg: "ECDH-ES+A128KW", enc: "A256CBC-HS512" }).encrypt(n), dbToken: e };
+  const e = y(), r = await new p({}).setProtectedHeader({ typ: "JWT", alg: "ES256" }).setIssuedAt().setExpirationTime("30d").setIssuer("https://mysite.com").setSubject(o).setJti(e).sign(t);
+  return { token: await new w(new TextEncoder().encode(r)).setProtectedHeader({ alg: "ECDH-ES+A128KW", enc: "A256CBC-HS512" }).encrypt(n), dbToken: e };
 }, S = async (o) => {
   try {
     const { plaintext: e } = await E(o, n), r = new TextDecoder().decode(e), { payload: c } = await d(r, t, {
