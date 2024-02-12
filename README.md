@@ -1,5 +1,5 @@
 
-# @qnx
+# qnx
 
 Welcome to the @qnx monorepository! This collection of libraries is designed to simplify various aspects of web development. Each library serves a specific purpose, providing essential tools for handling HTTP responses, errors, cryptographic tasks and much more.
 
@@ -7,43 +7,25 @@ Welcome to the @qnx monorepository! This collection of libraries is designed to 
 
 ### @qnx/response
 
-[@qnx/response](https://github.com/yatendra121/qnx/blob/main/packages/response/README.md) is a powerful library tailored for Express.js applications. It streamlines the process of handling HTTP responses with a focus on consistency, validation, and error management.
-
-#### Core Features:
-
-- **Standardized Response Formatting:** Provides a consistent structure for responses, including data, metadata, and errors.
-  
-- **Validation Support:** Integrates seamlessly with popular validation libraries like Zod and express-validator, making it easy to handle validation errors.
-
-- **No Try-Catch Blocks:** Eliminates the need for try-catch blocks by automatically handling errors and exceptions, resulting in cleaner and more readable code.
-
-- **Error Handling:** Offers built-in support for common error types like 404 (Not Found) and 500 (Internal Server Error).
-
-- **Type Strong:** Full TypeScript typings support enhances the developer experience and promotes the advantages of static typing.
-
-- **Customization:** Highly customizable, allowing developers to configure response format, error handling, and more.
+[@qnx/response](https://github.com/yatendra121/qnx/blob/main/packages/response/README.md) is a library for handling HTTP responses in Express.js applications. It provides a standardized way of formatting and sending responses, with built-in support for error handling and validation.
 
 ### @qnx/errors
 
 [@qnx/errors](https://github.com/yatendra121/qnx/blob/main/packages/errors/README.md) is a library focused on providing a consistent and streamlined approach to handling errors in your applications.
 
-#### Key Features:
+### @qnx/client
 
-- **Error Types:** Supports common error types like 404 (Not Found), 500 (Internal Server Error), making error handling more straightforward.
+[@qnx/client](https://github.com/yatendra121/qnx/blob/main/packages/client/README.md) is collect responses from @qnx/response on the client side with fully typed, ensuring a seamless and type-safe integration without the need to memorize API data.
 
-- **Consistent Error Format:** Ensures a standardized format for error responses, facilitating better communication and debugging.
 
 ### @qnx/crypto
 
 [@qnx/crypto](https://github.com/yatendra121/qnx/blob/main/packages/crypto/README.md) is dedicated to creating JWE tokens for secure authentication and cryptography.
 
-#### Features:
+### @qnx/winston
 
-- **JWE Token Creation:** Provides methods for creating JSON Web Encryption (JWE) tokens, ensuring secure communication.
+[@qnx/wiston](https://github.com/yatendra121/qnx/blob/main/packages/wiston/README.md) is a pre-configured library designed to generate logs for server errors using @qnx/response. Additionally, it offers flexibility for custom logging purposes.
 
-- **Authentication Support:** Ideal for generating secure tokens used in authentication processes.
-
-- **Cryptography:** Incorporates cryptographic algorithms to guarantee the secure creation of JWE tokens.
 
 ## Getting Started
 
