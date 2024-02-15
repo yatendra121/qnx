@@ -1,7 +1,7 @@
 {
-  "name": "messages",
+  "name": "message",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/messages/src",
+  "sourceRoot": "packages/message/src",
   "projectType": "library",
   "targets": {
     "build": {
@@ -13,29 +13,29 @@
             "forwardAllArgs": true
           }
         ],
-        "cwd": "packages/messages",
-        "outputPath": "packages/messages/dist"
+        "cwd": "packages/message",
+        "outputPath": "packages/message/dist"
       },
-      "outputs": ["{workspaceRoot}/packages/messages/dist"]
+      "outputs": ["{workspaceRoot}/packages/message/dist"]
     },
     "publish": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsx tools/scripts/publish.ts messages "
+        "command": "tsx tools/scripts/publish.ts message "
       }
     },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/messages/**/*.ts"]
+        "lintFilePatterns": ["packages/message/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/packages/messages"],
+      "outputs": ["{workspaceRoot}/coverage/packages/message"],
       "options": {
-        "jestConfig": "packages/messages/jest.config.ts",
+        "jestConfig": "packages/message/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,8 +1,8 @@
 {
-  "name": "@qnx/messages",
-  "description": "Collection of messages & message functions ",
+  "name": "@qnx/message",
+  "description": "Collection of utilities of message",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.6.0",
+  "version": "0.6.3",
   "license": "MIT",
   "funding": "https://github.com/sponsors/yatendra121",
   "files": [
@@ -12,13 +12,13 @@
     "type": "git",
     "url": "https://github.com/yatendra121/qnx.git"
   },
-  "main": "./dist/messages.cjs",
-  "module": "./dist/messages.mjs",
+  "main": "./dist/message.cjs",
+  "module": "./dist/message.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/messages.cjs",
-      "import": "./dist/messages.mjs"
+      "require": "./dist/message.cjs",
+      "import": "./dist/message.mjs"
     }
   },
   "unpkg": "./index.iife.js",

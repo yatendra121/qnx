@@ -1,10 +1,10 @@
 function r() {
-  return "messages";
+  return "message";
 }
 function i(e) {
   return `${e}  is a required field.`;
 }
 export {
-  r as messages,
+  r as message,
   i as requiredField
 };
