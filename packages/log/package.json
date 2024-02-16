@@ -1,8 +1,39 @@
 {
-  "name": "log",
-  "version": "0.0.1",
-  "dependencies": {},
-  "main": "./index.js",
-  "module": "./index.mjs",
-  "typings": "./index.d.ts"
+  "name": "@qnx/log",
+  "description": "Collection of utilities of console log",
+  "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
+  "version": "0.6.3",
+  "license": "MIT",
+  "funding": "https://github.com/sponsors/yatendra121",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yatendra121/qnx.git"
+  },
+  "main": "./dist/log.cjs",
+  "module": "./dist/log.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/log.cjs",
+      "import": "./dist/log.mjs"
+    }
+  },
+  "unpkg": "./index.iife.js",
+  "jsdelivr": "./index.iife.js",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
+    "lint:scripts": "eslint . --ext .ts",
+    "format:scripts": "prettier . --write",
+    "format": "npm run format:scripts"
+  },
+  "devDependencies": {},
+  "peerDependencies": {
+    "chalk": "*"
+  }
 }

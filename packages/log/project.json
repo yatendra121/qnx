@@ -5,13 +5,64 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/packages/log",
-        "main": "packages/log/src/index.ts",
-        "tsConfig": "packages/log/tsconfig.lib.json",
-        "assets": ["packages/log/*.md"]
+        "commands": [
+          {
+            "command": "pnpm build",
+            "forwardAllArgs": true
+          }
+        ],
+        "cwd": "packages/log",
+        "outputPath": "packages/log/dist"
+      },
+      "outputs": ["{workspaceRoot}/packages/log/dist"]
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/scripts/publish.ts log "
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/log/**/*.ts"]
+      }
+    },
+    "jest": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/log/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{workspaceRoot}/coverage/packages/log"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/packages/log"
+      }
+    },
+    "vitest": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "pnpm test",
+            "forwardAllArgs": true
+          }
+        ],
+        "cwd": "packages/log"
       }
     }
   },
