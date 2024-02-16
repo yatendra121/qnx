@@ -24,7 +24,8 @@
       "@qnx/message": ["packages/message/src/index.ts"],
       "@qnx/my-lib": ["packages/my-lib/src/index.ts"],
       "@qnx/response": ["packages/response/src/index.ts"],
-      "@qnx/winston": ["packages/winston/src/index.ts"]
+      "@qnx/winston": ["packages/winston/src/index.ts"],
+      "log": ["packages/log/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
