@@ -1,7 +1,7 @@
-import { log } from './log'
+import { consoleLog } from './log'
 
 describe('log', () => {
     it('should work', () => {
-        expect(log()).toEqual('log')
+        expect(consoleLog({ message: 'testing', type: 'info' })).toEqual(undefined)
     })
 })
