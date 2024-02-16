@@ -13,6 +13,6 @@ const config: Record<Type, ColorName> = {
     warning: 'yellow'
 }
 
-export function consoleLog({ message, type }: { message: string; type: Type }): void {
+export function consoleLog(message: string, { type }: { type: Type } = { type: 'info' }): void {
     log(chalk[config[type]](message))
 }
