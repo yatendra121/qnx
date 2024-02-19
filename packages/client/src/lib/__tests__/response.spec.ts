@@ -142,7 +142,7 @@ describe('ApiErrorResponse', () => {
     })
 
     describe('getErrors', () => {
-        it('returns the error messages when they exist', () => {
+        it('returns the error message when they exist', () => {
             const response = {
                 error: 'Something went wrong',
                 errors: {
@@ -158,7 +158,7 @@ describe('ApiErrorResponse', () => {
             })
         })
 
-        it('returns undefined when the error messages do not exist', () => {
+        it('returns undefined when the error message do not exist', () => {
             const response = {
                 error: 'Something went wrong'
             }

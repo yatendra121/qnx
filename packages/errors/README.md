@@ -60,7 +60,7 @@ ValidationError
 This class is used to represent validation errors. It inherits from the ApiError class and takes two parameters:
 
 message: A string that describes the validation error.
-errorResponse: An object that contains validation error messages. This object should follow the structure of the ApiResponseErrors type.
+errorResponse: An object that contains validation error message. This object should follow the structure of the ApiResponseErrors type.
 UnauthenticatedUserError
 This class represents errors that occur when a user is not authenticated. It inherits from the ApiError class and takes one parameter:
 

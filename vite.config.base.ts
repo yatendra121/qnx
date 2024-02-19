@@ -63,7 +63,7 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
         //         '@qnx/interfaces': resolve(__dirname, 'packages/interfaces/src/index.ts'),
         //         '@qnx/response': resolve(__dirname, 'packages/response/src/index.ts'),
         //         '@qnx/crypto': resolve(__dirname, 'packages/crypto/src/index.ts'),
-        //         '@qnx/messages': resolve(__dirname, 'packages/messages/src/index.ts')
+        //         '@qnx/message': resolve(__dirname, 'packages/message/src/index.ts')
         //     }
         // }
     })

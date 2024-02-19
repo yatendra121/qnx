@@ -220,7 +220,7 @@ express.get(
 The below code shows an example of how @qnx/response is handling Zod errors in an API response. In this example, we define a UserRequest and use Zod to validate the request body. If the request is invalid, the Zod will throw an error with the validation errors, which will be caught by asyncValidatorHandler.
 
 ```javascript
-import { asyncValidatorHandler, initializeApiResponse } from '@qnx/response'
+import { asyncValidatorHandler, ApiResponse } from '@qnx/response'
 import { z } from 'zod'
 
 express.post(
@@ -235,7 +235,7 @@ express.post(
 
     const user = UserModel.create(userData)
 
-    return initializeApiResponse().setData(user).setMessage('User created successfully.')
+    return ApiResponse.getInstance().setData(user).setMessage('User created successfully.')
   })
 )
 

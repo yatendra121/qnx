@@ -89,7 +89,7 @@ interface ApiErrorResponseInterface {
 
 /**
  * Represents an error API response value.
- * It includes error details such as error messages and error codes.
+ * It includes error details such as error message and error codes.
  */
 export type ApiErrorResponseValue = Pick<Required<ApiResponseValue<unknown>>, 'errors' | 'error'> &
     Pick<ApiResponseValue<unknown>, 'errorCode'>
