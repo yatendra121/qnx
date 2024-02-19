@@ -37,7 +37,7 @@ If you're interested in contributing to any of the libraries in this monorepo, p
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/yatendra121/vq-vuetify/blob/main/LICENSE.md) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121).
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/yatendra121/qnx/blob/main/license) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121).
 
 ## Acknowledgments
 
