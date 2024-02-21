@@ -36,6 +36,10 @@ yarn add @qnx/response
 pnpm install @qnx/response
 ```
 
+```bash
+bun install @qnx/response
+```
+
 #### Peer-Dependencies
 
 @qnx/response is using error instances of @qnx/errors.
