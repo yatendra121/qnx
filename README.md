@@ -26,7 +26,7 @@ Welcome to the @qnx monorepository! This collection of libraries is designed to 
 
 ### @qnx/log
 
-[@qnx/wiston](https://github.com/yatendra121/qnx/blob/main/packages/log/README.md) provides a console logger using the Chalk library for colorful output.
+[@qnx/log](https://github.com/yatendra121/qnx/blob/main/packages/log/README.md) provides a console logger using the Chalk library for colorful output.
 
 ## Getting Started
 
