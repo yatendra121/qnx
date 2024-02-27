@@ -1,4 +1,3 @@
-
 # qnx
 
 Welcome to the @qnx monorepository! This collection of libraries is designed to simplify various aspects of web development. Each library serves a specific purpose, providing essential tools for handling HTTP responses, errors, cryptographic tasks and much more.
@@ -17,7 +16,6 @@ Welcome to the @qnx monorepository! This collection of libraries is designed to 
 
 [@qnx/client](https://github.com/yatendra121/qnx/blob/main/packages/client/README.md) is collect responses from @qnx/response on the client side with fully typed, ensuring a seamless and type-safe integration without the need to memorize API data.
 
-
 ### @qnx/crypto
 
 [@qnx/crypto](https://github.com/yatendra121/qnx/blob/main/packages/crypto/README.md) is dedicated to creating JWE tokens for secure authentication and cryptography.
@@ -26,6 +24,9 @@ Welcome to the @qnx monorepository! This collection of libraries is designed to 
 
 [@qnx/wiston](https://github.com/yatendra121/qnx/blob/main/packages/wiston/README.md) is a pre-configured library designed to generate logs for server errors using @qnx/response. Additionally, it offers flexibility for custom logging purposes.
 
+### @qnx/log
+
+[@qnx/log](https://github.com/yatendra121/qnx/blob/main/packages/log/README.md) provides a console logger using the Chalk library for colorful output.
 
 ## Getting Started
 
