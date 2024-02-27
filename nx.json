@@ -16,7 +16,8 @@
     "build": {
       "cache": true
     },
-    "e2e": {
+    "@nx/vite:test": {
+      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"],
       "cache": true
     },
     "@nx/vite:build": {
