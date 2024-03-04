@@ -18,10 +18,12 @@ import {
 import { setErrorCodes } from '@qnx/errors'
 import { logger } from '@qnx/winston'
 import express, { urlencoded } from 'express'
+import type { Express } from 'express'
 import z from 'zod'
 import * as path from 'path'
 import { json } from 'body-parser'
 import { InvalidValueError } from '@qnx/errors'
+import { decyptToken, generateToken } from '@qnx/crypto'
 
 const app = express()
 
@@ -182,10 +184,38 @@ app.get(
 
 app.get('/check-invalid-function-value', asyncValidatorHandler(undefined))
 
-const port = process.env.PORT || 3333
+app.get(
+    '/generate-token',
+    asyncValidatorHandler(async () => {
+        return await generateToken('12345')
+    })
+)
+
+app.post(
+    '/generate-token',
+    asyncValidatorHandler(async () => {
+        return await decyptToken('12345')
+    })
+)
+
+//const port = process.env.PORT || 3333
+const port = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000
 const server = app.listen(port, () => {
     console.log(`Listening at http://localhost:${port}/`)
 })
 server.on('error', console.error)
+
+export class AppInstance {
+    static instance: Express
+
+    static getInstance(): Express {
+        if (!AppInstance.instance) {
+            AppInstance.instance = app
+        }
+
+        return app
+    }
+}
 export default app
+
 export { setErrorCodes }

@@ -16,10 +16,6 @@
     "build": {
       "cache": true
     },
-    "@nx/vite:test": {
-      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"],
-      "cache": true
-    },
     "@nx/vite:build": {
       "cache": true,
       "dependsOn": ["^build"],
@@ -28,16 +24,6 @@
   },
   "nxCloudAccessToken": "ZTdjN2Q5YjUtMGI5OS00ZTBlLWFlOWItOGU2YWI1MGI5NGUwfHJlYWQtd3JpdGU=",
   "plugins": [
-    {
-      "plugin": "@nx/vite/plugin",
-      "options": {
-        "buildTargetName": "build",
-        "previewTargetName": "preview",
-        "testTargetName": "test",
-        "serveTargetName": "serve",
-        "serveStaticTargetName": "serve-static"
-      }
-    },
     {
       "plugin": "@nx/eslint/plugin",
       "options": {

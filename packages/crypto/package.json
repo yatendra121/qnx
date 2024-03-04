@@ -27,7 +27,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
-    "test": "jest --runInBand",
+    "test": "vitest",
     "test:coverage": "jest --runInBand --coverage",
     "lint:scripts": "eslint . --ext .ts",
     "format:scripts": "prettier . --write",

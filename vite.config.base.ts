@@ -5,8 +5,7 @@ import { defineConfig } from 'vite'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import dts from 'vite-plugin-dts'
 import { joinPathFragments } from '@nx/devkit'
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 
 export function collectViteConfig(packageJson: any, dirName: string, option = {}) {
     const { rollupOptions } = option as any
@@ -29,7 +28,7 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
     }
 
     return defineConfig({
-        root: __dirname,
+        //root: __dirname,
         cacheDir: `../../node_modules/.vite/${getPackageName()}`,
         base: './',
         plugins: [
@@ -44,7 +43,7 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
                 entry: resolve(dirName, 'src/index.ts'),
                 name: getPackageNameCamelCase(),
                 formats: ['es', 'cjs', 'iife'],
-                fileName: (format) => fileName[format] 
+                fileName: (format) => fileName[format]
             },
             rollupOptions
         },
@@ -53,8 +52,8 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
             cache: {
                 dir: '../../node_modules/.vitest'
             },
-            environment: 'jsdom',
-            include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}']
+            environment: 'node',
+            include: [`src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}`]
         }
         // resolve: {
         //     alias: {
