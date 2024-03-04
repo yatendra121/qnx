@@ -1,9 +1,9 @@
 import { errorCodes } from '@qnx/errors'
 import { ValidationError, UnauthenticatedUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
-import { Response } from 'express'
 import { invalidApiResponse } from './errorResponse'
 import { ZodError } from 'zod'
+import type { Response } from 'express'
 
 type CallbackObj = { logger?: { serverError: (error: Error) => void | undefined } }
 export const callbackObj: CallbackObj = {
@@ -75,15 +75,18 @@ export function serverErrorApiResponse(response: Response, error: unknown) {
  * @returns
  */
 const collectErrorsFromZodError = (error: ZodError) => {
-    return error.issues.reduce((errors, item) => {
-        const path = item.path.join('.')
+    return error.issues.reduce(
+        (errors, item) => {
+            const path = item.path.join('.')
 
-        // Check if errors[path] exists, if not, initialize it as an array
-        if (!errors[path]) {
-            errors[path] = []
-        }
+            // Check if errors[path] exists, if not, initialize it as an array
+            if (!errors[path]) {
+                errors[path] = []
+            }
 
-        errors[path].push(item.message)
-        return errors
-    }, {} as Record<string, string[]>)
+            errors[path].push(item.message)
+            return errors
+        },
+        {} as Record<string, string[]>
+    )
 }
