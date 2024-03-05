@@ -7,7 +7,8 @@
   "funding": "https://github.com/sponsors/yatendra121",
   "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/response",
   "files": [
-    "dist"
+    "dist",
+    "package.json"
   ],
   "keywords": [
     "response",

@@ -28,7 +28,7 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
     }
 
     return defineConfig({
-        //root: __dirname,
+        root: __dirname,
         cacheDir: `../../node_modules/.vite/${getPackageName()}`,
         base: './',
         plugins: [
