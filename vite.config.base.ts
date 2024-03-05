@@ -1,6 +1,6 @@
 /// <reference types="vitest" />
 
-import { resolve } from 'path'
+import { resolve, join } from 'path'
 import { defineConfig } from 'vite'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import dts from 'vite-plugin-dts'
@@ -36,6 +36,9 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
             //     root: '../../' //this path is using from packages/LIB_NAME/vite.config.ts
             // })
             nxViteTsPaths()
+            // dts({
+            //     rollupTypes: true
+            // })
             // dts()
         ],
         build: {
