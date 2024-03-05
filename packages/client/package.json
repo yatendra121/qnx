@@ -1,8 +1,8 @@
 {
   "name": "@qnx/client",
-  "description": "QNX client for handling response",
+  "description": "@qnx/client for handling response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.6.0",
+  "version": "0.6.8",
   "license": "MIT",
   "funding": "https://github.com/sponsors/yatendra121",
   "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/client",

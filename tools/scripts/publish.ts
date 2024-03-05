@@ -9,7 +9,7 @@
 
 import { readCachedProjectGraph } from '@nx/devkit'
 import { execSync } from 'child_process'
-import { readFileSync, writeFileSync } from 'fs'
+import { copyFileSync, readFileSync, writeFileSync } from 'fs'
 import chalk from 'chalk'
 import { resolve } from 'path'
 
@@ -42,7 +42,7 @@ invariant(
     `Could not find project "${name}" in the workspace. Is the project.json configured correctly?`
 )
 
-const outputPath = project.data?.targets?.build?.options?.outputPath
+const outputPath = project.data?.targets?.build?.options?.cwd
 invariant(
     outputPath,
     `Could not find "build.options.outputPath" of project "${name}". Is project.json configured  correctly?`
@@ -68,7 +68,7 @@ try {
 }
 
 // Execute "npm publish" to publish
-let command = 'npm publish --access public'
+let command = 'npm publish --access=public'
 
 execSync(`${command} --tag ${tag}`, {
     stdio: 'inherit'

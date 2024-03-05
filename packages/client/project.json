@@ -44,10 +44,10 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["{workspaceRoot}/coverage/packages/response"],
+      "outputs": ["{workspaceRoot}/coverage/packages/client"],
       "options": {
         "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/packages/response"
+        "reportsDirectory": "../../coverage/packages/client"
       }
     },
     "vitest": {
