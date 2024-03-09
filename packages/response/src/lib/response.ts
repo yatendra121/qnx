@@ -3,7 +3,7 @@ import { ValidationError, UnauthenticatedUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
 import { invalidApiResponse } from './errorResponse'
 import { ZodError } from 'zod'
-import type { Response } from 'express'
+import type { Response as ExResponse } from 'express'
 
 type CallbackObj = { logger?: { serverError: (error: Error) => void | undefined } }
 export const callbackObj: CallbackObj = {
@@ -24,7 +24,7 @@ export const setCallback = ({ logger }: Partial<CallbackObj>) => {
  * @returns
  */
 export function errorApiResponse(
-    response: Response,
+    response: ExResponse,
     error: ValidationError | UnauthenticatedUserError | Error
 ) {
     if (error instanceof ValidationError) {
@@ -47,7 +47,7 @@ export function errorApiResponse(
  * @param response
  * @returns
  */
-export function unauthenticateApiResponse(response: Response) {
+export function unauthenticateApiResponse(response: ExResponse) {
     return ApiResponse.getInstance()
         .setMessage('Unauthenticated')
         .setErrorCode('unauthenticated')
@@ -62,7 +62,7 @@ export function unauthenticateApiResponse(response: Response) {
  * @param error
  * @returns
  */
-export function serverErrorApiResponse(response: Response, error: unknown) {
+export function serverErrorApiResponse(response: ExResponse, error: unknown) {
     return ApiResponse.getInstance()
         .setServerError(error)
         .setStatusCode(errorCodes.SERVER_ERROR_CODE)

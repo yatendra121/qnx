@@ -1,7 +1,7 @@
 import { ApiResponse } from './apiResponse'
 import { ApiResponseErrorsValue } from './apiResponseErrorsValue'
 import { ApiResponseErrors, ValidationError, errorCodes } from '@qnx/errors'
-import type { Response } from 'express'
+import type { Response as ExResponse } from 'express'
 
 /**
  * To send validation api response and can send multiple validation errors
@@ -9,7 +9,7 @@ import type { Response } from 'express'
  * @param errors
  * @returns
  */
-export function invalidApiResponse(response: Response, errors: ApiResponseErrors | undefined) {
+export function invalidApiResponse(response: ExResponse, errors: ApiResponseErrors | undefined) {
     const apiRes = ApiResponse.getInstance()
     if (errors) apiRes.setErrors(errors)
     return apiRes.setStatusCode(errorCodes.VALIDATION_ERROR_CODE).response(response)
@@ -23,7 +23,7 @@ export function invalidApiResponse(response: Response, errors: ApiResponseErrors
  * @returns
  */
 export function invalidValueApiResponse(
-    response: Response,
+    response: ExResponse,
     errorKey: string,
     errorMessage: string
 ) {

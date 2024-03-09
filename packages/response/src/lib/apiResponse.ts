@@ -1,4 +1,4 @@
-import type { Response } from 'express'
+import type { Response as ExResponse } from 'express'
 import type { ApiResponseErrors } from '@qnx/errors'
 
 const SHOW_SERVER_ERROR = true
@@ -115,7 +115,7 @@ export class ApiResponse<T = unknown> {
      * @param status
      * @returns
      */
-    response(response: Response) {
+    response(response: ExResponse) {
         if (this.errors) this.error = this.errors[Object.keys(this.errors)?.[0]]?.[0]
         return response.status(this.#statusCode).send({ ...this.#additionalData, ...this })
     }

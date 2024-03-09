@@ -1,11 +1,11 @@
 import { errorApiResponse } from './response'
 import { ApiResponse, initializeApiResponse } from './apiResponse'
 import { ServerResponse } from 'http'
-import type { NextFunction, Request, Response, Router } from 'express'
+import type { NextFunction, Request as ExRequest, Response as ExResponse, Router } from 'express'
 
 type ExecuteFun<T> = (
     req: T,
-    res?: Response,
+    res?: ExResponse,
     next?: NextFunction
 ) => Promise<ApiResponse> | Promise<void> | Promise<unknown>
 
@@ -18,8 +18,8 @@ function isFunction(value: unknown): boolean {
  * @param func
  * @returns handler
  */
-export function asyncValidatorHandler<T = Request>(func: ExecuteFun<T>) {
-    const handler = async (req: Request, res: Response, next: NextFunction) => {
+export function asyncValidatorHandler<T = ExRequest>(func: ExecuteFun<T>) {
+    const handler = async (req: ExRequest, res: ExResponse, next: NextFunction) => {
         try {
             if (!isFunction(func))
                 throw new TypeError('Provided parameter value is not a function.')
@@ -62,7 +62,7 @@ type ResourceController<T> = {
  * @param controller
  * @returns void
  */
-export function resourceRoute<T = Request>(router: Router, controller: ResourceController<T>) {
+export function resourceRoute<T = ExRequest>(router: Router, controller: ResourceController<T>) {
     const resourceRoutes: ResourceRoutes = {
         changeStatus: { method: 'put', url: '/change-status/:id' },
         create: { method: 'post', url: '/' },
