@@ -1,4 +1,5 @@
 import { ValidationError, UnauthenticatedUserError, ServerError, ApiError } from './' // Replace with the actual file path
+import { setErrorCodes } from './codes'
 import type { ErrorResponse } from './types'
 
 // Test cases for ApiError
@@ -66,5 +67,40 @@ describe('ServerError', () => {
         expect(serverError.getCode()).toBe(500)
         expect(serverError.getErrorResponse()).toBeUndefined()
         expect(serverError.message).toBe(errorMessage)
+    })
+})
+
+describe('Testing with change Codes', () => {
+    it('Change codes', async function () {
+        setErrorCodes({
+            UNAUTHENTICATED_USER_ERROR_CODE: 200,
+            SERVER_ERROR_CODE: 200,
+            VALIDATION_ERROR_CODE: 200
+        })
+    })
+
+    it('ValidationError Code', () => {
+        const errorMessage = 'Validation error'
+        const errorResponse: ErrorResponse = {
+            errors: {
+                field1: ['Error message 1'],
+                field2: ['Error message 2']
+            }
+        }
+        const validationError = new ValidationError(errorMessage, { errRes: errorResponse })
+
+        expect(validationError.getCode()).toBe(200)
+    })
+
+    it('UnauthenticatedUserError Code', () => {
+        const errorMessage = 'Unauthenticated user error'
+        const unauthenticatedUserError = new UnauthenticatedUserError(errorMessage)
+        expect(unauthenticatedUserError.getCode()).toBe(200)
+    })
+
+    it('ServerError Code', () => {
+        const errorMessage = 'Server error'
+        const serverError = new ServerError(errorMessage)
+        expect(serverError.getCode()).toBe(200)
     })
 })
