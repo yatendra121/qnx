@@ -49,6 +49,7 @@
       "executor": "@nx/vite:test",
       "outputs": ["{workspaceRoot}/coverage/packages/log"],
       "options": {
+        "config": "packages/log/vite.config.ts",
         "passWithNoTests": true,
         "reportsDirectory": "../../coverage/packages/log"
       }

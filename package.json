@@ -4,10 +4,10 @@
   "license": "MIT",
   "description": "An Ecosystem of Utilities for Node.js",
   "scripts": {
-    "app:test": "npx nx run app:test",
-    "affected:build": "npx nx affected --target=build  --exclude='app,my-lib'",
-    "affected:publish": "npx nx affected --target=publish --exclude='app,my-lib'",
-    "affected:test": "npx nx affected --target=test",
+    "app:test": "nx run app:test",
+    "affected:build": "nx affected --target=build  --exclude='app,my-lib'",
+    "affected:publish": "nx affected --target=publish --exclude='app,my-lib'",
+    "affected:test": "nx affected --target=test",
     "affected:deploy": "npm run affected:test && npm run app:test && npm run affected:build && npm run affected:publish"
   },
   "private": true,

@@ -35,6 +35,7 @@
       "executor": "@nx/vite:test",
       "outputs": ["{workspaceRoot}/coverage/packages/message"],
       "options": {
+        "config": "packages/message/vite.config.ts",
         "passWithNoTests": true,
         "reportsDirectory": "../../coverage/packages/message"
       }
