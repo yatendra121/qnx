@@ -255,7 +255,9 @@ express.post(
 */
 ```
 
-### Static Method
+### ApiResponse Methods
+
+#### Static Method
 
 **getInstance():**
 Retrieves a new instance of ApiResponse.
@@ -264,7 +266,7 @@ Retrieves a new instance of ApiResponse.
 ApiResponse.getInstance()
 ```
 
-### Helper Methods
+#### Helper Methods
 
 **setData(data: any):**
 Sets the response data to the specified value.
@@ -276,15 +278,16 @@ ApiResponse.getInstance().setData({ user: { name: 'John' } })
 **setErrorCode(errorCode: string):**
 Sets a specific error code for the response.
 
-````javascript
-ApiResponse.getInstance().setErrorCode('E123');
+```javascript
+ApiResponse.getInstance().setErrorCode('E123')
+```
 
 **setError(error: string):**
 Sets a general error message for the response.
 
 ```javascript
-ApiResponse.getInstance().setError('Internal Server Error');
-````
+ApiResponse.getInstance().setError('Internal Server Error')
+```
 
 **setErrors(errors: ApiResponseErrors):**
 Sets multiple errors for the response using an ApiResponseErrors object.
@@ -313,6 +316,52 @@ Sets additional custom data for the response.
 
 ```javascript
 ApiResponse.getInstance().setAdditional({ key1: 'value1', key2: 'value2' })
+```
+
+### ApiResponseErrorsValue Methods
+
+**setError(errorKey: string, errorMessage: string):**
+Set a single error message for a specific type of error.
+
+```javascript
+ApiResponseErrorsValue.getInstance().setError('email', 'Invalid email format')
+```
+
+**addError(errorKey: string, errorMessage: string):**
+Add a new error message to the existing errors collection.
+
+```javascript
+ApiResponseErrorsValue.getInstance().addError('password', 'Password must be at least 8 characters')
+```
+
+**getErrorResponse():**
+Retrieve all collected errors as a response object.
+
+```javascript
+const errorResponse = ApiResponseErrorsValue.getInstance().addError('foo', 'bar').getErrorResponse()
+console.log(errorResponse)
+
+/*
+{
+  errors: {
+    foo: ['bar'],
+  },
+}
+*/
+```
+
+**getErrors():**
+Returns the collection of errors stored within the `ApiResponseErrorsValue` instance.
+
+```javascript
+const errors = ApiResponseErrorsValue.getInstance().addError('foo', 'bar').getErrors()
+console.log(errors)
+
+/*
+{
+  foo: ['bar'],
+}
+*/
 ```
 
 These methods offer flexibility in tailoring responses to specific requirements. Utilize them in combination to construct responses that align with your application's needs.
