@@ -31,7 +31,7 @@ export function errorApiResponse(
         return invalidApiResponse(response, error.getErrorResponse()?.errors)
     } else if (error instanceof UnauthenticatedUserError) {
         return unauthenticateApiResponse(response)
-    } else if (error instanceof ZodError && error.name === 'ZodError') {
+    } else if (error.name === 'ZodError' && error instanceof ZodError) {
         return invalidApiResponse(response, collectErrorsFromZodError(error))
     } else {
         setTimeout(() => {
