@@ -41,7 +41,7 @@
       "outputs": ["{workspaceRoot}/coverage/packages/crypto"],
       "options": {
         "config": "packages/crypto/vite.config.ts",
-        "passWithNoTests": true,
+        "passWithNoTests": false,
         "reportsDirectory": "../../coverage/packages/crypto"
       }
     },
