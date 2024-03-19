@@ -23,7 +23,7 @@ import z from 'zod'
 import * as path from 'path'
 import { json } from 'body-parser'
 import { InvalidValueError } from '@qnx/errors'
-import { decyptToken, generateToken } from '@qnx/crypto'
+import { decyptAuthToken, generateAuthToken, toPKCS8Secret } from '@qnx/crypto'
 
 const app = express()
 
@@ -187,14 +187,16 @@ app.get('/check-invalid-function-value', asyncValidatorHandler(undefined))
 app.get(
     '/generate-token',
     asyncValidatorHandler(async () => {
-        return await generateToken('12345')
+        const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWT'] ?? '', 'ES256')
+        return await generateAuthToken('12345', secret)
     })
 )
 
 app.post(
     '/generate-token',
     asyncValidatorHandler(async () => {
-        return await decyptToken('12345')
+        const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWT'] ?? '', 'ES256')
+        return await decyptAuthToken('12345', secret)
     })
 )
 
