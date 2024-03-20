@@ -1,6 +1,6 @@
 # @qnx/crypto
 
-@qnx/crypto provides utility functions to generate and decrypt JSON Web Encrypt (JWEs) using elliptic curve cryptography for secure authentication.
+`@qnx/crypto` provides utility functions to generate and decrypt JSON Web Signatures (JWS) and JSON Web Encryption (JWE) using the [jose](https://www.npmjs.com/package/jose) cryptography library for secure data transmission.
 
 ## Installation
 
@@ -28,7 +28,59 @@ pnpm install @qnx/crypto
 npm install jose
 ```
 
-## Setup
+## Usage
+
+### Core functions
+
+- jwtSign
+- jwtVerify
+- jweEncrypt
+- jweDecrypt
+
+**jwtSign:** Signs and returns the JWT.
+
+```javascript
+import { jwtSign, toSymmetricSecret } from '@qnx/crypto'
+
+const dataVal = {
+  foo: 'bar'
+}
+const jwt = await jwtSign({ data: dataVal }, toSymmetricSecret('SECRET_STRING'), {
+  alg: 'HS256'
+})
+```
+
+**jwtVerify:** Verifies the JWT format, signature, and claims set.
+
+```javascript
+import { jwtVerify, toSymmetricSecret } from '@qnx/crypto'
+
+const { payload } = await jwtVerify(jwt, toSymmetricSecret('SECRET_STRING'))
+```
+
+**jweEncrypt:** Encrypts a value of the JWE string.
+
+```javascript
+import { jweEncrypt, toPKCS8Secret } from '@qnx/crypto'
+
+const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWE'], 'ECDH-ES+A128KW')
+const dataVal = 'this is message.'
+const jwe = await jweEncrypt(dataVal, secret)
+```
+
+**jweDecrypt:** Decrypts a JWE.
+
+```javascript
+import { jweDecrypt, toPKCS8Secret } from '@qnx/crypto'
+
+const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWE'], 'ECDH-ES+A128KW')
+const jwe = 'JWE_TOKEN'
+const { plaintext } = await jweDecrypt(jwe, secret)
+```
+
+### JWE Authentication Token
+
+#### Setup
 
 Ensure you have the necessary environment variables set:
 
@@ -37,14 +89,12 @@ ENCRYPTION_SECRET_JWT: The secret key used for JWT signing
 ENCRYPTION_SECRET_JWE: The secret key used for JWT encryption
 ```
 
-## Usage
+### Generate Auth Token
 
-### Generating Tokens
-
-The generateToken function creates a JWT for authentication purposes.
+**generateAuthToken:** Creates a JWE for authentication purposes.
 
 ```javascript
-import { generateToken } from '@qnx/crypto'
+import { generateAuthToken } from '@qnx/crypto'
 
 const subject = 'userId'
 const { token, dbToken } = await generateToken(subject)
@@ -52,11 +102,12 @@ const { token, dbToken } = await generateToken(subject)
 // dbToken: The unique identifier associated with the token
 ```
 
-Decrypting Tokens
-The decryptToken function decrypts a JWT token and verifies its authenticity.
+### Decrypt Auth Token
+
+**decryptToken:** Decrypts a JWE token and verifies its authenticity.
 
 ```javascript
-import { decryptToken } from '@qnx/crypto'
+import { decryptAuthToken } from '@qnx/crypto'
 
 const encryptedToken = '...' // Replace with the encrypted token
 try {
@@ -70,8 +121,7 @@ try {
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 Please make sure to update tests as appropriate.
 
 ## License
