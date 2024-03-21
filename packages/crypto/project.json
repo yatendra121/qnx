@@ -9,12 +9,12 @@
       "options": {
         "commands": [
           {
-            "command": "pnpm  build",
+            "command": "npm run build",
             "forwardAllArgs": true
           }
         ],
         "cwd": "packages/crypto",
-        "outputPath": "packages/crypto/dist"
+        "outputPath": "{workspaceRoot}/packages/crypto/dist"
       },
       "outputs": ["{workspaceRoot}/packages/crypto/dist"]
     },
@@ -51,6 +51,18 @@
         "commands": [
           {
             "command": "pnpm test",
+            "forwardAllArgs": true
+          }
+        ],
+        "cwd": "packages/crypto"
+      }
+    },
+    "type": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "npm run type",
             "forwardAllArgs": true
           }
         ],
