@@ -42,8 +42,3 @@ Thumbs.db
 .nx/cache
 
 **/dist
-
-packages/winston/dist/index.d.ts
-packages/winston/dist/winston.cjs
-packages/winston/dist/winston.iife.js
-packages/winston/dist/winston.mjs

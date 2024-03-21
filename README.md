@@ -18,7 +18,7 @@ Welcome to the @qnx monorepository! This collection of libraries is designed to 
 
 ### @qnx/crypto
 
-[@qnx/crypto](https://github.com/yatendra121/qnx/blob/main/packages/crypto/README.md) is dedicated to creating JWE tokens for secure authentication and cryptography.
+[@qnx/crypto](https://github.com/yatendra121/qnx/blob/main/packages/crypto/README.md) provides utility functions to generate and decrypt JSON Web Signatures (JWS) and JSON Web Encryption (JWE) using the jose cryptography library for secure data transmission.
 
 ### @qnx/winston
 
