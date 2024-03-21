@@ -188,7 +188,7 @@ app.get(
     '/generate-token',
     asyncValidatorHandler(async () => {
         const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWT'] ?? '', 'ES256')
-        return await generateAuthToken('12345', secret)
+        return await generateAuthToken('12345')
     })
 )
 
@@ -196,7 +196,7 @@ app.post(
     '/generate-token',
     asyncValidatorHandler(async () => {
         const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWT'] ?? '', 'ES256')
-        return await decyptAuthToken('12345', secret)
+        return await decyptAuthToken('12345')
     })
 )
 
