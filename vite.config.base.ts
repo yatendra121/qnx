@@ -51,7 +51,7 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
             rollupOptions
         },
         test: {
-            // globals: true,
+            globals: true,
             // cache: {
             //     dir: '../../node_modules/.vitest'
             // },
