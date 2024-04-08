@@ -9,12 +9,12 @@
       "options": {
         "commands": [
           {
-            "command": "pnpm  build",
+            "command": "npm run build",
             "forwardAllArgs": true
           }
         ],
         "cwd": "packages/crypto",
-        "outputPath": "packages/crypto/dist"
+        "outputPath": "{workspaceRoot}/packages/crypto/dist"
       },
       "outputs": ["{workspaceRoot}/packages/crypto/dist"]
     },
@@ -22,6 +22,12 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "tsx tools/scripts/publish.ts crypto "
+      }
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsx tools/scripts/clean.ts crypto "
       }
     },
     "lint": {
@@ -51,6 +57,18 @@
         "commands": [
           {
             "command": "pnpm test",
+            "forwardAllArgs": true
+          }
+        ],
+        "cwd": "packages/crypto"
+      }
+    },
+    "type": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "npm run type",
             "forwardAllArgs": true
           }
         ],

@@ -5,23 +5,22 @@ import { generateAuthToken, decyptAuthToken } from '../auth'
 
 describe('Crypto Integration Testing', function () {
     it('generate token', async function () {
-        const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWT'] ?? '', 'ES256')
-
-        const data = await generateAuthToken('string', secret)
+        const data = await generateAuthToken('string')
 
         expect(true).toEqual(!!data.dbToken)
         expect(true).toEqual(!!data.token)
     })
 
     it('generate & decrypt token', async function () {
-        const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWT'] ?? '', 'ES256')
-
         const tokenVal = 'this is testing string'
-        const data = await generateAuthToken(tokenVal, secret)
+        const data = await generateAuthToken(tokenVal)
         expect(true).toEqual(!!data.dbToken)
         expect(true).toEqual(!!data.token)
 
-        const values = await decyptAuthToken(data.token, secret)
+        console.log({ data })
+
+        const values = await decyptAuthToken(data.token)
+        console.log({ values })
 
         expect(tokenVal).toEqual(values.sub)
     })
