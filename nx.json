@@ -11,10 +11,6 @@
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
       "cache": true
     },
-    "test": {
-      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"],
-      "cache": true
-    },
     "build": {
       "cache": true
     },

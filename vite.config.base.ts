@@ -50,28 +50,28 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
             },
             rollupOptions
         },
+        // test: {
+        //     globals: true,
+        //     // cache: {
+        //     //     dir: '../../node_modules/.vitest'
+        //     // },
+        //     environment: 'jsdom',
+        //     include: [`src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}`]
+        // },
         test: {
             globals: true,
             // cache: {
-            //     dir: '../../node_modules/.vitest'
+            //     dir: '../node_modules/.vitest'
             // },
             environment: 'node',
-            include: [`src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}`]
-        }
-        // test: {
-        //     globals: true,
-        //     cache: {
-        //         dir: '../node_modules/.vitest'
-        //     },
-        //     environment: 'node',
-        //     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+            include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 
-        //     reporters: ['default'],
-        //     coverage: {
-        //         reportsDirectory: `../coverage/${getPackageName()}`,
-        //         provider: 'v8'
-        //     }
-        // }
+            reporters: ['default'],
+            coverage: {
+                reportsDirectory: `../coverage/${getPackageName()}`,
+                provider: 'v8'
+            }
+        }
         // resolve: {
         //     alias: {
         //         '@qnx/core-helpers': resolve(__dirname, 'packages/core-helpers/src/index.ts'),
