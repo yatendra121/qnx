@@ -29,7 +29,7 @@ export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) 
                 return apiRes.response(res)
             } else if (apiRes instanceof ServerResponse) {
                 return apiRes
-            } else if (!apiRes) {
+            } else if (apiRes === undefined) {
                 return next()
             } else {
                 return initializeApiResponse().setData(apiRes).response(res)
