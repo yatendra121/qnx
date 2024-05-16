@@ -35,7 +35,7 @@ yarn add @qnx/response
 pnpm install @qnx/response
 
 # Using bun
-npm install @qnx/response
+bun install @qnx/response
 ```
 
 #### Peer-Dependencies
