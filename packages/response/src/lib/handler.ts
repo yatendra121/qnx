@@ -18,15 +18,13 @@ function isFunction(value: unknown): boolean {
  * @param func
  * @returns handler
  */
-export function asyncValidatorHandler<T = ExRequest>(func: ExecuteFun<T>) {
+export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) {
     const handler = async (req: ExRequest, res: ExResponse, next: NextFunction) => {
         try {
             if (!isFunction(func))
                 throw new TypeError('Provided parameter value is not a function.')
 
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            const apiRes = await func(req, res, next)
+            const apiRes = await func(req as T, res, next)
             if (apiRes instanceof ApiResponse) {
                 return apiRes.response(res)
             } else if (apiRes instanceof ServerResponse) {
@@ -62,7 +60,10 @@ type ResourceController<T> = {
  * @param controller
  * @returns void
  */
-export function resourceRoute<T = ExRequest>(router: Router, controller: ResourceController<T>) {
+export function resourceRoute<T extends ExRequest>(
+    router: Router,
+    controller: ResourceController<T>
+) {
     const resourceRoutes: ResourceRoutes = {
         changeStatus: { method: 'put', url: '/change-status/:id' },
         create: { method: 'post', url: '/' },
