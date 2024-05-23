@@ -3,20 +3,31 @@ import { ApiResponse, initializeApiResponse } from './apiResponse'
 import { ServerResponse } from 'http'
 import type { NextFunction, Request as ExRequest, Response as ExResponse, Router } from 'express'
 
+/**
+ * Type definition for the execute function, which is an asynchronous function
+ * that handles a request and optionally a response and next function.
+ */
 type ExecuteFun<T> = (
     req: T,
     res?: ExResponse,
     next?: NextFunction
 ) => Promise<ApiResponse> | Promise<void> | Promise<unknown>
 
+/**
+ * Checks if a value is a function.
+ *
+ * @param value - The value to check.
+ * @returns True if the value is a function, otherwise false.
+ */
 function isFunction(value: unknown): boolean {
     return typeof value === 'function'
 }
 
 /**
- * This function is providing an async function that will handle response as well as any type of error
- * @param func
- * @returns handler
+ * Provides an asynchronous function that handles responses as well as any type of error.
+ *
+ * @param func - The function to be executed.
+ * @returns A handler function that executes the given function and manages responses and errors.
  */
 export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) {
     const handler = async (req: ExRequest, res: ExResponse, next: NextFunction) => {
@@ -43,22 +54,33 @@ export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) 
     return handler
 }
 
+/**
+ * Type definition for the names of resource controller functions.
+ */
 type functionNames = 'changeStatus' | 'create' | 'findAll' | 'findOne' | 'update' | 'remove'
+
+/**
+ * Type definition for resource routes, mapping function names to their HTTP method and URL.
+ */
 type ResourceRoutes = {
     [key in functionNames]: {
         method: 'get' | 'post' | 'put' | 'delete'
         url: string
     }
 }
+
+/**
+ * Type definition for a resource controller, mapping function names to their execute functions.
+ */
 type ResourceController<T> = {
     [key in functionNames]?: ExecuteFun<T>
 }
 
 /**
- * This function will create resource route based on functions of provided controller
- * @param router
- * @param controller
- * @returns void
+ * Creates resource routes based on the functions of the provided controller.
+ *
+ * @param router - The Express router to define the routes on.
+ * @param controller - The controller containing the execute functions for each route.
  */
 export function resourceRoute<T extends ExRequest>(
     router: Router,

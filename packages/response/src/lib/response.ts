@@ -10,18 +10,22 @@ export const callbackObj: CallbackObj = {
     logger: undefined
 }
 
+/**
+ * Sets a callback object with optional logger for server errors.
+ *
+ * @param logger - An optional logger object with a serverError method.
+ */
 export const setCallback = ({ logger }: Partial<CallbackObj>) => {
     if (logger) callbackObj.logger = logger
 }
 
 /**
- * Using for internal uses
- * This is useful when you want collect all errors into a single try catch block
- * If you using this function in catch block then you don't need define additional try catch block
- * for api response
- * @param response
- * @param error
- * @returns
+ * Handles errors and sends an appropriate API response.
+ * This function should be used in a catch block to handle and respond to various types of errors.
+ *
+ * @param response - The Express response object to send the response with.
+ * @param error - The error to handle, which can be a ValidationError, UnauthenticatedUserError, or generic Error.
+ * @returns The API response appropriate for the given error type.
  */
 export function errorApiResponse(
     response: ExResponse,
@@ -42,10 +46,10 @@ export function errorApiResponse(
 }
 
 /**
- * Using for internal uses
- * Return unauthenticate api response
- * @param response
- * @returns
+ * Sends an unauthenticated API response.
+ *
+ * @param response - The Express response object to send the response with.
+ * @returns The API response indicating the user is unauthenticated.
  */
 export function unauthenticateApiResponse(response: ExResponse) {
     return ApiResponse.getInstance()
@@ -56,11 +60,12 @@ export function unauthenticateApiResponse(response: ExResponse) {
 }
 
 /**
- * Using for internal uses
- * This is useful to collect any errors that will be consider as server error
- * @param response
- * @param error
- * @returns
+ * Sends a server error API response.
+ * This function is useful for handling server errors and sending a consistent error response.
+ *
+ * @param response - The Express response object to send the response with.
+ * @param error - The error that occurred on the server.
+ * @returns The API response indicating a server error.
  */
 export function serverErrorApiResponse(response: ExResponse, error: unknown) {
     return ApiResponse.getInstance()
@@ -70,9 +75,10 @@ export function serverErrorApiResponse(response: ExResponse, error: unknown) {
 }
 
 /**
- * Using for internal uses
- * @param error
- * @returns
+ * Collects and formats errors from a ZodError.
+ *
+ * @param error - The ZodError to collect errors from.
+ * @returns A record of errors formatted for an API response.
  */
 const collectErrorsFromZodError = (error: ZodError) => {
     return error.issues.reduce(

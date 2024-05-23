@@ -4,7 +4,9 @@ import type { ApiResponseErrors } from '@qnx/errors'
 const SHOW_SERVER_ERROR = true
 
 /**
- * This class is useful for send api response
+ * Class for sending API responses.
+ *
+ * @template T - The type of the data included in the response.
  */
 export class ApiResponse<T = unknown> {
     #statusCode = 200
@@ -17,15 +19,20 @@ export class ApiResponse<T = unknown> {
     protected message?: string
     protected serverError?: unknown
 
-    //Get new instance
+    /**
+     * Returns a new instance of ApiResponse.
+     *
+     * @returns A new ApiResponse instance.
+     */
     static getInstance(): ApiResponse {
         return new ApiResponse()
     }
 
     /**
-     * Set any data for response
-     * @param data
-     * @returns ApiResponse
+     * Sets the data for the response.
+     *
+     * @param data - The data to be included in the response.
+     * @returns The current ApiResponse instance.
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setData(data: any) {
@@ -34,9 +41,10 @@ export class ApiResponse<T = unknown> {
     }
 
     /**
-     * Set any error code
-     * @param errorCode
-     * @returns
+     * Sets the error code for the response.
+     *
+     * @param errorCode - The error code to be included in the response.
+     * @returns The current ApiResponse instance.
      */
     setErrorCode(errorCode: string) {
         this.errorCode = errorCode
@@ -44,9 +52,10 @@ export class ApiResponse<T = unknown> {
     }
 
     /**
-     * Set any error
-     * @param error
-     * @returns
+     * Sets a single error message for the response.
+     *
+     * @param error - The error message to be included in the response.
+     * @returns The current ApiResponse instance.
      */
     setError(error: string) {
         this.error = error
@@ -54,9 +63,10 @@ export class ApiResponse<T = unknown> {
     }
 
     /**
-     * Set multiple errors
-     * @param errors
-     * @returns
+     * Sets multiple errors for the response.
+     *
+     * @param errors - An object containing multiple error messages.
+     * @returns The current ApiResponse instance.
      */
     setErrors(errors: ApiResponseErrors) {
         this.errors = errors
@@ -64,9 +74,10 @@ export class ApiResponse<T = unknown> {
     }
 
     /**
-     * Set any message
-     * @param message
-     * @returns
+     * Sets a message for the response.
+     *
+     * @param message - The message to be included in the response.
+     * @returns The current ApiResponse instance.
      */
     setMessage(message: string) {
         this.message = message
@@ -74,9 +85,10 @@ export class ApiResponse<T = unknown> {
     }
 
     /**
-     * Set status code
-     * @param message
-     * @returns
+     * Sets the status code for the response.
+     *
+     * @param statusCode - The HTTP status code to be used for the response.
+     * @returns The current ApiResponse instance.
      */
     setStatusCode(statusCode: number) {
         this.#statusCode = statusCode
@@ -84,9 +96,10 @@ export class ApiResponse<T = unknown> {
     }
 
     /**
-     * Set server error
-     * @param error
-     * @returns
+     * Sets a server error for the response. The server error will only be included if SHOW_SERVER_ERROR is true.
+     *
+     * @param error - The server error to be included in the response.
+     * @returns The current ApiResponse instance.
      */
     setServerError(error: unknown) {
         if (!SHOW_SERVER_ERROR) return this
@@ -100,9 +113,10 @@ export class ApiResponse<T = unknown> {
     }
 
     /**
-     * Set additional data
-     * @param data
-     * @returns
+     * Sets additional data to be included in the response.
+     *
+     * @param data - An object containing additional data.
+     * @returns The current ApiResponse instance.
      */
     setAdditional(data: { [key: string]: unknown }) {
         this.#additionalData = data
@@ -110,10 +124,10 @@ export class ApiResponse<T = unknown> {
     }
 
     /**
-     * Return api response
-     * @param response
-     * @param status
-     * @returns
+     * Sends the API response using the provided Express response object.
+     *
+     * @param response - The Express response object to send the response with.
+     * @returns The response sent by the Express response object.
      */
     response(response: ExResponse) {
         if (this.errors) this.error = this.errors[Object.keys(this.errors)?.[0]]?.[0]
@@ -122,8 +136,9 @@ export class ApiResponse<T = unknown> {
 }
 
 /**
+ * Initializes and returns a new instance of ApiResponse.
  *
- * @returns Instance of ApiResponse class
+ * @returns A new instance of the ApiResponse class.
  */
 export function initializeApiResponse() {
     return ApiResponse.getInstance()

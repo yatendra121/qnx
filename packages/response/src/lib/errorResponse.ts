@@ -4,10 +4,11 @@ import { ApiResponseErrors, ValidationError, errorCodes } from '@qnx/errors'
 import type { Response as ExResponse } from 'express'
 
 /**
- * To send validation api response and can send multiple validation errors
- * @param response
- * @param errors
- * @returns
+ * Sends a validation API response with multiple validation errors.
+ *
+ * @param response - The Express response object to send the response with.
+ * @param errors - An object containing multiple validation errors.
+ * @returns The API response with a validation error code and errors.
  */
 export function invalidApiResponse(response: ExResponse, errors: ApiResponseErrors | undefined) {
     const apiRes = ApiResponse.getInstance()
@@ -16,11 +17,12 @@ export function invalidApiResponse(response: ExResponse, errors: ApiResponseErro
 }
 
 /**
- * To send validation api response and that is useful when you want single validation error
- * @param response
- * @param errorKey
- * @param errorMessage
- * @returns
+ * Sends a validation API response with a single validation error.
+ *
+ * @param response - The Express response object to send the response with.
+ * @param errorKey - The key associated with the validation error.
+ * @param errorMessage - The validation error message to be sent.
+ * @returns The API response with a validation error code and a single error.
  */
 export function invalidValueApiResponse(
     response: ExResponse,
@@ -31,10 +33,11 @@ export function invalidValueApiResponse(
 }
 
 /**
- * To send validation api response and that is useful when you want single validation error
- * @param errorKey
- * @param errorMessage
- * @returns
+ * Throws a ValidationError with a single validation error.
+ *
+ * @param errorKey - The key associated with the validation error.
+ * @param errorMessage - The validation error message.
+ * @throws ValidationError - Throws a validation error with the provided error details.
  */
 export function throwInvalidValueApiResponse(errorKey: string, errorMessage: string): never {
     const errorResponse = new ApiResponseErrorsValue()
