@@ -18,6 +18,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "require": "./dist/crypto.cjs",
       "import": "./dist/crypto.mjs"
     }
