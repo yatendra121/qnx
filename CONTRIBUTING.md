@@ -68,7 +68,7 @@ nx run affected:test
 Update the documentation as necessary to reflect your changes. Clear and comprehensive documentation helps other contributors and users understand how to use the libraries effectively.
 
 ## Code of Conduct
-Please note that we have a Code of Conduct. By participating in this project, you agree to abide by its terms. We are committed to providing a welcoming and respectful environment for all contributors.
+Please note that we have a [Code of Conduct](https://github.com/yatendra121/qnx/blob/main/CODE_OF_CONDUCT.md). By participating in this project, you agree to abide by its terms. We are committed to providing a welcoming and respectful environment for all contributors.
 
 ## Getting Help
 If you need any help or have questions about contributing, feel free to reach out by opening an issue in the relevant repository. We're here to assist you!
