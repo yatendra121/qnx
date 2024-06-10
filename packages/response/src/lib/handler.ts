@@ -9,8 +9,8 @@ import type { NextFunction, Request as ExRequest, Response as ExResponse, Router
  */
 type ExecuteFun<T> = (
     req: T,
-    res?: ExResponse,
-    next?: NextFunction
+    res: ExResponse,
+    next: NextFunction
 ) => Promise<ApiResponse> | Promise<void> | Promise<unknown>
 
 /**
@@ -26,7 +26,7 @@ function isFunction(value: unknown): boolean {
 /**
  * Provides an asynchronous function that handles responses as well as any type of error.
  *
- * @param func - The function to be executed.
+ * @param  func - The function to be executed.
  * @returns A handler function that executes the given function and manages responses and errors.
  */
 export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) {
