@@ -1,3 +1,10 @@
+## 0.6.1 (2024-09-17)
+
+
+### 🩹 Fixes
+
+- (fix): update dependencies ([](https://github.com/yatendra121/qnx/commit/))
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
