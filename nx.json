@@ -29,5 +29,8 @@
       }
     }
   ],
+  "release": {
+    "versionPlans": true
+  },
   "defaultBase": "main"
 }
