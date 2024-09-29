@@ -9,7 +9,10 @@
   "files": [
     "dist"
   ],
-  "keywords": [],
+  "keywords": [
+    "response",
+    "client response handler"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/yatendra121/qnx.git",

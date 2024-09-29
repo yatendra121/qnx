@@ -8,6 +8,9 @@
   "files": [
     "dist"
   ],
+  "keywords": [
+    "response message"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/yatendra121/qnx.git"

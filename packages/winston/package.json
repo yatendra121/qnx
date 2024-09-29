@@ -12,7 +12,8 @@
   "keywords": [
     "logger",
     "errors response logger",
-    "error log"
+    "error log",
+    "winston"
   ],
   "repository": {
     "type": "git",
