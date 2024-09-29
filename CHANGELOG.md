@@ -1,5 +1,17 @@
-## 0.6.1 (2024-09-17)
+## 0.6.2 (2024-09-29)
 
+
+### 🩹 Fixes
+
+- chore: release 0.6.22 ([](https://github.com/yatendra121/qnx/commit/))
+
+## 0.6.22 (2024-09-29)
+
+### 🩹 Fixes
+
+- (fix): update dependencies ([](https://github.com/yatendra121/qnx/commit/))
+
+## 0.6.1 (2024-09-17)
 
 ### 🩹 Fixes
 

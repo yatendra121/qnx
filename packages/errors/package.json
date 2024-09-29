@@ -2,7 +2,7 @@
   "name": "@qnx/errors",
   "description": "Collection for handle express error response",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.6.21",
+  "version": "0.6.22",
   "license": "MIT",
   "funding": "https://github.com/sponsors/yatendra121",
   "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/errors",
