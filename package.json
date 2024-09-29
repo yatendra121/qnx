@@ -4,6 +4,8 @@
   "license": "MIT",
   "description": "An Ecosystem of Utilities for Node.js",
   "scripts": {
+    "release-plan": "nx release plan",
+    "release": "nx release",
     "app:test": "nx run app:test",
     "affected:build": "nx affected --target=build  --exclude='app,my-lib'",
     "affected:publish": "nx affected --target=publish --exclude='app,my-lib'",
