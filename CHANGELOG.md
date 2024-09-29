@@ -1,3 +1,10 @@
+## 0.6.3 (2024-09-29)
+
+
+### 🩹 Fixes
+
+- release v0.6.24 ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.6.2 (2024-09-29)
 
 
