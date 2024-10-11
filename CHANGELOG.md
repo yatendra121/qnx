@@ -1,3 +1,10 @@
+## 0.6.5 (2024-10-11)
+
+
+### 🩹 Fixes
+
+- chore: v0.7.1 ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.6.4 (2024-10-11)
 
 
