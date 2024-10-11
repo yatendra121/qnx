@@ -1,3 +1,10 @@
+## 0.6.4 (2024-10-11)
+
+
+### 🩹 Fixes
+
+- chore: release v0.6.2 ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.6.3 (2024-09-29)
 
 
