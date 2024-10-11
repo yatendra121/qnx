@@ -15,7 +15,7 @@
   "private": true,
   "dependencies": {
     "axios": "1.7.7",
-    "express": "^4.21.0",
+    "express": "^4.21.1",
     "jose": "^5.9.3",
     "postcss": "^8.4.47",
     "tslib": "^2.7.0",
@@ -51,7 +51,7 @@
     "@vitest/ui": "2.1.1",
     "body-parser": "^1.20.3",
     "chalk": "^5.3.0",
-    "changelogithub": "^0.13.10",
+    "changelogithub": "^0.13.11",
     "dts-bundle-generator": "9.5.1",
     "eslint": "9.11.1",
     "eslint-config-prettier": "9.1.0",
@@ -73,10 +73,10 @@
     "tsx": "^4.19.1",
     "typescript": "5.6.2",
     "vite": "^5.4.8",
-    "vite-plugin-dts": "~4.2.2",
+    "vite-plugin-dts": "~4.2.3",
     "vite-plugin-eslint": "^1.8.1",
     "vite-tsconfig-paths": "^5.0.1",
-    "winston": "^3.14.2",
+    "winston": "^3.15.0",
     "winston-daily-rotate-file": "^5.0.0",
     "zod": "^3.23.8"
   }
