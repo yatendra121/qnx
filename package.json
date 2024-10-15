@@ -15,7 +15,7 @@
   "private": true,
   "dependencies": {
     "axios": "1.7.7",
-    "express": "^5.0.0",
+    "express": "^5.0.1",
     "jose": "^5.9.3",
     "postcss": "^8.4.47",
     "tslib": "^2.7.0",
