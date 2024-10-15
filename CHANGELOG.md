@@ -1,3 +1,9 @@
+## 0.6.6 (2024-10-15)
+
+### 🩹 Fixes
+
+- fix version conflict ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.6.5 (2024-10-11)
 
 
