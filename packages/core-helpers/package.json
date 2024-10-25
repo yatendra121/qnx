@@ -2,7 +2,11 @@
   "name": "@qnx/core-helpers",
   "description": "Collection of core functions",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
+<<<<<<< HEAD
+  "version": "0.7.0",
+=======
   "version": "0.6.26",
+>>>>>>> main
   "license": "MIT",
   "funding": "https://github.com/sponsors/yatendra121",
   "files": [

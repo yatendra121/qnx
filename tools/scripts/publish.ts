@@ -22,7 +22,9 @@ function invariant(condition, message) {
 
 // Executing publish script: node path/to/publish.ts {name} --version {version} --tag {tag}
 // Default "tag" to "next" so we won't publish the "latest" tag by accident.
-let [, , name, version, tag = 'latest'] = process.argv
+let [, , name, tag = 'latest'] = process.argv
+
+let version = ''
 
 if (version == 'affected') version = ''
 

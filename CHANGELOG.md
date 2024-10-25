@@ -1,8 +1,9 @@
-## 0.6.6 (2024-10-15)
+## 0.7.0 (2024-10-11)
 
-### 🩹 Fixes
 
-- fix version conflict ([](https://github.com/yatendra121/qnx/commit/))
+### 🚀 Features
+
+- chore: release v0.7.0 ([](https://github.com/yatendra121/qnx/commit/))
 
 ## 0.6.5 (2024-10-11)
 

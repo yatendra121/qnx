@@ -315,7 +315,19 @@ ApiResponse.getInstance().setStatusCode(200)
 Sets additional custom data for the response.
 
 ```javascript
-ApiResponse.getInstance().setAdditional({ key1: 'value1', key2: 'value2' })
+ApiResponse.getInstance()
+  .setData({ user: { name: 'John' } })
+  .setMessage('User fetched successfully')
+  .setAdditional({ processingTime: '500ms', apiVersion: 'v1.0.0' })
+
+/*
+{
+  "data": { "user": { "name": "John" } },
+  "message": "User fetched successfully",
+  "processingTime": "500ms",
+  "apiVersion": "v1.0.0"
+}
+*/
 ```
 
 ### ApiResponseErrorsValue Methods
