@@ -43,7 +43,7 @@
     "format": "npm run format:scripts"
   },
   "peerDependencies": {
-    "express": "*",
-    "@qnx/errors": "0.6.*"
+    "express": "4.x || 5.x",
+    "@qnx/errors": "0.7.*"
   }
 }

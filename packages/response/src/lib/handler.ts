@@ -24,30 +24,32 @@ function isFunction(value: unknown): boolean {
 }
 
 /**
- * Provides an asynchronous function that handles responses as well as any type of error.
+ * Provides an asynchronous function that handles responses and any type of error.
  *
  * @param  func - The function to be executed.
  * @returns A handler function that executes the given function and manages responses and errors.
  */
 export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) {
-    const handler = async (req: ExRequest, res: ExResponse, next: NextFunction) => {
+    const handler = async (req: ExRequest, res: ExResponse, next: NextFunction): Promise<void> => {
         try {
-            if (!isFunction(func))
+            if (!isFunction(func)) {
                 throw new TypeError('Provided parameter value is not a function.')
+            }
 
             const apiRes = await func(req as T, res, next)
+
             if (apiRes instanceof ApiResponse) {
-                return apiRes.response(res)
-            } else if (apiRes instanceof ServerResponse) {
-                return apiRes
-            } else if (apiRes === undefined) {
-                return next()
-            } else {
-                return initializeApiResponse().setData(apiRes).response(res)
+                void apiRes.response(res) // Ensure the return value is ignored
+                return
             }
+
+            if (apiRes instanceof ServerResponse || apiRes === undefined) {
+                return next()
+            }
+
+            initializeApiResponse().setData(apiRes).response(res)
         } catch (error: unknown) {
-            const err = error as Error
-            return errorApiResponse(res, err)
+            errorApiResponse(res, error as Error)
         }
     }
 
