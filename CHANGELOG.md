@@ -1,3 +1,9 @@
+## 0.6.27 (2024-12-02)
+
+### 🩹 Fixes
+
+- feat(workspace): update deps ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.6.6 (2024-10-15)
 
 ### 🩹 Fixes
