@@ -1,3 +1,9 @@
+## 0.6.28 (2025-01-07)
+
+### 🩹 Fixes
+
+- chore: release 0.6.28 ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.6.27 (2024-12-02)
 
 ### 🩹 Fixes
