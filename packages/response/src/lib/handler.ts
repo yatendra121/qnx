@@ -39,8 +39,7 @@ export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) 
             const apiRes = await func(req as T, res, next)
 
             if (apiRes instanceof ApiResponse) {
-                void apiRes.response(res) // Ensure the return value is ignored
-                return
+                return void apiRes.response(res) // Ensure the return value is ignored
             }
 
             if (apiRes instanceof ServerResponse || apiRes === undefined) {
