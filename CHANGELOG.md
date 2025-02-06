@@ -1,3 +1,13 @@
+# 1.0.0 (2025-02-06)
+
+### 🚀 Features
+
+- ⚠️  release v0.7.1 ([](https://github.com/yatendra121/qnx/commit/))
+
+### ⚠️  Breaking Changes
+
+- ⚠️  release v0.7.1 ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.6.28 (2025-01-07)
 
 ### 🩹 Fixes

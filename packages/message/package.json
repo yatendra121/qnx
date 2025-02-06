@@ -2,7 +2,7 @@
   "name": "@qnx/message",
   "description": "Collection of utilities of message",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.6.28",
+  "version": "1.0.0",
   "license": "MIT",
   "funding": "https://github.com/sponsors/yatendra121",
   "files": [
