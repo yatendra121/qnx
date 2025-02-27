@@ -23,7 +23,7 @@ import z from 'zod'
 import * as path from 'path'
 import { json } from 'body-parser'
 import { InvalidValueError } from '@qnx/errors'
-import { decyptAuthToken, generateAuthToken, toPKCS8Secret } from '@qnx/crypto'
+import { decyptAuthToken, generateAuthToken } from '@qnx/crypto'
 
 const app = express()
 
@@ -181,22 +181,23 @@ app.get(
         throw new Error('Logger testing.')
     })
 )
-
+//@ts-ignore
 app.get('/check-invalid-function-value', asyncValidatorHandler(undefined))
 
 app.get(
     '/generate-token',
     asyncValidatorHandler(async () => {
-        const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWT'] ?? '', 'ES256')
+        // const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWT'] ?? '', 'ES256')
         return await generateAuthToken('12345')
     })
 )
 
-app.post(
-    '/generate-token',
+app.get(
+    '/generate-token-value',
     asyncValidatorHandler(async () => {
-        const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWT'] ?? '', 'ES256')
-        return await decyptAuthToken('12345')
+        const data = await generateAuthToken('This is token value!')
+        const val = await decyptAuthToken(data.token)
+        return { data, val }
     })
 )
 
