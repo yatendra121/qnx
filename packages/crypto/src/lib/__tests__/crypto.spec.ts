@@ -1,7 +1,8 @@
 import { describe, it } from 'vitest'
 import { jweEncrypt, jweDecrypt, jwtSign, jwtVerify } from '../crypto'
-import { toPKCS8Secret, toSymmetricSecret } from '../key'
+import { toSymmetricSecret } from '../key'
 import { generateAuthToken, decyptAuthToken } from '../auth'
+import { importPKCS8, importSPKI } from 'jose'
 
 describe('Crypto Integration Testing', function () {
     it('generate token', async function () {
@@ -45,23 +46,26 @@ describe('Crypto Functions Testing', function () {
             foo: 'bar'
         }
 
-        const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWT'] ?? '', 'ES256')
-        const jwt = await jwtSign({ data: dataVal }, secret, {
+        const ecPrivateKey = await importPKCS8(process.env['JWT_PRIVATE_KEY'] ?? '', 'ES256')
+        const jwt = await jwtSign({ data: dataVal }, ecPrivateKey, {
             issuer: 'https:yatendra.tech'
         })
 
-        const { payload } = await jwtVerify(jwt, secret)
+        const ecPublicKey = await importSPKI(process.env['JWT_PUBLIC_KEY'] ?? '', 'ES256')
+        const { payload } = await jwtVerify(jwt, ecPublicKey)
         expect(dataVal).toEqual(payload.data)
     })
 
     it('Encrypt JWE & descrypt JWE using PKCS8 secret', async function () {
-        const secret = await toPKCS8Secret(
-            process.env['ENCRYPTION_SECRET_JWE'] ?? '',
+        const ecPublicKey = await importSPKI(process.env['JWE_PUBLIC_KEY'] ?? '', 'ECDH-ES+A128KW')
+        const dataVal = 'this is message.'
+        const jwe = await jweEncrypt(dataVal, ecPublicKey)
+
+        const ecPrivateKey = await importPKCS8(
+            process.env['JWE_PRIVATE_KEY'] ?? '',
             'ECDH-ES+A128KW'
         )
-        const dataVal = 'this is message.'
-        const jwe = await jweEncrypt(dataVal, secret)
-        const { plaintext } = await jweDecrypt(jwe, secret)
+        const { plaintext } = await jweDecrypt(jwe, ecPrivateKey)
         expect(dataVal).toEqual(plaintext)
     })
 })
