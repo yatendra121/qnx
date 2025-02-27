@@ -1,4 +1,4 @@
-import { type KeyLike, importPKCS8, jwtVerify } from 'jose'
+import { type CryptoKey, type KeyObject, type JWK, importSPKI, jwtVerify, importPKCS8 } from 'jose'
 import { v4 as uuidv4 } from 'uuid'
 import { jweDecrypt, jweEncrypt, jwtSign } from './crypto'
 
@@ -29,37 +29,69 @@ import { jweDecrypt, jweEncrypt, jwtSign } from './crypto'
  * KeyPair class represents a pair of cryptographic keys for JWT and JWE encryption.
  */
 class KeyPair {
-    static jwtKey: KeyLike | Uint8Array | undefined
-    static jweKey: KeyLike | Uint8Array | undefined
+    static jwtPublicKey: CryptoKey | KeyObject | JWK | Uint8Array
+    static jwtPrivateKey: CryptoKey | KeyObject | JWK | Uint8Array
+    static jwePublicKey: CryptoKey | KeyObject | JWK | Uint8Array
+    static jwePrivateKey: CryptoKey | KeyObject | JWK | Uint8Array
 
     /**
-     * Retrieves the JWT encryption key.
-     * If the key is already available, returns it; otherwise, fetches it from the environment variables.
-     * @returns The JWT encryption key.
-     * @throws Error if the JWT encryption secret is not found in the environment variables.
+     * Retrieves the JWT public key.
+     * If the key is already available, returns it; otherwise, loads it from environment variables.
+     * @returns The JWT public key.
+     * @throws Error if the JWT public key is not found in the environment variables.
      */
-    static async getJwtKey(): Promise<KeyLike | Uint8Array> {
-        if (KeyPair.jwtKey) return KeyPair.jwtKey
+    static async getJwtPublicKey(): Promise<CryptoKey | KeyObject | JWK | Uint8Array> {
+        if (KeyPair.jwtPublicKey) return KeyPair.jwtPublicKey
 
-        const spkiJwt = process.env['ENCRYPTION_SECRET_JWT']
-        if (!spkiJwt) throw new Error('JWT encryption secret is not found in env.')
+        const spkiJwt = process.env['JWT_PUBLIC_KEY']
+        if (!spkiJwt) throw new Error('JWT public key is not found in environment variables.')
 
-        return (KeyPair.jwtKey = await importPKCS8(spkiJwt, 'ES256'))
+        return (KeyPair.jwtPublicKey = await importSPKI(spkiJwt, 'ES256'))
     }
 
     /**
-     * Retrieves the JWE encryption key.
-     * If the key is already available, returns it; otherwise, fetches it from the environment variables.
-     * @returns The JWE encryption key.
-     * @throws Error if the JWE encryption secret is not found in the environment variables.
+     * Retrieves the JWE public key.
+     * If the key is already available, returns it; otherwise, loads it from environment variables.
+     * @returns The JWE public key.
+     * @throws Error if the JWE public key is not found in the environment variables.
      */
-    static async getJweKey(): Promise<KeyLike | Uint8Array> {
-        if (KeyPair.jweKey) return KeyPair.jweKey
+    static async getJwePublicKey(): Promise<CryptoKey | KeyObject | JWK | Uint8Array> {
+        if (KeyPair.jwePublicKey) return KeyPair.jwePublicKey
 
-        const spkiJwe = process.env['ENCRYPTION_SECRET_JWE']
-        if (!spkiJwe) throw new Error('JWE encryption secret is not found in env.')
+        const spkiJwe = process.env['JWE_PUBLIC_KEY']
+        if (!spkiJwe) throw new Error('JWE public key is not found in environment variables.')
 
-        return (KeyPair.jweKey = await importPKCS8(spkiJwe, 'ECDH-ES+A128KW'))
+        return (KeyPair.jwePublicKey = await importSPKI(spkiJwe, 'ECDH-ES+A128KW'))
+    }
+
+    /**
+     * Retrieves the JWT private key.
+     * If the key is already available, returns it; otherwise, loads it from environment variables.
+     * @returns The JWT private key.
+     * @throws Error if the JWT private key is not found in the environment variables.
+     */
+    static async getJwtPrivateKey(): Promise<CryptoKey | KeyObject | JWK | Uint8Array> {
+        if (KeyPair.jwtPrivateKey) return KeyPair.jwtPrivateKey
+
+        const pkcs8Jwt = process.env['JWT_PRIVATE_KEY']
+        if (!pkcs8Jwt) throw new Error('JWT private key is not found in environment variables.')
+
+        return (KeyPair.jwtPrivateKey = await importPKCS8(pkcs8Jwt, 'ES256'))
+    }
+
+    /**
+     * Retrieves the JWE private key.
+     * If the key is already available, returns it; otherwise, loads it from environment variables.
+     * @returns The JWE private key.
+     * @throws Error if the JWE private key is not found in the environment variables.
+     */
+    static async getJwePrivateKey(): Promise<CryptoKey | KeyObject | JWK | Uint8Array> {
+        if (KeyPair.jwePrivateKey) return KeyPair.jwePrivateKey
+
+        const pkcs8Jwe = process.env['JWE_PRIVATE_KEY']
+        if (!pkcs8Jwe) throw new Error('JWE private key is not found in environment variables.')
+
+        return (KeyPair.jwePrivateKey = await importPKCS8(pkcs8Jwe, 'ECDH-ES+A128KW'))
     }
 }
 
@@ -73,7 +105,10 @@ class KeyPair {
  */
 export const generateAuthToken = async (subject: string) => {
     const jti = uuidv4()
-    const [jwtKey, jweKey] = await Promise.all([KeyPair.getJwtKey(), KeyPair.getJweKey()])
+    const [jwtKey, jweKey] = await Promise.all([
+        KeyPair.getJwtPrivateKey(),
+        KeyPair.getJwePublicKey()
+    ])
 
     const jwt = await jwtSign({}, jwtKey, { jti, subject })
     const jwe = await jweEncrypt(jwt, jweKey)
@@ -90,7 +125,10 @@ export const generateAuthToken = async (subject: string) => {
  * @returns A promise resolving to the payload of the decrypted and verified authentication token.
  */
 export const decyptAuthToken = async (jwe: string) => {
-    const [jwtKey, jweKey] = await Promise.all([KeyPair.getJwtKey(), KeyPair.getJweKey()])
+    const [jwtKey, jweKey] = await Promise.all([
+        KeyPair.getJwtPublicKey(),
+        KeyPair.getJwePrivateKey()
+    ])
     const { plaintext } = await jweDecrypt(jwe, jweKey)
     const { payload } = await jwtVerify(plaintext, jwtKey)
     return payload

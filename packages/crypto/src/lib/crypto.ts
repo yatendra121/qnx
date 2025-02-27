@@ -2,7 +2,9 @@ import {
     compactDecrypt,
     SignJWT,
     CompactEncrypt,
-    type KeyLike,
+    type CryptoKey,
+    type KeyObject,
+    type JWK,
     type JWTPayload,
     type SignOptions,
     type EncryptOptions,
@@ -22,7 +24,7 @@ export { jwtVerify } from 'jose'
  */
 export const jweEncrypt = (
     plaintext: string,
-    key: KeyLike | Uint8Array,
+    key: CryptoKey | KeyObject | JWK | Uint8Array,
     options?: EncryptOptions & { alg: string; enc: string }
 ): Promise<string> => {
     return new CompactEncrypt(new TextEncoder().encode(plaintext))
@@ -43,7 +45,7 @@ export const jweEncrypt = (
  */
 export const jweDecrypt = async (
     jwe: string,
-    key: KeyLike | Uint8Array,
+    key: CryptoKey | KeyObject | JWK | Uint8Array,
     options?: DecryptOptions
 ): Promise<{ plaintext: string; protectedHeader: CompactJWEHeaderParameters }> => {
     const { plaintext, protectedHeader } = await compactDecrypt(jwe, key, options)
@@ -61,7 +63,7 @@ export const jweDecrypt = async (
  */
 export const jwtSign = (
     payload: JWTPayload,
-    key: KeyLike | Uint8Array,
+    key: CryptoKey | KeyObject | JWK | Uint8Array,
     options?: SignOptions & {
         jti?: string
         issuer?: string

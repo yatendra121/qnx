@@ -1,4 +1,4 @@
-import { importJWK, importPKCS8 } from 'jose'
+import { importJWK, importPKCS8, importSPKI } from 'jose'
 
 /**
 Encodes a given key string into a symmetric secret representation.
@@ -9,4 +9,4 @@ export const toSymmetricSecret = (key: string): Uint8Array => {
     return new TextEncoder().encode(key)
 }
 
-export { importPKCS8 as toPKCS8Secret, importJWK as toJWKSecret }
+export { importPKCS8 as toPKCS8Secret, importSPKI as toSPKISecret, importJWK as toJWKSecret }
