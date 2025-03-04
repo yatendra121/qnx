@@ -14,7 +14,7 @@ export default defineConfig({
     test: {
         watch: false,
         globals: true,
-        environment: 'jsdom',
+        environment: 'happy-dom', // crypto not worked with jsdom. reference https://github.com/jsdom/jsdom/issues/3711#issuecomment-2096255351
         include: ['__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         reporters: ['default'],
         coverage: {

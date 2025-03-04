@@ -209,17 +209,16 @@ describe('Response Integration Testing', function () {
 
     it('checkGenerateToken', async function () {
         const response = await request(app).get('/generate-token').set('Accept', 'application/json')
-        //console.log(response)
         expect(response.status).toEqual(200)
     })
 
-    // it('checkGenerateTokenValue', async function () {
-    //     const response = await request(app)
-    //         .get('/generate-token-value')
-    //         .set('Accept', 'application/json')
-    //     expect(response.status).toEqual(200)
-    //     expect(response.body.val.sub).toEqual('This is token value!')
-    // })
+    it('checkGenerateTokenValue', async function () {
+        const response = await request(app)
+            .get('/generate-token-value')
+            .set('Accept', 'application/json')
+        expect(response.status).toEqual(200)
+        expect(response.body.data.val.sub).toEqual('This is token value!')
+    })
 })
 
 describe('Response Integration Testing With Change Codes', function () {
