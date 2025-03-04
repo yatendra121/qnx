@@ -43,3 +43,6 @@ Thumbs.db
 .nx/workspace-data
 
 **/dist
+
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
