@@ -68,6 +68,7 @@ type ResourceRoutes = {
         method: 'get' | 'post' | 'put' | 'delete'
         url: string
     }
+    
 }
 
 /**
