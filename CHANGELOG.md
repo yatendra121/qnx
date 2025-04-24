@@ -1,3 +1,9 @@
+## 0.7.7 (2025-04-24)
+
+### 🩹 Fixes
+
+- release v0.7.7 ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.7.6 (2025-04-24)
 
 ### 🩹 Fixes
