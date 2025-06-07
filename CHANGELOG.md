@@ -1,3 +1,9 @@
+## 0.7.8 (2025-06-07)
+
+### 🩹 Fixes
+
+- chore: release 0.7.8 ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.7.7 (2025-04-24)
 
 ### 🩹 Fixes
