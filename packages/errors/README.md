@@ -1,81 +1,138 @@
-# @qnx/errors
+# `@qnx/errors`
 
-@qnx/errors is providing components to simplify your codes.
+`@qnx/errors` provides a set of custom error classes to help you simplify and standardize error handling in your JavaScript/TypeScript applications.
 
-## Installation
+---
 
-Use the package manager [npm](https://www.npmjs.com/) to install @qnx/errors.
+## ✨ Features
+
+- Predefined error classes for common scenarios
+- Consistent structure for error responses
+- Easy integration with APIs and validation logic
+
+---
+
+## 📦 Installation
+
+You can install via your preferred package manager:
 
 ```bash
+# npm
 npm install @qnx/errors
-```
 
-You can also use [yarn](https://yarnpkg.com/) & [pnpm](https://pnpm.io/)
-
-```bash
+# yarn
 yarn add @qnx/errors
-```
 
-```bash
+# pnpm
 pnpm install @qnx/errors
 ```
 
-## Usage
+---
+
+## 🚀 Usage
+
+### Importing Errors
 
 ```javascript
-import { ApiError, ValidationError, InvalidValueError, UnauthenticatedUserError, ServerError } from '@qnx/errors';
-
-# Creating a custom error instance
-const validationError = new ValidationError('Custom error message', { errRes: { errors: { email: ['Invalid email'] } } });
-
-# Creating a single error instance
-const invalidValueError = new InvalidValueError('Invalid email address.', { key:'email' });
-
-
-Handling validation errors
-try {
-  // ... perform validation
-} catch (err) {
-  const validationError = new ValidationError('Validation failed', { errors: err.errors });
-  // ... handle validation error
-}
-
-Handling server errors
-try {
-  // ... perform server action
-} catch (err) {
-  const serverError = new ServerError('Server error occurred');
-  // ... handle server error
-}
-
-
+import {
+  ApiError,
+  ValidationError,
+  InvalidValueError,
+  UnauthenticatedUserError,
+  ServerError
+} from '@qnx/errors'
 ```
 
-ApiError: An optional object that contains additional information about the error. This object should follow the structure of the ErrorResponse interface.
-This class provides two methods:
+## 📘 Error Class Examples
 
-getCode(): Returns the HTTP error code.
-getErrorResponse(): Returns the error response object.
-ValidationError
-This class is used to represent validation errors. It inherits from the ApiError class and takes two parameters:
+### `ApiError`
 
-message: A string that describes the validation error.
-errorResponse: An object that contains validation error message. This object should follow the structure of the ApiResponseErrors type.
-UnauthenticatedUserError
-This class represents errors that occur when a user is not authenticated. It inherits from the ApiError class and takes one parameter:
+```ts
+const apiError = new ApiError('Something went wrong', 500, {
+  errRes: {
+    message: 'Server failed to respond',
+    errors: {
+      generic: ['Unexpected error occurred']
+    }
+  }
+})
 
-message: A string that describes the unauthenticated user error.
-ServerError
-This class is used to represent errors that occur on the server side. It inherits from the ApiError class and takes one parameter:
+console.log(apiError.message) // "Something went wrong"
+console.log(apiError.getCode()) // 500
+console.log(apiError.getErrorResponse()) // { message: "...", errors: ... }
+```
 
-message: A string that describes the server error.
+---
 
-## Contributing
+### `ValidationError`
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
+```ts
+const validationError = new ValidationError('Validation failed', {
+  errRes: {
+    message: 'Validation errors found',
+    errors: {
+      email: ['Email is invalid'],
+      password: ['Password must be at least 8 characters']
+    }
+  }
+})
+
+console.log(validationError.getCode()) // errorCodes.VALIDATION_ERROR_CODE
+console.log(validationError.getErrorResponse()) // Detailed error response
+```
+
+---
+
+### `InvalidValueError`
+
+```ts
+const error = new InvalidValueError('Username cannot contain spaces', {
+  key: 'username'
+})
+
+console.log(error.getCode()) // errorCodes.VALIDATION_ERROR_CODE
+console.log(error.getErrorResponse()) // { errors: { username: ['Username cannot contain spaces'] } }
+```
+
+---
+
+### `UnauthenticatedUserError`
+
+```ts
+const authError = new UnauthenticatedUserError('User not authenticated')
+
+console.log(authError.getCode()) // errorCodes.UNAUTHENTICATED_USER_ERROR_CODE
+console.log(authError.message) // "User not authenticated"
+```
+
+---
+
+### `ServerError`
+
+```ts
+const serverError = new ServerError('Internal server error')
+
+console.log(serverError.getCode()) // errorCodes.SERVER_ERROR_CODE
+console.log(serverError.message) // "Internal server error"
+```
+
+---
+
+## 📊 Summary Table
+
+| Error Class                | Purpose                     | Default Code | Use When...                                 |
+| -------------------------- | --------------------------- | ------------ | ------------------------------------------- |
+| `ApiError`                 | Generic base error          | Custom       | You need a customizable error               |
+| `ValidationError`          | Multi-field form validation | 422          | Input or schema validation fails            |
+| `InvalidValueError`        | Single field validation     | 422          | One field like "email" or "username` is bad |
+| `UnauthenticatedUserError` | Auth failure                | 401          | User not logged in or token missing         |
+| `ServerError`              | Internal system failure     | 500          | Something broke that user can’t fix         |
+
+## 🤝 Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 Please make sure to update tests as appropriate.
 
-## License
+## 📄 License
 
 [MIT License](https://github.com/yatendra121/qnx/blob/main/LICENSE.md) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)
