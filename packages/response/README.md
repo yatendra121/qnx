@@ -1,24 +1,42 @@
+# Project Title
+
+A brief description of what this project does and who it's for
+
 # @qnx/response
 
 @qnx/response is a library designed to simplify handling HTTP responses within Express.js applications. It offers standardized formatting and transmission of responses, including built-in support for error management and validation.
 
-### Core features
+---
 
-**Standardized response formatting:** @qnx/response provides a consistent way of formatting responses, with a common structure for all responses that includes data, metadata, and errors.
+## 📑 Table of Contents
 
-**Validation Support:** @qnx/response integrates with popular validation libraries like Zod and express-validator, making it easy to handle validation errors in a consistent It automatically returns error responses if validation fails.
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Basic Example](#basic-example)
+  - [Standard Response Format](#standard-response-format)
+  - [Error Handling](#error-handling)
+  - [Zod Integration](#zod-integration)
+- [API Reference](#api-reference)
+  - [ApiResponse Methods](#apiresponse-methods)
+  - [ApiResponseErrorsValue Methods](#apiresponseerrorsvalue-methods)
+- [Contributing](#contributing)
+- [License](#license)
 
-**No try-catch blocks:** @qnx/response eliminates the need for manual try-catch blocks by automatically handling errors and exceptions. This reduces boilerplate code, enhancing code readability and cleanliness.
+---
 
-**Error handling:** @qnx/response makes it easy to handle errors in a consistent way, with built-in support for common error types like 400 (Bad Request) and 500 (Internal Server Error).
+## 🚀 Features
 
-**Type Strong:** @qnx/response offers full TypeScript typings support, enhancing developer experience and leveraging the benefits of static typing.
+| Feature                 | Description                                                      |
+| ----------------------- | ---------------------------------------------------------------- |
+| 📦 Standard Format      | Unified response structure across APIs                           |
+| ✅ Validation Support   | Works with Zod and express-validator to handle validation errors |
+| 🚫 No Try-Catch Needed  | Automatically handles async errors                               |
+| ⚠️ Custom Error Support | Create and throw validation errors easily                        |
+| 🧠 TypeScript-First     | Fully typed API with excellent IntelliSense support              |
+| ⚙️ Configurable         | Flexible enough to adjust error structures and codes             |
 
-**Customization:** @qnx/response is highly customizable with options for configuring response formats, error handling, and more.
-
-In summary, @qnx/response streamlines HTTP response handling in Express.js applications, minimizing boilerplate code for error handling and validation while enhancing overall maintainability.
-
-## Installation
+## 📦 Installation
 
 Install @qnx/response via [npm](https://www.npmjs.com/), [yarn](https://yarnpkg.com/), [pnpm](https://pnpm.io/), or [bun](https://bun.sh/):
 
@@ -46,30 +64,30 @@ bun install @qnx/response
 npm install @qnx/errors
 ```
 
-## Usage
+## 💡Usage
 
 #### Basic Example
 
-```javascript
+```ts
 import { asyncValidatorHandler } from '@qnx/response'
 
-express.get(
+app.get(
   '/',
-  asyncValidatorHandler(async (req, res, next) => {
-    return await Model.findAll()
+  asyncValidatorHandler(async (req, res) => {
+    return await UserModel.findAll()
   })
 )
 ```
 
-Without @qnx/response
+### Without `@qnx/response`
 
-```javascript
-express.get('/', async (req, res, next) => {
+```ts
+app.get('/', async (req, res) => {
   try {
-    const data = await Model.findAll()
-    res.send({ data })
-  } catch (error) {
-    // handle error response
+    const users = await UserModel.findAll()
+    res.send({ data: users })
+  } catch (err) {
+    res.status(500).send({ error: 'Internal Server Error' })
   }
 })
 ```
@@ -255,123 +273,107 @@ express.post(
 */
 ```
 
-### ApiResponse Methods
+---
 
-#### Static Method
+## 📘 API Reference
 
-**getInstance():**
-Retrieves a new instance of ApiResponse.
+This guide helps you understand how to build structured API responses using `ApiResponse` and manage field-level errors using `ApiResponseErrorsValue`.
 
-```javascript
+---
+
+### Getting the Instance
+
+```ts
 ApiResponse.getInstance()
 ```
 
-#### Helper Methods
+Returns a new instance of the response object that you can build on.
 
-**setData(data: any):**
-Sets the response data to the specified value.
+---
 
-```javascript
-ApiResponse.getInstance().setData({ user: { name: 'John' } })
+### ApiResponse – Building Your Response
+
+#### ✅ Success & Data
+
+| Method                | Description                              | Example                                    |
+| --------------------- | ---------------------------------------- | ------------------------------------------ |
+| `setData(data)`       | Sets the main data for success responses | `.setData({ user: { name: 'John' } })`     |
+| `setMessage(message)` | Sets a human-readable message            | `.setMessage('User fetched successfully')` |
+
+#### ⚠️ Error Management
+
+| Method               | Description                      | Example                                     |
+| -------------------- | -------------------------------- | ------------------------------------------- |
+| `setError(error)`    | Sets a general error message     | `.setError('Internal Server Error')`        |
+| `setErrorCode(code)` | Sets a custom error code string  | `.setErrorCode('E123')`                     |
+| `setErrors(errors)`  | Sets detailed field-level errors | `.setErrors({ email: ['Invalid format'] })` |
+
+#### 📦 Additional Meta
+
+| Method                  | Description                | Example                                  |
+| ----------------------- | -------------------------- | ---------------------------------------- |
+| `setStatusCode(status)` | Sets HTTP status code      | `.setStatusCode(400)`                    |
+| `setAdditional(data)`   | Adds any extra custom data | `.setAdditional({ traceId: 'xyz-001' })` |
+
+---
+
+### ApiResponseErrorsValue – Building Field-Level Errors
+
+Use this when you want to build `errors` in `{ field: [message1, message2] }` format.
+
+#### ✏️ Add / Set Errors
+
+| Method               | Description                            | Example                                |
+| -------------------- | -------------------------------------- | -------------------------------------- |
+| `addError(key, msg)` | Appends an error message to a field    | `.addError('email', 'Invalid format')` |
+| `setError(key, msg)` | Replaces existing error(s) for a field | `.setError('email', 'Required field')` |
+
+#### Get Structured Errors
+
+| Method               | Returns                        | Example               |
+| -------------------- | ------------------------------ | --------------------- |
+| `getErrors()`        | `{ field: [messages] }`        | `.getErrors()`        |
+| `getErrorResponse()` | `{ errors: { field: [...] } }` | `.getErrorResponse()` |
+
+---
+
+### Example: Full Error Response
+
+```ts
+const errors = ApiResponseErrorsValue.getInstance()
+  .addError('email', 'Invalid format')
+  .addError('password', 'Must be at least 8 characters')
+  .getErrors()
+
+const response = ApiResponse.getInstance()
+  .setErrors(errors)
+  .setStatusCode(400)
+  .setError('Validation failed')
+
+console.log(response)
 ```
 
-**setErrorCode(errorCode: string):**
-Sets a specific error code for the response.
+📤 **Output:**
 
-```javascript
-ApiResponse.getInstance().setErrorCode('E123')
-```
-
-**setError(error: string):**
-Sets a general error message for the response.
-
-```javascript
-ApiResponse.getInstance().setError('Internal Server Error')
-```
-
-**setErrors(errors: ApiResponseErrors):**
-Sets multiple errors for the response using an ApiResponseErrors object.
-
-```javascript
-const customErrors = { field1: ['Error 1'], field2: ['Error 2'] }
-ApiResponse.getInstance().setErrors(customErrors)
-```
-
-**setMessage(message: string):**
-Sets a custom message for the response.
-
-```javascript
-ApiResponse.getInstance().setMessage('Operation successful')
-```
-
-**setStatusCode(statusCode: number):**
-Sets the HTTP status code for the response.
-
-```javascript
-ApiResponse.getInstance().setStatusCode(200)
-```
-
-**setAdditional(data: { [key: string]: unknown }):**
-Sets additional custom data for the response.
-
-```javascript
-ApiResponse.getInstance().setAdditional({ key1: 'value1', key2: 'value2' })
-```
-
-### ApiResponseErrorsValue Methods
-
-**setError(errorKey: string, errorMessage: string):**
-Set a single error message for a specific type of error.
-
-```javascript
-ApiResponseErrorsValue.getInstance().setError('email', 'Invalid email format')
-```
-
-**addError(errorKey: string, errorMessage: string):**
-Add a new error message to the existing errors collection.
-
-```javascript
-ApiResponseErrorsValue.getInstance().addError('password', 'Password must be at least 8 characters')
-```
-
-**getErrorResponse():**
-Retrieve all collected errors as a response object.
-
-```javascript
-const errorResponse = ApiResponseErrorsValue.getInstance().addError('foo', 'bar').getErrorResponse()
-console.log(errorResponse)
-
-/*
+```json
 {
-  errors: {
-    foo: ['bar'],
+  "error": "Validation failed",
+  "errors": {
+    "email": ["Invalid format"],
+    "password": ["Must be at least 8 characters"]
   },
+  "statusCode": 400
 }
-*/
 ```
 
-**getErrors():**
-Returns the collection of errors stored within the `ApiResponseErrorsValue` instance.
+---
 
-```javascript
-const errors = ApiResponseErrorsValue.getInstance().addError('foo', 'bar').getErrors()
-console.log(errors)
-
-/*
-{
-  foo: ['bar'],
-}
-*/
-```
-
-These methods offer flexibility in tailoring responses to specific requirements. Utilize them in combination to construct responses that align with your application's needs.
-
-## Contributing
+## 🤝 Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
 to discuss what you would like to change.
 Please make sure to update tests as appropriate.
 
-## License
+## 📄 License
 
 [MIT License](https://github.com/yatendra121/qnx/blob/main/LICENSE.md) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)
