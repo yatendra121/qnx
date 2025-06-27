@@ -19,7 +19,7 @@ import { setErrorCodes } from '@qnx/errors'
 import { logger } from '@qnx/winston'
 import express, { urlencoded } from 'express'
 import type { Express } from 'express'
-import z from 'zod'
+import z from 'zod/v4'
 import * as path from 'path'
 import { json } from 'body-parser'
 import { InvalidValueError } from '@qnx/errors'
@@ -142,10 +142,12 @@ app.post(
     asyncValidatorHandler(async (req) => {
         const UserSchema = z.object({
             addresses: z.array(z.string()),
-            posts: z.object({
-                title: z.string(),
-                tagUsers: z.array(z.string())
-            })
+            posts: z.array(
+                z.object({
+                    title: z.string(),
+                    tagUsers: z.array(z.string())
+                })
+            )
         })
 
         const userData = UserSchema.parse(req.body)

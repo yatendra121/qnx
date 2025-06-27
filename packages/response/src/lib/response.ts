@@ -2,7 +2,7 @@ import { errorCodes } from '@qnx/errors'
 import { ValidationError, UnauthenticatedUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
 import { invalidApiResponse } from './errorResponse'
-import { ZodError } from 'zod'
+import { ZodError } from 'zod/v4'
 import type { Response as ExResponse } from 'express'
 
 type CallbackObj = { logger?: { serverError: (error: Error) => void | undefined } }
@@ -90,6 +90,7 @@ const collectErrorsFromZodError = (error: ZodError) => {
                 errors[path] = []
             }
 
+            // In zod4 error will be come in 'error' key
             errors[path].push(item.message)
             return errors
         },

@@ -1,7 +1,6 @@
 import request from 'supertest'
 import app from '../../src/main'
 import { setErrorCodes } from '../../src/main'
-import { z } from 'zod'
 
 describe('Response Integration Testing', function () {
     it('Success Object', async function () {
@@ -109,8 +108,11 @@ describe('Response Integration Testing', function () {
             .set('Accept', 'application/json')
         expect(response.status).toEqual(400)
 
-        expect('Required').toEqual(response.body.error)
-        expect({ errors: { email: ['Required'] }, error: 'Required' }).toEqual(response.body)
+        expect('Invalid input: expected string, received undefined').toEqual(response.body.error)
+        expect({
+            errors: { email: ['Invalid input: expected string, received undefined'] },
+            error: 'Invalid input: expected string, received undefined'
+        }).toEqual(response.body)
     })
 
     it('ValidationErrorResponse With a field', async function () {
@@ -120,8 +122,11 @@ describe('Response Integration Testing', function () {
             .set('Accept', 'application/json')
         expect(response.status).toEqual(400)
 
-        expect('Required').toEqual(response.body.error)
-        expect({ errors: { email: ['Required'] }, error: 'Required' }).toEqual(response.body)
+        expect('Invalid input: expected string, received undefined').toEqual(response.body.error)
+        expect({
+            errors: { email: ['Invalid input: expected string, received undefined'] },
+            error: 'Invalid input: expected string, received undefined'
+        }).toEqual(response.body)
     })
 
     it('ValidationErrorResponse With All fields', async function () {
@@ -144,14 +149,13 @@ describe('Response Integration Testing', function () {
             .send({})
             .set('Accept', 'application/json')
         expect(response.status).toEqual(400)
-        
 
         expect({
             errors: {
-                addresses: ['Required'],
-                posts: ['Required']
+                addresses: ['Invalid input: expected array, received undefined'],
+                posts: ['Invalid input: expected array, received undefined']
             },
-            error: 'Required'
+            error: 'Invalid input: expected array, received undefined'
         }).toEqual(response.body)
     })
     it('ValidationErrorResponse with values using Zod for Array', async function () {
@@ -159,20 +163,22 @@ describe('Response Integration Testing', function () {
             .post('/zod-validation-error/array')
             .send({
                 addresses: ['foo', 5],
-                posts: {
-                    title: 'foo',
-                    tagUsers: ['foo', 'bar', 1]
-                }
+                posts: [
+                    {
+                        title: 'foo',
+                        tagUsers: ['foo', 'bar', 1]
+                    }
+                ]
             })
             .set('Accept', 'application/json')
         expect(response.status).toEqual(400)
 
         expect({
             errors: {
-                'addresses.1': ['Expected string, received number'],
-                'posts.tagUsers.2': ['Expected string, received number']
+                'addresses.1': ['Invalid input: expected string, received number'],
+                'posts.0.tagUsers.2': ['Invalid input: expected string, received number']
             },
-            error: 'Expected string, received number'
+            error: 'Invalid input: expected string, received number'
         }).toEqual(response.body)
     })
 
@@ -243,10 +249,13 @@ describe('Response Integration Testing With Change Codes', function () {
             .post('/zod-validation-error')
             .send({ name: 'test' })
             .set('Accept', 'application/json')
-        expect(response.status).toEqual(200)
 
-        expect('Required').toEqual(response.body.error)
-        expect({ errors: { email: ['Required'] }, error: 'Required' }).toEqual(response.body)
+        expect(response.status).toEqual(200)
+        expect('Invalid input: expected string, received undefined').toEqual(response.body.error)
+        expect({
+            errors: { email: ['Invalid input: expected string, received undefined'] },
+            error: 'Invalid input: expected string, received undefined'
+        }).toEqual(response.body)
     })
 
     it('InvalidValueValidationErrorResponse', async function () {
@@ -286,7 +295,7 @@ describe('Response Integration Testing With Change Codes', function () {
         expect('Unauthenticated').toEqual(response.body.message)
     })
 
-    it('generateErrorLog', async function () {                
+    it('generateErrorLog', async function () {
         const response = await request(app).get('/generate-log').set('Accept', 'application/json')
         expect(response.status).toEqual(200)
 
