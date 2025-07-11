@@ -1,7 +1,3 @@
-# Project Title
-
-A brief description of what this project does and who it's for
-
 # @qnx/response
 
 @qnx/response is a library designed to simplify handling HTTP responses within Express.js applications. It offers standardized formatting and transmission of responses, including built-in support for error management and validation.
@@ -10,20 +6,21 @@ A brief description of what this project does and who it's for
 
 ## 📑 Table of Contents
 
-- [Features](#features)
-- [Installation](#installation)
+- [Features](#-features)
+- [Installation](#-installation)
 - [Usage](#usage)
   - [Basic Example](#basic-example)
-  - [Standard Response Format](#standard-response-format)
-  - [Error Handling](#error-handling)
-  - [Zod Integration](#zod-integration)
-- [API Reference](#api-reference)
-  - [ApiResponse Methods](#apiresponse-methods)
-  - [ApiResponseErrorsValue Methods](#apiresponseerrorsvalue-methods)
-- [Contributing](#contributing)
-- [License](#license)
-
----
+  - [Response Structure](#response-structure)
+  - [Handling errors](#handling-errors)
+  - [Alternative Error Handling Methods](#alternative-error-handling-methods)
+  - [Zod Built-in](#zod-built-in)
+- [API Reference](#-api-reference)
+  - [Getting the Instance](#getting-the-instance)
+  - [ApiResponse – Building Your Response](#apiresponse--building-your-response)
+  - [ApiResponseErrorsValue – Building Field-Level Errors](#apiresponseerrorsvalue--building-field-level-errors)
+  - [Example: Full Error Response](#example-full-error-response)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## 🚀 Features
 
@@ -273,13 +270,9 @@ express.post(
 */
 ```
 
----
-
 ## 📘 API Reference
 
 This guide helps you understand how to build structured API responses using `ApiResponse` and manage field-level errors using `ApiResponseErrorsValue`.
-
----
 
 ### Getting the Instance
 
@@ -288,8 +281,6 @@ ApiResponse.getInstance()
 ```
 
 Returns a new instance of the response object that you can build on.
-
----
 
 ### ApiResponse – Building Your Response
 
@@ -315,8 +306,6 @@ Returns a new instance of the response object that you can build on.
 | `setStatusCode(status)` | Sets HTTP status code      | `.setStatusCode(400)`                    |
 | `setAdditional(data)`   | Adds any extra custom data | `.setAdditional({ traceId: 'xyz-001' })` |
 
----
-
 ### ApiResponseErrorsValue – Building Field-Level Errors
 
 Use this when you want to build `errors` in `{ field: [message1, message2] }` format.
@@ -334,8 +323,6 @@ Use this when you want to build `errors` in `{ field: [message1, message2] }` fo
 | -------------------- | ------------------------------ | --------------------- |
 | `getErrors()`        | `{ field: [messages] }`        | `.getErrors()`        |
 | `getErrorResponse()` | `{ errors: { field: [...] } }` | `.getErrorResponse()` |
-
----
 
 ### Example: Full Error Response
 
