@@ -10,8 +10,6 @@
 - Consistent structure for error responses
 - Easy integration with APIs and validation logic
 
----
-
 ## 📦 Installation
 
 You can install via your preferred package manager:
@@ -26,8 +24,6 @@ yarn add @qnx/errors
 # pnpm
 pnpm install @qnx/errors
 ```
-
----
 
 ## 🚀 Usage
 
@@ -62,8 +58,6 @@ console.log(apiError.getCode()) // 500
 console.log(apiError.getErrorResponse()) // { message: "...", errors: ... }
 ```
 
----
-
 ### `ValidationError`
 
 ```ts
@@ -81,8 +75,6 @@ console.log(validationError.getCode()) // errorCodes.VALIDATION_ERROR_CODE
 console.log(validationError.getErrorResponse()) // Detailed error response
 ```
 
----
-
 ### `InvalidValueError`
 
 ```ts
@@ -94,8 +86,6 @@ console.log(error.getCode()) // errorCodes.VALIDATION_ERROR_CODE
 console.log(error.getErrorResponse()) // { errors: { username: ['Username cannot contain spaces'] } }
 ```
 
----
-
 ### `UnauthenticatedUserError`
 
 ```ts
@@ -104,8 +94,6 @@ const authError = new UnauthenticatedUserError('User not authenticated')
 console.log(authError.getCode()) // errorCodes.UNAUTHENTICATED_USER_ERROR_CODE
 console.log(authError.message) // "User not authenticated"
 ```
-
----
 
 ### `ServerError`
 
@@ -116,8 +104,6 @@ console.log(serverError.getCode()) // errorCodes.SERVER_ERROR_CODE
 console.log(serverError.message) // "Internal server error"
 ```
 
----
-
 ## 📊 Summary Table
 
 | Error Class                | Purpose                     | Default Code | Use When...                                 |
@@ -127,6 +113,8 @@ console.log(serverError.message) // "Internal server error"
 | `InvalidValueError`        | Single field validation     | 422          | One field like "email" or "username` is bad |
 | `UnauthenticatedUserError` | Auth failure                | 401          | User not logged in or token missing         |
 | `ServerError`              | Internal system failure     | 500          | Something broke that user can’t fix         |
+
+---
 
 ## 🤝 Contributing
 
