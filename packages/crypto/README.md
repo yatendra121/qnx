@@ -1,129 +1,142 @@
-# @qnx/crypto
+# `@qnx/crypto`
 
 `@qnx/crypto` provides utility functions to generate and decrypt JSON Web Signatures (JWS) and JSON Web Encryption (JWE) using the [jose](https://www.npmjs.com/package/jose) cryptography library for secure data transmission.
 
-## Installation
+## ✨ Features
 
-Use the package manager [npm](https://www.npmjs.com/) to install @qnx/crypto.
+- 🔐 JWT signing and verification
+- 🔒 JWE encryption and decryption
+- 🔁 Auth token generator/decryptor
+- 📦 Built on the [JOSE](https://github.com/panva/jose) standard
+
+## 📦 Installation
+
+Install via your preferred package manager:
 
 ```bash
+# npm
 npm install @qnx/crypto
-```
 
-You can also use [yarn](https://yarnpkg.com/) & [pnpm](https://pnpm.io/)
-
-```bash
+# yarn
 yarn add @qnx/crypto
-```
 
-```bash
+# pnpm
 pnpm install @qnx/crypto
 ```
 
-#### Peer-Dependencies
+### 🔗 Peer Dependency
 
-@qnx/crypto is using [JOSE](https://github.com/panva/jose).
+Install `jose` (required):
 
 ```bash
 npm install jose
 ```
 
-## Usage
+## 🚀 Usage
 
-### Core functions
+### 🔧 Core Functions
 
-- jwtSign
-- jwtVerify
-- jweEncrypt
-- jweDecrypt
+| Function     | Purpose                  |
+| ------------ | ------------------------ |
+| `jwtSign`    | Sign a JWT payload       |
+| `jwtVerify`  | Verify a JWT token       |
+| `jweEncrypt` | Encrypt a payload to JWE |
+| `jweDecrypt` | Decrypt a JWE token      |
 
-**jwtSign:** Signs and returns the JWT.
+### ✅ `jwtSign`
 
-```javascript
+Signs and returns a JWT using a symmetric secret.
+
+```ts
 import { jwtSign, toSymmetricSecret } from '@qnx/crypto'
 
-const dataVal = {
-  foo: 'bar'
-}
-const jwt = await jwtSign({ data: dataVal }, toSymmetricSecret('SECRET_STRING'), {
-  alg: 'HS256'
-})
+const data = { foo: 'bar' }
+const secret = toSymmetricSecret('SECRET_STRING')
+
+const jwt = await jwtSign({ data }, secret, { alg: 'HS256' })
 ```
 
-**jwtVerify:** Verifies the JWT format, signature, and claims set.
+### ✅ `jwtVerify`
 
-```javascript
+Verifies the JWT format, signature, and claims set.
+
+```ts
 import { jwtVerify, toSymmetricSecret } from '@qnx/crypto'
 
-const { payload } = await jwtVerify(jwt, toSymmetricSecret('SECRET_STRING'))
+const secret = toSymmetricSecret('SECRET_STRING')
+const { payload } = await jwtVerify(jwt, secret)
 ```
 
-**jweEncrypt:** Encrypts a value of the JWE string.
+### 🔐 `jweEncrypt`
 
-```javascript
+Encrypts a string using JWE.
+
+```ts
 import { jweEncrypt, toPKCS8Secret } from '@qnx/crypto'
 
-const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWE'], 'ECDH-ES+A128KW')
-const dataVal = 'this is message.'
-const jwe = await jweEncrypt(dataVal, secret)
+const secret = await toPKCS8Secret(process.env.ENCRYPTION_SECRET_JWE, 'ECDH-ES+A128KW')
+const jwe = await jweEncrypt('this is message.', secret)
 ```
 
-**jweDecrypt:** Decrypts a JWE.
+### 🔓 `jweDecrypt`
 
-```javascript
+Decrypts a previously encrypted JWE string.
+
+```ts
 import { jweDecrypt, toPKCS8Secret } from '@qnx/crypto'
 
-const secret = await toPKCS8Secret(process.env['ENCRYPTION_SECRET_JWE'], 'ECDH-ES+A128KW')
-const jwe = 'JWE_TOKEN'
+const secret = await toPKCS8Secret(process.env.ENCRYPTION_SECRET_JWE, 'ECDH-ES+A128KW')
 const { plaintext } = await jweDecrypt(jwe, secret)
 ```
 
-### JWE Authentication Token
+## 🔐 Auth Token Management
 
-#### Setup
+### 🔧 Environment Setup
 
-Ensure you have the necessary environment variables set:
+Ensure these environment variables are set:
 
 ```bash
-ENCRYPTION_SECRET_JWT: The secret key used for JWT signing
-ENCRYPTION_SECRET_JWE: The secret key used for JWT encryption
+ENCRYPTION_SECRET_JWT=your_jwt_secret
+ENCRYPTION_SECRET_JWE=your_jwe_secret
 ```
 
-### Generate Auth Token
+### 🛠️ `generateAuthToken`
 
-**generateAuthToken:** Creates a JWE for authentication purposes.
+Creates a signed and encrypted auth token.
 
-```javascript
+```ts
 import { generateAuthToken } from '@qnx/crypto'
 
 const subject = 'userId'
-const { token, dbToken } = await generateToken(subject)
-// token: The encrypted JWT token
-// dbToken: The unique identifier associated with the token
+const { token, dbToken } = await generateAuthToken(subject)
+
+// token: Encrypted token for client
+// dbToken: Unique identifier for storage
 ```
 
-### Decrypt Auth Token
+### 🥪 `decryptAuthToken`
 
-**decryptToken:** Decrypts a JWE token and verifies its authenticity.
+Decrypts and verifies the encrypted auth token.
 
-```javascript
+```ts
 import { decryptAuthToken } from '@qnx/crypto'
 
-const encryptedToken = '...' // Replace with the encrypted token
+const encryptedToken = '...' // Your token here
+
 try {
-  const decryptedPayload = await decryptToken(encryptedToken)
-  // decryptedPayload: The decoded payload from the token
+  const decryptedPayload = await decryptAuthToken(encryptedToken)
+  // Use the decrypted payload
 } catch (error) {
-  // Handle decryption errors
   console.error('Token decryption failed:', error)
 }
 ```
 
-## Contributing
+## 🤝 Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-Please make sure to update tests as appropriate.
+Pull requests are welcome!
+For major changes, please open an issue first to discuss what you’d like to change.
+Make sure to update or add tests where appropriate.
 
-## License
+## 📄 License
 
 [MIT License](https://github.com/yatendra121/qnx/blob/main/LICENSE.md) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)
