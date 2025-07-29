@@ -2,8 +2,6 @@
 
 `@qnx/errors` provides a set of custom error classes to help you simplify and standardize error handling in your JavaScript/TypeScript applications.
 
----
-
 ## ✨ Features
 
 - Predefined error classes for common scenarios
@@ -113,8 +111,6 @@ console.log(serverError.message) // "Internal server error"
 | `InvalidValueError`        | Single field validation     | 422          | One field like "email" or "username` is bad |
 | `UnauthenticatedUserError` | Auth failure                | 401          | User not logged in or token missing         |
 | `ServerError`              | Internal system failure     | 500          | Something broke that user can’t fix         |
-
----
 
 ## 🤝 Contributing
 
