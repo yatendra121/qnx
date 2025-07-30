@@ -1,28 +1,34 @@
-# @qnx/client
+# `@qnx/client`
 
-@qnx/client is providing components to simplify your codes.
+`@qnx/client` provides utility classes and types to help standardize and simplify handling of API responses on the client side. It supports typed access to data, messages, and errors from server responses.
 
-## Installation
+## ✨ Features
 
-Use the package manager [npm](https://www.npmjs.com/) to install @qnx/client.
+- Typed wrappers for API responses
+- Easy parsing of both success and error responses
+- Works well with any REST API response structure
+- Improves code readability and error handling consistency
+
+## 📦 Installation
+
+You can install via your preferred package manager:
 
 ```bash
+# npm
 npm install @qnx/client
-```
 
-You can also use [yarn](https://yarnpkg.com/) & [pnpm](https://pnpm.io/)
-
-```bash
+# yarn
 yarn add @qnx/client
-```
 
-```bash
+# pnpm
 pnpm install @qnx/client
 ```
 
-## Usage
+## 🚀 Usage
 
-```javascript
+### General API Response
+
+```ts
 import { ApiResponse } from '@qnx/client'
 
 const res = {
@@ -49,7 +55,9 @@ const error = apiRes.getError()
 const errorCode = apiRes.getErrorCode()
 ```
 
-```javascript
+### Success Response
+
+```ts
 import { ApiSuccessResponse } from '@qnx/client'
 
 const res = {
@@ -63,7 +71,9 @@ const data = apiRes.getData()
 const message = apiRes.getMessage()
 ```
 
-```javascript
+### Error Response
+
+```ts
 import { ApiErrorResponse } from '@qnx/client'
 
 const res = {
@@ -82,8 +92,11 @@ const error = apiRes.getError()
 const errorCode = apiRes.getErrorCode()
 ```
 
-```javascript
-// ApiResponseValue
+### Types
+
+#### ApiResponseValue
+
+```ts
 import type { ApiResponseValue } from '@qnx/client'
 
 const response: ApiResponseValue<number> = {
@@ -102,8 +115,9 @@ const response: ApiResponseValue<number> = {
 }
 ```
 
-```javascript
-// ApiResponseValue
+#### ApiSuccessResponseValue
+
+```ts
 import type { ApiSuccessResponseValue } from '@qnx/client'
 
 const successResponse: ApiSuccessResponseValue<number> = {
@@ -112,8 +126,9 @@ const successResponse: ApiSuccessResponseValue<number> = {
 }
 ```
 
-```javascript
-// ApiErrorResponseValue
+#### ApiErrorResponseValue
+
+```ts
 import type { ApiErrorResponseValue } from '@qnx/client'
 
 const errorResponse: ApiErrorResponseValue = {
@@ -126,13 +141,12 @@ const errorResponse: ApiErrorResponseValue = {
 }
 ```
 
-## Contributing
+## 🤝 Contributing
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
+Pull requests are welcome!  
+For major changes, please open an issue first to discuss your proposed updates.  
+Ensure tests are updated for any feature changes.
 
-Please make sure to update tests as appropriate.
+## 📄 License
 
-## License
-
-[MIT License](https://github.com/yatendra121/client/blob/main/LICENSE.md) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)
+[MIT License](https://github.com/yatendra121/client/blob/main/LICENSE.md) © 2023–PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)
