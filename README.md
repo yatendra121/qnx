@@ -22,7 +22,7 @@ Welcome to the @qnx monorepository! This collection of libraries is designed to 
 
 ### @qnx/winston
 
-[@qnx/wiston](https://github.com/yatendra121/qnx/blob/main/packages/wiston/README.md) is a pre-configured library designed to generate logs for server errors using @qnx/response. Additionally, it offers flexibility for custom logging purposes.
+[@qnx/winston](https://github.com/yatendra121/qnx/blob/main/packages/winston/README.md) is a pre-configured library designed to generate logs for server errors using @qnx/response. Additionally, it offers flexibility for custom logging purposes.
 
 ### @qnx/log
 
