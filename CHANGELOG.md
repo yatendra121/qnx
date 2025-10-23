@@ -1,3 +1,9 @@
+## 0.7.12 (2025-10-23)
+
+### 🩹 Fixes
+
+- fix publish issue ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.7.11 (2025-10-23)
 
 ### 🩹 Fixes
