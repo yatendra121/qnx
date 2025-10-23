@@ -44,11 +44,7 @@
   },
   "peerDependencies": {
     "express": "4.x || 5.x",
-<<<<<<< HEAD
-    "@qnx/errors": "0.7.11"
-=======
-    "@qnx/errors": "0.7.10",
+    "@qnx/errors": "0.7.11",
     "zod": "4.x"
->>>>>>> 2175614fbc5fa35d1e8341e9e1d9d077763222c9
   }
 }
