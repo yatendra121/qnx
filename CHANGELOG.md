@@ -1,3 +1,9 @@
+## 0.7.11 (2025-10-23)
+
+### 🩹 Fixes
+
+- update deps ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.7.10 (2025-07-11)
 
 ### 🩹 Fixes
