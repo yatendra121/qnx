@@ -2,8 +2,6 @@
 
 @qnx/response is a library designed to simplify handling HTTP responses within Express.js applications. It offers standardized formatting and transmission of responses, including built-in support for error management and validation.
 
----
-
 ## 📑 Table of Contents
 
 - [Features](#-features)
@@ -352,8 +350,6 @@ console.log(response)
   "statusCode": 400
 }
 ```
-
----
 
 ## 🤝 Contributing
 
