@@ -43,7 +43,7 @@
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/packages/client"],
       "options": {
         "config": "packages/client/vite.config.ts",

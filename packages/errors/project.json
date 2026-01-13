@@ -37,7 +37,7 @@
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/packages/errors"],
       "options": {
         "config": "packages/errors/vite.config.ts",

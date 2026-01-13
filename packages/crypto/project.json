@@ -43,7 +43,7 @@
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/packages/crypto"],
       "options": {
         "config": "packages/crypto/vite.config.ts",

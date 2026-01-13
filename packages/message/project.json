@@ -32,7 +32,7 @@
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/packages/message"],
       "options": {
         "config": "packages/message/vite.config.ts",
