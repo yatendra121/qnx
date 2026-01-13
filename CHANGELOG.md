@@ -1,3 +1,9 @@
+## 0.7.13 (2026-01-13)
+
+### 🩹 Fixes
+
+- release 0.7.14 ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.7.12 (2025-10-23)
 
 ### 🩹 Fixes
