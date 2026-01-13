@@ -2,9 +2,6 @@
 
 import { resolve, join } from 'path'
 import { defineConfig } from 'vite'
-import viteTsConfigPaths from 'vite-tsconfig-paths'
-import dts from 'vite-plugin-dts'
-import { joinPathFragments } from '@nx/devkit'
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 
 export function collectViteConfig(packageJson: any, dirName: string, option = {}) {
@@ -31,16 +28,7 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
         // root: __dirname,  #do wants uncomment, verify tests cases
         cacheDir: `../../node_modules/.vite/${getPackageName()}`,
         base: './',
-        plugins: [
-            // viteTsConfigPaths({
-            //     root: '../../' //this path is using from packages/LIB_NAME/vite.config.ts
-            // })
-            nxViteTsPaths()
-            // dts({
-            //     rollupTypes: true
-            // })
-            // dts()
-        ],
+        plugins: [nxViteTsPaths()],
         build: {
             lib: {
                 entry: resolve(dirName, 'src/index.ts'),
@@ -50,14 +38,6 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
             },
             rollupOptions
         },
-        // test: {
-        //     globals: true,
-        //     // cache: {
-        //     //     dir: '../../node_modules/.vitest'
-        //     // },
-        //     environment: 'jsdom',
-        //     include: [`src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}`]
-        // },
         test: {
             globals: true,
             // cache: {
@@ -72,15 +52,5 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
                 provider: 'v8'
             }
         }
-        // resolve: {
-        //     alias: {
-        //         '@qnx/core-helpers': resolve(__dirname, 'packages/core-helpers/src/index.ts'),
-        //         '@qnx/errors': resolve(__dirname, 'packages/errors/src/index.ts'),
-        //         '@qnx/interfaces': resolve(__dirname, 'packages/interfaces/src/index.ts'),
-        //         '@qnx/response': resolve(__dirname, 'packages/response/src/index.ts'),
-        //         '@qnx/crypto': resolve(__dirname, 'packages/crypto/src/index.ts'),
-        //         '@qnx/message': resolve(__dirname, 'packages/message/src/index.ts')
-        //     }
-        // }
     })
 }
