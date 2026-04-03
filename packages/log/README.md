@@ -20,12 +20,12 @@ yarn add -D @qnx/log
 pnpm install -D @qnx/log
 ```
 
-#### Peer-Dependencies
+#### Peer Dependencies
 
-@qnx/response is using error instances of @qnx/errors.
+`@qnx/log` requires `chalk` as a peer dependency:
 
 ```bash
-npm install -D chalk
+npm install chalk
 ```
 
 ## Usage

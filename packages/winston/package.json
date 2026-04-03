@@ -36,13 +36,13 @@
     "dev": "vite --host",
     "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
     "test": "vitest",
-    "test:coverage": "jest --runInBand --coverage",
+    "test:coverage": "vitest --coverage",
     "lint:scripts": "eslint . --ext .ts",
     "format:scripts": "prettier . --write",
     "format": "npm run format:scripts"
   },
   "peerDependencies": {
-    "winston": "*",
-    "winston-daily-rotate-file": "*"
+    "winston": "^3.0.0",
+    "winston-daily-rotate-file": "^5.0.0"
   }
 }

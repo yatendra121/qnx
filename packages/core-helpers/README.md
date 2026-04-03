@@ -1,6 +1,6 @@
 # @qnx/core-helpers
 
-The starter is built on top of Vite 3.x and prepared for writing libraries in TypeScript. It generates a hybrid package - both support for CommonJS and ESM modules.
+The starter is built on top of Vite 8.x and prepared for writing libraries in TypeScript. It generates a hybrid package - both support for CommonJS and ESM modules.
 
 ## Features
 
@@ -8,6 +8,5 @@ The starter is built on top of Vite 3.x and prepared for writing libraries in Ty
 - IIFE bundle for direct browser support without bundler
 - Typings bundle
 - ESLint - scripts linter
-- Stylelint - styles linter
 - Prettier - formatter
-- Jest - test framework
+- Vitest - test framework
