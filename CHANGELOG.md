@@ -1,3 +1,9 @@
+## 0.8.1 (2026-04-03)
+
+### 🩹 Fixes
+
+- chore: update version ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.8.0 (2026-04-03)
 
 ### 🚀 Features
