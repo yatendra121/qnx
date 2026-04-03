@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/client/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
@@ -63,6 +64,5 @@
         "cwd": "packages/client"
       }
     }
-  },
-  "tags": []
+  }
 }

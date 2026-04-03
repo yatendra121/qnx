@@ -8,7 +8,7 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
+      "inputs": ["default", "{workspaceRoot}/eslint.config.mjs"],
       "cache": true
     },
     "build": {
@@ -36,5 +36,6 @@
   "release": {
     "versionPlans": true
   },
-  "defaultBase": "main"
+  "defaultBase": "main",
+  "analytics": true
 }
