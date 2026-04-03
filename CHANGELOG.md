@@ -1,3 +1,9 @@
+## 0.8.0 (2026-04-03)
+
+### 🚀 Features
+
+- chore: update deps ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.7.13 (2026-01-13)
 
 ### 🩹 Fixes
