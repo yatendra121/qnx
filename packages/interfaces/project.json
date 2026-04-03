@@ -30,11 +30,12 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/packages/interfaces"],
       "options": {
-        "jestConfig": "packages/interfaces/jest.config.ts",
-        "passWithNoTests": true
+        "config": "packages/interfaces/vite.config.ts",
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/packages/interfaces"
       }
     }
   }

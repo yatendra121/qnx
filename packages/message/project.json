@@ -37,14 +37,6 @@
         "reportsDirectory": "../../coverage/packages/message"
       }
     },
-    "jest": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/packages/message"],
-      "options": {
-        "jestConfig": "packages/message/jest.config.ts",
-        "passWithNoTests": true
-      }
-    }
   },
   "tags": []
 }

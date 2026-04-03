@@ -35,14 +35,6 @@
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
-    "jest": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/packages/crypto"],
-      "options": {
-        "jestConfig": "packages/crypto/jest.config.ts",
-        "passWithNoTests": true
-      }
-    },
     "test": {
       "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/packages/crypto"],
