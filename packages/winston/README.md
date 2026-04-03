@@ -100,4 +100,4 @@ Please make sure to update tests as appropriate.
 
 ## 📄 License
 
-[MIT License](https://github.com/yatendra121/qnx/blob/main/LICENSE.md) © 2023–PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)
+[MIT License](https://github.com/yatendra121/qnx/blob/main/LICENSE.md) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)

@@ -149,4 +149,4 @@ Ensure tests are updated for any feature changes.
 
 ## 📄 License
 
-[MIT License](https://github.com/yatendra121/client/blob/main/LICENSE.md) © 2023–PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)
+[MIT License](https://github.com/yatendra121/qnx/blob/main/LICENSE.md) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)
