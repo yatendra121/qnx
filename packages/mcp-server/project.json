@@ -1,0 +1,34 @@
+{
+  "name": "@qnx/mcp-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mcp-server/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "pnpm run build"
+          }
+        ],
+        "cwd": "packages/mcp-server"
+      },
+      "outputs": ["{workspaceRoot}/packages/mcp-server/dist"]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/packages/mcp-server"],
+      "options": {
+        "config": "packages/mcp-server/vite.config.ts",
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/packages/mcp-server"
+      }
+    }
+  }
+}

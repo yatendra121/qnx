@@ -1,0 +1,51 @@
+{
+  "name": "@qnx/mcp-server",
+  "description": "MCP server for qnx ecosystem",
+  "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
+  "version": "0.8.2",
+  "license": "MIT",
+  "funding": "https://github.com/sponsors/yatendra121",
+  "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/mcp-server",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model context protocol"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yatendra121/qnx.git",
+    "directory": "packages/mcp-server"
+  },
+  "main": "./dist/mcp-server.cjs",
+  "module": "./dist/mcp-server.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/mcp-server.cjs",
+      "import": "./dist/mcp-server.mjs"
+    }
+  },
+  "scripts": {
+    "serve": "tsx src/main.ts",
+    "dev": "vite --host",
+    "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
+    "test": "vitest",
+    "lint:scripts": "eslint . --ext .ts",
+    "format:scripts": "prettier . --write",
+    "format": "npm run format:scripts",
+    "inspect": "npx @modelcontextprotocol/inspector"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0"
+  },
+  "peerDependencies": {
+    "@qnx/errors": "workspace:*",
+    "@qnx/winston": "workspace:*",
+    "express": "4.x || 5.x",
+    "zod": "4.x"
+  }
+}
