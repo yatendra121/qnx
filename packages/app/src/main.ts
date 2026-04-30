@@ -203,8 +203,7 @@ app.get(
     })
 )
 
-//const port = process.env.PORT || 3333
-const port = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000
+const port = process.env.PORT || 3333
 const server = app.listen(port, () => {
     console.log(`Listening at http://localhost:${port}/`)
 })
