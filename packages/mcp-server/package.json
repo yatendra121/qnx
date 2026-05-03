@@ -2,13 +2,10 @@
   "name": "@qnx/mcp-server",
   "description": "MCP server for qnx ecosystem",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
-  "version": "0.8.2",
+  "version": "0.0.4",
   "license": "MIT",
   "funding": "https://github.com/sponsors/yatendra121",
   "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/mcp-server",
-  "files": [
-    "dist"
-  ],
   "keywords": [
     "mcp",
     "mcp-server",
@@ -16,23 +13,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yatendra121/qnx.git",
+    "url": "git+https://github.com/yatendra121/qnx.git",
     "directory": "packages/mcp-server"
   },
-  "main": "./dist/mcp-server.cjs",
-  "module": "./dist/mcp-server.mjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/mcp-server.cjs",
-      "import": "./dist/mcp-server.mjs"
-    }
-  },
+  "type": "module",
   "scripts": {
-    "serve": "tsx src/main.ts",
+    "serve": "tsx watch --env-file=../../.env src/main.ts",
+    "serve:stdio": "tsx watch --env-file=../../.env src/stdio.ts",
     "dev": "vite --host",
-    "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
+    "build:stdio": "rm -rf stdio && vite build --config vite.config.stdio.ts && chmod +x stdio/stdio.js",
+    "build:http": "rm -rf http && vite build --config vite.config.http.ts && chmod +x http/main.js",
     "test": "vitest",
     "lint:scripts": "eslint . --ext .ts",
     "format:scripts": "prettier . --write",
@@ -40,12 +30,15 @@
     "inspect": "npx @modelcontextprotocol/inspector"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0"
-  },
-  "peerDependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@qnx/crypto": "workspace:*",
     "@qnx/errors": "workspace:*",
+    "@qnx/response": "workspace:*",
     "@qnx/winston": "workspace:*",
-    "express": "4.x || 5.x",
-    "zod": "4.x"
+    "express": "^5.0.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
   }
 }

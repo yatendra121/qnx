@@ -5,17 +5,29 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "build": {
+    "build:stdio": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           {
-            "command": "pnpm run build"
+            "command": "pnpm run build:stdio"
           }
         ],
         "cwd": "packages/mcp-server"
       },
-      "outputs": ["{workspaceRoot}/packages/mcp-server/dist"]
+      "outputs": ["{workspaceRoot}/packages/mcp-server/stdio"]
+    },
+    "build:http": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "pnpm run build:http"
+          }
+        ],
+        "cwd": "packages/mcp-server"
+      },
+      "outputs": ["{workspaceRoot}/packages/mcp-server/http"]
     },
     "lint": {
       "executor": "@nx/eslint:lint",
