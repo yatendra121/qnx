@@ -124,7 +124,7 @@ export const generateAuthToken = async (subject: string) => {
  *            See {@link https://github.com/panva/jose/issues/210#jwe-alg Algorithm Key Requirements}.
  * @returns A promise resolving to the payload of the decrypted and verified authentication token.
  */
-export const decyptAuthToken = async (jwe: string) => {
+export const decryptAuthToken = async (jwe: string) => {
     const [jwtKey, jweKey] = await Promise.all([
         KeyPair.getJwtPublicKey(),
         KeyPair.getJwePrivateKey()

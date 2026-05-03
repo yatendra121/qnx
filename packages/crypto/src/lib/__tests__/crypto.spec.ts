@@ -1,7 +1,7 @@
 import { describe, it } from 'vitest'
 import { jweEncrypt, jweDecrypt, jwtSign, jwtVerify } from '../crypto'
 import { toSymmetricSecret } from '../key'
-import { generateAuthToken, decyptAuthToken } from '../auth'
+import { generateAuthToken, decryptAuthToken } from '../auth'
 import { importPKCS8, importSPKI } from 'jose'
 
 describe('Crypto Integration Testing', function () {
@@ -20,7 +20,7 @@ describe('Crypto Integration Testing', function () {
 
         console.log({ data })
 
-        const values = await decyptAuthToken(data.token)
+        const values = await decryptAuthToken(data.token)
         console.log({ values })
 
         expect(tokenVal).toEqual(values.sub)
