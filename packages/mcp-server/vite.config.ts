@@ -5,6 +5,13 @@ import packageJson from './package.json'
 
 export { packageJson }
 
+export const qnxDependencies = {
+    '@qnx/crypto': 'latest',
+    '@qnx/errors': 'latest',
+    '@qnx/response': 'latest',
+    '@qnx/winston': 'latest'
+}
+
 export function generatePackageJson(content: Record<string, unknown>): Plugin {
     return {
         name: 'generate-package-json',
