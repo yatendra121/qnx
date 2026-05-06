@@ -134,7 +134,7 @@ export function registerResponsePatternTool(server: McpServer) {
     server.registerTool(
         'get-response-docs',
         {
-            description: 'Get a TypeScript code example for a @qnx/response usage pattern. Covers handler setup, success responses, validation errors, Zod validation, unauthenticated responses, and resource routes.',
+            description: 'Get documentation for @qnx/response — Express handler utilities that standardize HTTP response shapes. asyncValidatorHandler auto-catches @qnx/errors and ZodErrors; initializeApiResponse controls the success response body. Use this to understand the full response pattern.',
             inputSchema: {
                 pattern: z.enum(patterns).describe(
                     'async-handler | success | validation-error | invalid-value | throw-validation | zod-validation | unauthenticated | resource-route'
