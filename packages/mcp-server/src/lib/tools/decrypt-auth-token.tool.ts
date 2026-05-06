@@ -1,5 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { decyptAuthToken } from '@qnx/crypto'
+import { decryptAuthToken } from '@qnx/crypto'
 import { z } from 'zod'
 
 const REQUIRED_ENV_VARS = ['JWT_PUBLIC_KEY', 'JWE_PRIVATE_KEY']
@@ -24,7 +24,7 @@ export function registerDecryptAuthTokenTool(server: McpServer) {
             }
 
             try {
-                const payload = await decyptAuthToken(token)
+                const payload = await decryptAuthToken(token)
                 return { content: [{ type: 'text', text: JSON.stringify(payload) }] }
             } catch (error) {
                 return {
