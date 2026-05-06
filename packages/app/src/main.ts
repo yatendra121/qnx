@@ -23,7 +23,7 @@ import z from 'zod/v4'
 import * as path from 'path'
 import { json } from 'body-parser'
 import { InvalidValueError } from '@qnx/errors'
-import { decyptAuthToken, generateAuthToken } from '@qnx/crypto'
+import { decryptAuthToken, generateAuthToken } from '@qnx/crypto'
 
 const app = express()
 
@@ -198,7 +198,7 @@ app.get(
     '/generate-token-value',
     asyncValidatorHandler(async () => {
         const data = await generateAuthToken('This is token value!')
-        const val = await decyptAuthToken(data.token)
+        const val = await decryptAuthToken(data.token)
         return { data, val }
     })
 )

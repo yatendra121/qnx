@@ -1,6 +1,5 @@
 export { createMcpServer } from './server'
 export { createMcpHttpHandler } from './transport'
-export { registerExampleTool } from './tools'
 export { registerGenerateAuthTokenTool } from './tools'
 export { registerDecryptAuthTokenTool } from './tools'
 export { registerInspectJwtPayloadTool } from './tools'

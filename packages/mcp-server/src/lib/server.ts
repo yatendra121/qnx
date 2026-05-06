@@ -1,10 +1,19 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { registerExampleTool } from './tools/example.tool'
 // import { registerGenerateAuthTokenTool } from './tools/generate-auth-token.tool'
 // import { registerDecryptAuthTokenTool } from './tools/decrypt-auth-token.tool'
 // import { registerInspectJwtPayloadTool } from './tools/inspect-jwt-payload.tool'
 // import { registerValidateSchemaTool } from './tools/validate-schema.tool'
 import { registerFormatErrorTool } from './tools/format-error.tool'
+import { registerCreateErrorInstanceTool } from './tools/create-error-instance.tool'
+import { registerLoggerDocsTool } from './tools/logger-docs.tool'
+import { registerBuildLogEntryTool } from './tools/build-log-entry.tool'
+import { registerConsoleLogDocsTool } from './tools/console-log-docs.tool'
+import { registerBuildConsoleLogTool } from './tools/build-console-log.tool'
+import { registerClientDocsTool } from './tools/client-docs.tool'
+import { registerBuildClientResponseTool } from './tools/build-client-response.tool'
+import { registerCryptoDocsTool } from './tools/crypto-docs.tool'
+import { registerBuildCryptoSnippetTool } from './tools/build-crypto-snippet.tool'
+import { registerListMcpToolsTool } from './tools/list-mcp-tools.tool'
 // import { registerLogMessageTool } from './tools/log-message.tool'
 import { registerBuildApiResponseTool } from './tools/build-api-response.tool'
 import { registerResponsePatternTool } from './tools/response-pattern.tool'
@@ -13,16 +22,20 @@ export interface McpServerConfig {
     crypto?: boolean
     response?: boolean
     log?: boolean
+    winston?: boolean
     schema?: boolean
     errors?: boolean
+    client?: boolean
 }
 
 const defaultConfig: McpServerConfig = {
     crypto: true,
     response: true,
     log: true,
+    winston: true,
     schema: true,
-    errors: true
+    errors: true,
+    client: true
 }
 
 export function createMcpServer(config: McpServerConfig = defaultConfig) {
@@ -31,29 +44,36 @@ export function createMcpServer(config: McpServerConfig = defaultConfig) {
         version: '0.8.2'
     })
 
-    registerExampleTool(server)
+    if (config.response && config.errors) registerListMcpToolsTool(server)
 
-    // if (config.crypto) {
-    //     registerGenerateAuthTokenTool(server)
-    //     registerDecryptAuthTokenTool(server)
-    //     registerInspectJwtPayloadTool(server)
-    // }
+    if (config.crypto) {
+        registerCryptoDocsTool(server)
+        registerBuildCryptoSnippetTool(server)
+    }
 
     if (config.response) {
         registerBuildApiResponseTool(server)
         registerResponsePatternTool(server)
     }
 
-    // if (config.log) {
-    //     registerLogMessageTool(server)
-    // }
+    if (config.winston) {
+        registerLoggerDocsTool(server)
+        registerBuildLogEntryTool(server)
+    }
 
-    // if (config.schema) {
-    //     registerValidateSchemaTool(server)
-    // }
+    if (config.log) {
+        registerConsoleLogDocsTool(server)
+        registerBuildConsoleLogTool(server)
+    }
 
     if (config.errors) {
         registerFormatErrorTool(server)
+        registerCreateErrorInstanceTool(server)
+    }
+
+    if (config.client) {
+        registerClientDocsTool(server)
+        registerBuildClientResponseTool(server)
     }
 
     return server
