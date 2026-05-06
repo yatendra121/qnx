@@ -83,7 +83,7 @@ export function registerConsoleLogDocsTool(server: McpServer) {
     server.registerTool(
         'get-console-log-docs',
         {
-            description: 'Get documentation for @qnx/log — a colorized console logger using Chalk with four message types: info, error, success, warning. Pass "all" for the full reference.',
+            description: 'Get documentation for @qnx/log — lightweight colorized terminal output for development, CLI scripts, and startup messages. Use instead of @qnx/winston when you need visible terminal feedback without file persistence. Pass "all" for the full reference.',
             inputSchema: {
                 topic: z.enum(topics).describe('usage | types | patterns | all')
             }
