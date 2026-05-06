@@ -200,7 +200,7 @@ export function registerCreateErrorInstanceTool(server: McpServer) {
     server.registerTool(
         'get-error-class-docs',
         {
-            description: 'Get documentation for a @qnx/errors error class — constructor signature, methods, usage example, and when to use it. Pass "all" to get the full reference including the summary table and custom codes guide.',
+            description: 'Get documentation for @qnx/errors — structured error types (ValidationError, UnauthenticatedUserError, ServerError, InvalidValueError) that integrate with @qnx/response to produce consistent HTTP error responses. Pass "all" for the full reference including the summary table and custom codes guide.',
             inputSchema: {
                 errorClass: z.enum(errorClasses).describe(
                     'ApiError | ValidationError | InvalidValueError | UnauthenticatedUserError | ServerError | all'
