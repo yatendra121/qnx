@@ -1,8 +1,4 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-// import { registerGenerateAuthTokenTool } from './tools/generate-auth-token.tool'
-// import { registerDecryptAuthTokenTool } from './tools/decrypt-auth-token.tool'
-// import { registerInspectJwtPayloadTool } from './tools/inspect-jwt-payload.tool'
-// import { registerValidateSchemaTool } from './tools/validate-schema.tool'
 import { registerFormatErrorTool } from './tools/format-error.tool'
 import { registerCreateErrorInstanceTool } from './tools/create-error-instance.tool'
 import { registerLoggerDocsTool } from './tools/logger-docs.tool'
