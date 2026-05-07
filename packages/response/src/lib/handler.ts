@@ -42,7 +42,11 @@ export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) 
                 return void apiRes.response(res) // Ensure the return value is ignored
             }
 
-            if (apiRes instanceof ServerResponse || apiRes === undefined) {
+            if (apiRes instanceof ServerResponse) {
+                return
+            }
+
+            if (apiRes === undefined) {
                 return next()
             }
 

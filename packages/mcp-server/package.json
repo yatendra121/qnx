@@ -1,0 +1,44 @@
+{
+  "name": "@qnx/mcp-server",
+  "description": "MCP server for qnx ecosystem",
+  "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
+  "version": "0.0.4",
+  "license": "MIT",
+  "funding": "https://github.com/sponsors/yatendra121",
+  "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/mcp-server",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model context protocol"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yatendra121/qnx.git",
+    "directory": "packages/mcp-server"
+  },
+  "type": "module",
+  "scripts": {
+    "serve": "tsx watch --env-file=../../.env src/main.ts",
+    "serve:stdio": "tsx watch --env-file=../../.env src/stdio.ts",
+    "dev": "vite --host",
+    "build:stdio": "rm -rf stdio && vite build --config vite.config.stdio.ts && chmod +x stdio/stdio.js",
+    "build:http": "rm -rf http && vite build --config vite.config.http.ts && chmod +x http/main.js",
+    "test": "vitest",
+    "lint:scripts": "eslint . --ext .ts",
+    "format:scripts": "prettier . --write",
+    "format": "npm run format:scripts",
+    "inspect": "npx @modelcontextprotocol/inspector"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@qnx/crypto": "workspace:*",
+    "@qnx/errors": "workspace:*",
+    "@qnx/response": "workspace:*",
+    "@qnx/winston": "workspace:*",
+    "express": "^5.0.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  }
+}

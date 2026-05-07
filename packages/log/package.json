@@ -31,14 +31,14 @@
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
-    "test": "jest --runInBand",
-    "test:coverage": "jest --runInBand --coverage",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
     "lint:scripts": "eslint . --ext .ts",
     "format:scripts": "prettier . --write",
     "format": "npm run format:scripts"
   },
   "devDependencies": {},
   "peerDependencies": {
-    "chalk": "*"
+    "chalk": "^5.0.0"
   }
 }

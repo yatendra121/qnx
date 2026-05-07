@@ -18,7 +18,3 @@ export const errorFormatter = ({ msg }: { msg: string }) => {
     // })
     return [msg]
 }
-
-export const est = () => {
-    return 'ok'
-}

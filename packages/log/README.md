@@ -1,62 +1,59 @@
-# @qnx/log
+# `@qnx/log`
 
-@qnx/log provides a console logger using the Chalk library for colorful output. It supports different types of messages such as 'info', 'error', 'success', and 'warning', each associated with a specific color.
+`@qnx/log` provides a console logger using the [Chalk](https://www.npmjs.com/package/chalk) library for colorful output. It supports different message types — `info`, `error`, `success`, and `warning` — each rendered in a distinct color.
 
-## Installation
+## ✨ Features
 
-Use the package manager [npm](https://www.npmjs.com/) to install @qnx/log.
+- Colorized console output via Chalk
+- Four built-in message types: `info`, `error`, `success`, `warning`
+- Simple, minimal API
 
-```bash
-npm install -D @qnx/log
-```
+## 📦 Installation
 
-You can also use [yarn](https://yarnpkg.com/) & [pnpm](https://pnpm.io/)
-
-```bash
-yarn add -D @qnx/log
-```
+Install via your preferred package manager:
 
 ```bash
-pnpm install -D @qnx/log
+# npm
+npm install @qnx/log
+
+# yarn
+yarn add @qnx/log
+
+# pnpm
+pnpm install @qnx/log
 ```
 
-#### Peer-Dependencies
+### Peer Dependencies
 
-@qnx/response is using error instances of @qnx/errors.
+This package requires `chalk` as a peer dependency:
 
 ```bash
-npm install -D chalk
+npm install chalk
 ```
 
-## Usage
+## 🚀 Usage
 
-Import the module and use the consoleLog function to log messages with different types and corresponding colors.
-
-```javascript
+```ts
 import { consoleLog } from '@qnx/log'
 
-// Example usage
-consoleLog('This is an informational message', { type: 'info' })
+consoleLog('Server started', { type: 'info' })
 consoleLog('An error occurred!', { type: 'error' })
 consoleLog('Operation successful', { type: 'success' })
-consoleLog('Warning: Proceed with caution', { type: 'warning' })
+consoleLog('Proceed with caution', { type: 'warning' })
 ```
 
-The consoleLog function takes a string message and an optional configuration object, allowing you to specify the message type. The default type is 'info'.
+The `type` option defaults to `'info'` if omitted:
 
-```javascript
-import { consoleLog } from '@qnx/log'
-
+```ts
 consoleLog('This is an informational message')
 ```
 
-## Contributing
+## 🤝 Contributing
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
+Pull requests are welcome!
+For major changes, please open an issue first to discuss what you'd like to change.
+Make sure to update or add tests where appropriate.
 
-Please make sure to update tests as appropriate.
+## 📄 License
 
-## License
-
-[MIT License](https://github.com/yatendra121/log/blob/main/LICENSE.md) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)
+[MIT License](https://github.com/yatendra121/qnx/blob/main/LICENSE.md) © 2023-PRESENT [Yatendra Kushwaha](https://github.com/yatendra121)
