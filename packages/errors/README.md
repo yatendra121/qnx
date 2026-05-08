@@ -2,6 +2,30 @@
 
 `@qnx/errors` provides a set of custom error classes to help you simplify and standardize error handling in your JavaScript/TypeScript applications.
 
+## 🤖 MCP Server
+
+AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
+
+**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/errors`
+
+| Tool | Description |
+| --- | --- |
+| `get-error-class-docs` | Documentation for each error class — constructor signature, methods, examples, and when to use it |
+| `build-api-error` | Instantiate an error class with real values — preview resolved code and errorResponse |
+
+**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
+
+**Configuration:**
+```json
+{
+  "mcpServers": {
+    "qnx-errors": {
+      "url": "https://qnx-mcp-server.vercel.app/mcp/errors"
+    }
+  }
+}
+```
+
 ## ✨ Features
 
 - Predefined error classes for common scenarios
