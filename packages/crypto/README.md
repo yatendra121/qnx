@@ -2,6 +2,30 @@
 
 `@qnx/crypto` provides utility functions to generate and decrypt JSON Web Signatures (JWS) and JSON Web Encryption (JWE) using the [jose](https://www.npmjs.com/package/jose) cryptography library for secure data transmission.
 
+## 🤖 MCP Server
+
+AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
+
+**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/crypto`
+
+| Tool | Description |
+| --- | --- |
+| `get-crypto-docs` | Documentation for JWT, JWE, auth token helpers, key helpers, and supported algorithms |
+| `build-crypto-snippet` | Generate a TypeScript snippet for jwt-sign, jwt-verify, jwe-encrypt, jwe-decrypt, auth-token-generate, auth-token-decrypt |
+
+**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
+
+**Configuration:**
+```json
+{
+  "mcpServers": {
+    "qnx-crypto": {
+      "url": "https://qnx-mcp-server.vercel.app/mcp/crypto"
+    }
+  }
+}
+```
+
 ## ✨ Features
 
 - 🔐 JWT signing and verification
