@@ -2,6 +2,30 @@
 
 `@qnx/log` provides a console logger using the [Chalk](https://www.npmjs.com/package/chalk) library for colorful output. It supports different message types — `info`, `error`, `success`, and `warning` — each rendered in a distinct color.
 
+## 🤖 MCP Server
+
+AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
+
+**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/log`
+
+| Tool | Description |
+| --- | --- |
+| `get-console-log-docs` | Documentation for usage, message types, and patterns |
+| `build-console-log` | Preview console output and get the consoleLog() call |
+
+**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
+
+**Configuration:**
+```json
+{
+  "mcpServers": {
+    "qnx-log": {
+      "url": "https://qnx-mcp-server.vercel.app/mcp/log"
+    }
+  }
+}
+```
+
 ## ✨ Features
 
 - Colorized console output via Chalk
