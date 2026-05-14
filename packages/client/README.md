@@ -2,6 +2,30 @@
 
 `@qnx/client` provides utility classes and types to help standardize and simplify handling of API responses on the client side. It supports typed access to data, messages, and errors from server responses.
 
+## 🤖 MCP Server
+
+AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
+
+**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/client`
+
+| Tool | Description |
+| --- | --- |
+| `get-client-docs` | Documentation for ApiResponse, ApiSuccessResponse, ApiErrorResponse classes, TypeScript types, and usage patterns |
+| `build-client-response` | Instantiate a response class with real values — see what each method returns |
+
+**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
+
+**Configuration:**
+```json
+{
+  "mcpServers": {
+    "qnx-client": {
+      "url": "https://qnx-mcp-server.vercel.app/mcp/client"
+    }
+  }
+}
+```
+
 ## ✨ Features
 
 - Typed wrappers for API responses

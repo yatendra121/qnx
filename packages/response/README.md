@@ -2,6 +2,30 @@
 
 @qnx/response is a library designed to simplify handling HTTP responses within Express.js applications. It offers standardized formatting and transmission of responses, including built-in support for error management and validation.
 
+## 🤖 MCP Server
+
+AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
+
+**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/response`
+
+| Tool | Description |
+| --- | --- |
+| `get-response-docs` | Documentation for handler setup, success responses, validation errors, Zod, unauthenticated, and resource routes |
+| `build-api-response` | Show HTTP status code, response body shape, and which @qnx/response function produces it |
+
+**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
+
+**Configuration:**
+```json
+{
+  "mcpServers": {
+    "qnx-response": {
+      "url": "https://qnx-mcp-server.vercel.app/mcp/response"
+    }
+  }
+}
+```
+
 ## 📑 Table of Contents
 
 - [Features](#-features)
