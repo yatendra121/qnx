@@ -2,6 +2,30 @@
 
 `@qnx/winston` provides a pre-configured logger instance using the popular [winston](https://www.npmjs.com/package/winston) logging library. It simplifies logging setup by offering a ready-to-use logger with support for console and daily rotated file logs out of the box.
 
+## 🤖 MCP Server
+
+AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
+
+**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/winston`
+
+| Tool | Description |
+| --- | --- |
+| `get-file-logger-docs` | Documentation for usage, log levels, file output format, configuration, and patterns |
+| `build-file-log-entry` | Preview the JSON log entry written to file for a given level, message, and metadata |
+
+**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
+
+**Configuration:**
+```json
+{
+  "mcpServers": {
+    "qnx-winston": {
+      "url": "https://qnx-mcp-server.vercel.app/mcp/winston"
+    }
+  }
+}
+```
+
 ## ✨ Features
 
 - ✅ Pre-configured `winston` logger instance
