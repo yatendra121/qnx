@@ -1,6 +1,6 @@
-# `@qnx/mcp-server`
+# `@qnx/mcp`
 
-`@qnx/mcp-server` is a [Model Context Protocol](https://modelcontextprotocol.io) server that exposes the qnx ecosystem as AI-callable tools. It supports both **HTTP (Streamable HTTP)** and **stdio** transports and is publicly hosted at:
+`@qnx/mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server that exposes the qnx ecosystem as AI-callable tools. It supports both **HTTP (Streamable HTTP)** and **stdio** transports and is publicly hosted at:
 
 ```
 https://qnx-mcp-server.vercel.app/mcp
@@ -99,7 +99,7 @@ Add to your AI client's MCP config:
   "mcpServers": {
     "qnx": {
       "command": "npx",
-      "args": ["-y", "@qnx/mcp-server"]
+      "args": ["-y", "@qnx/mcp"]
     }
   }
 }
@@ -112,7 +112,7 @@ Or scoped to a specific package:
   "mcpServers": {
     "qnx-crypto": {
       "command": "npx",
-      "args": ["-y", "@qnx/mcp-server", "crypto"]
+      "args": ["-y", "@qnx/mcp", "crypto"]
     }
   }
 }

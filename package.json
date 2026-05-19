@@ -11,7 +11,7 @@
     "affected:publish": "nx affected --target=publish --exclude='app,my-lib'",
     "affected:test": "nx affected --target=test",
     "affected:deploy": "npm run affected:test && npm run app:test && npm run affected:build && npm run affected:publish",
-    "mcp:serve": "pnpm --filter @qnx/mcp-server run serve",
+    "mcp:serve": "pnpm --filter @qnx/mcp run serve",
     "mcp:inspect": "npx @modelcontextprotocol/inspector"
   },
   "private": true,
@@ -26,7 +26,7 @@
       "@qnx/interfaces": "workspace:*",
       "@qnx/core-helpers": "workspace:*",
       "@qnx/client": "workspace:*",
-      "@qnx/mcp-server": "workspace:*"
+      "@qnx/mcp": "workspace:*"
     }
   },
   "dependencies": {
