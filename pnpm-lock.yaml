@@ -14,7 +14,7 @@ overrides:
   '@qnx/interfaces': workspace:*
   '@qnx/core-helpers': workspace:*
   '@qnx/client': workspace:*
-  '@qnx/mcp-server': workspace:*
+  '@qnx/mcp': workspace:*
 
 importers:
 
@@ -190,7 +190,7 @@ importers:
         specifier: ^5.0.0
         version: 5.6.2
 
-  packages/mcp-server:
+  packages/mcp:
     dependencies:
       '@modelcontextprotocol/sdk':
         specifier: ^1.29.0

@@ -1,3 +1,9 @@
+## 0.8.3 (2026-05-19)
+
+### 🩹 Fixes
+
+- chore: release patch ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.8.2 (2026-04-03)
 
 ### 🩹 Fixes
