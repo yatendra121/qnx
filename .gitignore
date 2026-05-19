@@ -43,8 +43,8 @@ Thumbs.db
 .nx/workspace-data
 
 **/dist
-packages/mcp-server/stdio
-packages/mcp-server/http
+packages/mcp/stdio
+packages/mcp/http
 
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
