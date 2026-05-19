@@ -36,16 +36,14 @@ export default [
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
-      '@typescript-eslint/no-extra-semi': 'error',
-      'no-extra-semi': 'off'
+      'no-extra-semi': 'error'
     }
   },
   ...nx.configs['flat/javascript'],
   {
     files: ['**/*.js', '**/*.jsx'],
     rules: {
-      '@typescript-eslint/no-extra-semi': 'error',
-      'no-extra-semi': 'off'
+      'no-extra-semi': 'error'
     }
   },
   ...compat
