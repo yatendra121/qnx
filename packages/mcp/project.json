@@ -7,16 +7,14 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build:stdio"],
       "options": {
-        "command": "echo 'build complete'",
+        "command": "pnpm run build:stdio",
         "cwd": "packages/mcp"
       },
       "outputs": ["{workspaceRoot}/packages/mcp/stdio"]
     },
     "publish": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
       "options": {
         "command": "pnpm publish --no-git-checks",
         "cwd": "packages/mcp/stdio"
