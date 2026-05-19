@@ -49,3 +49,6 @@ jobs:
 
       - name: App Test
         run: pnpm app:test
+
+      - name: MCP Build
+        run: pnpm --filter @qnx/mcp run build:stdio && pnpm --filter @qnx/mcp run build:http
