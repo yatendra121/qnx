@@ -28,9 +28,9 @@ Welcome to the @qnx monorepository! This collection of libraries is designed to 
 
 [@qnx/log](https://github.com/yatendra121/qnx/blob/main/packages/log/README.md) provides a console logger using the Chalk library for colorful output.
 
-### @qnx/mcp-server
+### @qnx/mcp
 
-[@qnx/mcp-server](https://github.com/yatendra121/qnx/blob/main/packages/mcp-server) is a [Model Context Protocol](https://modelcontextprotocol.io) server that exposes the qnx ecosystem as AI-callable tools. It is publicly hosted at:
+[@qnx/mcp](https://github.com/yatendra121/qnx/blob/main/packages/mcp-server) is a [Model Context Protocol](https://modelcontextprotocol.io) server that exposes the qnx ecosystem as AI-callable tools. It is publicly hosted at:
 
 ```
 https://qnx-mcp-server.vercel.app/mcp

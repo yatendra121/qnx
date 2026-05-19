@@ -14,7 +14,7 @@ export default defineConfig({
             name, version, description, author, license, funding, homepage, keywords, repository, dependencies: resolvedDependencies,
             type: 'module',
             main: './stdio.js',
-            bin: { 'qnx-mcp-server': './stdio.js' }
+            bin: { 'qnx-mcp': './stdio.js' }
         })
     ],
     build: {

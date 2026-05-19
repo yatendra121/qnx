@@ -1,20 +1,19 @@
 {
-  "name": "@qnx/mcp-server",
+  "name": "@qnx/mcp",
   "description": "MCP server for qnx ecosystem",
   "author": "Yatendra Kushwaha <https://github.com/yatendra121>",
   "version": "0.0.4",
   "license": "MIT",
   "funding": "https://github.com/sponsors/yatendra121",
-  "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/mcp-server",
+  "homepage": "https://github.com/yatendra121/qnx/tree/main/packages/mcp",
   "keywords": [
     "mcp",
-    "mcp-server",
     "model context protocol"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yatendra121/qnx.git",
-    "directory": "packages/mcp-server"
+    "directory": "packages/mcp"
   },
   "type": "module",
   "scripts": {

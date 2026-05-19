@@ -1,7 +1,7 @@
 {
-  "name": "@qnx/mcp-server",
+  "name": "@qnx/mcp",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/mcp-server/src",
+  "sourceRoot": "packages/mcp/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -13,9 +13,9 @@
             "command": "pnpm run build:stdio"
           }
         ],
-        "cwd": "packages/mcp-server"
+        "cwd": "packages/mcp"
       },
-      "outputs": ["{workspaceRoot}/packages/mcp-server/stdio"]
+      "outputs": ["{workspaceRoot}/packages/mcp/stdio"]
     },
     "build:http": {
       "executor": "nx:run-commands",
@@ -25,9 +25,9 @@
             "command": "pnpm run build:http"
           }
         ],
-        "cwd": "packages/mcp-server"
+        "cwd": "packages/mcp"
       },
-      "outputs": ["{workspaceRoot}/packages/mcp-server/http"]
+      "outputs": ["{workspaceRoot}/packages/mcp/http"]
     },
     "lint": {
       "executor": "@nx/eslint:lint",
@@ -35,11 +35,11 @@
     },
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{workspaceRoot}/coverage/packages/mcp-server"],
+      "outputs": ["{workspaceRoot}/coverage/packages/mcp"],
       "options": {
-        "config": "packages/mcp-server/vite.config.ts",
+        "config": "packages/mcp/vite.config.ts",
         "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/packages/mcp-server"
+        "reportsDirectory": "../../coverage/packages/mcp"
       }
     }
   }
