@@ -37,7 +37,7 @@ const defaultConfig: McpServerConfig = {
 export function createMcpServer(config: McpServerConfig = defaultConfig) {
     const server = new McpServer({
         name: 'qnx-mcp',
-        version: '0.8.2'
+        version: '0.8.0'
     })
 
     if (config.response && config.errors) registerListMcpToolsTool(server)
