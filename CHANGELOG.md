@@ -1,3 +1,9 @@
+## 0.8.6 (2026-05-20)
+
+### 🩹 Fixes
+
+- chore: update deps, pnpm v11, fix ci ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.8.5 (2026-05-20)
 
 ### 🩹 Fixes
