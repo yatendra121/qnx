@@ -1,3 +1,9 @@
+## 0.8.5 (2026-05-20)
+
+### 🩹 Fixes
+
+- fix(message): remove stale dev deps causing build failure ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.8.4 (2026-05-20)
 
 ### 🩹 Fixes
