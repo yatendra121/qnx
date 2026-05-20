@@ -50,6 +50,11 @@ jobs:
       - name: Build
         run: pnpm affected:build
 
+      - name: Set npm auth token
+        run: npm config set //registry.npmjs.org/:_authToken $NODE_AUTH_TOKEN
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
       - run: pnpm affected:publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
