@@ -15,20 +15,6 @@
     "mcp:inspect": "npx @modelcontextprotocol/inspector"
   },
   "private": true,
-  "pnpm": {
-    "overrides": {
-      "@qnx/errors": "workspace:*",
-      "@qnx/response": "workspace:*",
-      "@qnx/crypto": "workspace:*",
-      "@qnx/winston": "workspace:*",
-      "@qnx/log": "workspace:*",
-      "@qnx/message": "workspace:*",
-      "@qnx/interfaces": "workspace:*",
-      "@qnx/core-helpers": "workspace:*",
-      "@qnx/client": "workspace:*",
-      "@qnx/mcp": "workspace:*"
-    }
-  },
   "dependencies": {
     "axios": "1.14.0",
     "body-parser": "^2.2.2",

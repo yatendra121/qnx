@@ -23,7 +23,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 11
 
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v4
@@ -49,11 +49,6 @@ jobs:
 
       - name: Build
         run: pnpm affected:build
-
-      - name: Set npm auth token
-        run: npm config set //registry.npmjs.org/:_authToken $NODE_AUTH_TOKEN
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
       - run: pnpm affected:publish
         env:

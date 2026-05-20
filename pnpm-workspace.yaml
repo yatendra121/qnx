@@ -1,2 +1,14 @@
 packages:
   - 'packages/*'
+
+overrides:
+  '@qnx/errors': 'workspace:*'
+  '@qnx/response': 'workspace:*'
+  '@qnx/crypto': 'workspace:*'
+  '@qnx/winston': 'workspace:*'
+  '@qnx/log': 'workspace:*'
+  '@qnx/message': 'workspace:*'
+  '@qnx/interfaces': 'workspace:*'
+  '@qnx/core-helpers': 'workspace:*'
+  '@qnx/client': 'workspace:*'
+  '@qnx/mcp': 'workspace:*'

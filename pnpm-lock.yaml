@@ -4,18 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@qnx/errors': workspace:*
-  '@qnx/response': workspace:*
-  '@qnx/crypto': workspace:*
-  '@qnx/winston': workspace:*
-  '@qnx/log': workspace:*
-  '@qnx/message': workspace:*
-  '@qnx/interfaces': workspace:*
-  '@qnx/core-helpers': workspace:*
-  '@qnx/client': workspace:*
-  '@qnx/mcp': workspace:*
-
 importers:
 
   .:
@@ -265,8 +253,8 @@ importers:
   packages/response:
     dependencies:
       '@qnx/errors':
-        specifier: workspace:*
-        version: link:../errors
+        specifier: '>=0.8.0'
+        version: 0.8.0
       express:
         specifier: 4.x || 5.x
         version: 5.2.1
@@ -1953,6 +1941,9 @@ packages:
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
+
+  '@qnx/errors@0.8.0':
+    resolution: {integrity: sha512-t7E886IxZeOyx4K5K9LHNLSuzdUy8/pVrNNbuJDDyQn5zliyeX1hkD2fdskwnZhOtPNHMQkFRCCJX1v8k213Ew==}
 
   '@rolldown/binding-android-arm64@1.0.0-rc.12':
     resolution: {integrity: sha512-pv1y2Fv0JybcykuiiD3qBOBdz6RteYojRFY1d+b95WVuzx211CRh+ytI/+9iVyWQ6koTh5dawe4S/yRfOFjgaA==}
@@ -9743,6 +9734,8 @@ snapshots:
   '@pkgr/core@0.2.9': {}
 
   '@polka/url@1.0.0-next.29': {}
+
+  '@qnx/errors@0.8.0': {}
 
   '@rolldown/binding-android-arm64@1.0.0-rc.12':
     optional: true
