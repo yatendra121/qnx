@@ -12,3 +12,9 @@ overrides:
   '@qnx/core-helpers': 'workspace:*'
   '@qnx/client': 'workspace:*'
   '@qnx/mcp': 'workspace:*'
+
+onlyBuiltDependencies:
+  - '@swc/core'
+  - esbuild
+  - nx
+  - unrs-resolver
