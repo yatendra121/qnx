@@ -29,47 +29,45 @@ describe('createMcpServer (via InMemoryTransport / stdio-equivalent)', () => {
     // ─── tool registration ────────────────────────────────────────────────────
 
     describe('tool registration', () => {
-        it('registers all 13 tools with default config', async () => {
+        it('registers all 14 tools with default config', async () => {
             const c = await connectClient()
             const { tools } = await c.listTools()
-            expect(tools).toHaveLength(13)
+            expect(tools).toHaveLength(14)
         })
 
-        it('registers only 2 crypto tools when only crypto is enabled', async () => {
+        it('registers list-mcp-tools + 2 crypto tools when only crypto is enabled', async () => {
             const c = await connectClient({ crypto: true })
             const { tools } = await c.listTools()
-            expect(tools).toHaveLength(2)
+            expect(tools).toHaveLength(3)
             const names = tools.map((t) => t.name)
+            expect(names).toContain('list-mcp-tools')
             expect(names).toContain('get-crypto-docs')
             expect(names).toContain('build-crypto-snippet')
         })
 
-        it('registers only 2 error tools when only errors is enabled', async () => {
+        it('registers list-mcp-tools + 2 error tools when only errors is enabled', async () => {
             const c = await connectClient({ errors: true })
             const { tools } = await c.listTools()
-            expect(tools).toHaveLength(2)
+            expect(tools).toHaveLength(3)
             const names = tools.map((t) => t.name)
+            expect(names).toContain('list-mcp-tools')
             expect(names).toContain('build-api-error')
             expect(names).toContain('get-error-class-docs')
         })
 
-        it('registers list-mcp-tools only when both response and errors are enabled', async () => {
-            const c = await connectClient({ response: true, errors: true })
-            const { tools } = await c.listTools()
-            const names = tools.map((t) => t.name)
-            expect(names).toContain('list-mcp-tools')
-        })
-
-        it('does not register list-mcp-tools when only response is enabled', async () => {
-            const c = await connectClient({ response: true })
-            const { tools } = await c.listTools()
-            expect(tools.map((t) => t.name)).not.toContain('list-mcp-tools')
-        })
-
-        it('does not register list-mcp-tools when only errors is enabled', async () => {
-            const c = await connectClient({ errors: true })
-            const { tools } = await c.listTools()
-            expect(tools.map((t) => t.name)).not.toContain('list-mcp-tools')
+        it('always registers list-mcp-tools regardless of config', async () => {
+            for (const config of [
+                { response: true },
+                { errors: true },
+                { crypto: true },
+                { response: true, errors: true }
+            ]) {
+                const c = await connectClient(config)
+                const { tools } = await c.listTools()
+                expect(tools.map((t) => t.name)).toContain('list-mcp-tools')
+                await c.close()
+            }
+            client = undefined
         })
     })
 

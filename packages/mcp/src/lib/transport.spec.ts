@@ -75,7 +75,7 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
         it('initializes a session and lists all default tools', async () => {
             const c = await connectClient()
             const { tools } = await c.listTools()
-            expect(tools.length).toBe(13)
+            expect(tools.length).toBe(14)
         })
 
         it('lists expected tool names after initialization', async () => {
@@ -136,7 +136,7 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
     // ─── per-route config ─────────────────────────────────────────────────────
 
     describe('per-route config', () => {
-        it('crypto-only route exposes exactly 2 tools', async () => {
+        it('crypto-only route exposes list-mcp-tools + 2 crypto tools', async () => {
             const app = express()
             app.use(express.json())
             app.all('/mcp/crypto', createMcpHttpHandler({ crypto: true }))
@@ -153,7 +153,8 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
             await cryptoClient.connect(transport)
 
             const { tools } = await cryptoClient.listTools()
-            expect(tools).toHaveLength(2)
+            expect(tools).toHaveLength(3)
+            expect(tools.map((t) => t.name)).toContain('list-mcp-tools')
             expect(tools.map((t) => t.name)).toContain('get-crypto-docs')
             expect(tools.map((t) => t.name)).toContain('build-crypto-snippet')
 
@@ -161,7 +162,7 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
             await new Promise<void>((resolve) => cryptoServer.close(() => resolve()))
         })
 
-        it('errors-only route exposes exactly 2 tools', async () => {
+        it('errors-only route exposes list-mcp-tools + 2 error tools', async () => {
             const app = express()
             app.use(express.json())
             app.all('/mcp/errors', createMcpHttpHandler({ errors: true }))
@@ -178,7 +179,8 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
             await errorsClient.connect(transport)
 
             const { tools } = await errorsClient.listTools()
-            expect(tools).toHaveLength(2)
+            expect(tools).toHaveLength(3)
+            expect(tools.map((t) => t.name)).toContain('list-mcp-tools')
             expect(tools.map((t) => t.name)).toContain('build-api-error')
 
             await errorsClient.close()
