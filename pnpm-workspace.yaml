@@ -13,8 +13,23 @@ overrides:
   '@qnx/client': 'workspace:*'
   '@qnx/mcp': 'workspace:*'
 
-onlyBuiltDependencies:
-  - '@swc/core'
-  - esbuild
-  - nx
-  - unrs-resolver
+minimumReleaseAgeExclude:
+  - '@types/node@25.9.1'
+  - '@vitest/coverage-v8@4.1.7'
+  - '@vitest/expect@4.1.7'
+  - '@vitest/mocker@4.1.7'
+  - '@vitest/pretty-format@4.1.7'
+  - '@vitest/runner@4.1.7'
+  - '@vitest/snapshot@4.1.7'
+  - '@vitest/spy@4.1.7'
+  - '@vitest/ui@4.1.7'
+  - '@vitest/utils@4.1.7'
+  - vitest@4.1.7
+
+allowBuilds:
+  '@parcel/watcher': true
+  '@swc/core': true
+  esbuild: true
+  less: true
+  nx: true
+  unrs-resolver: true
