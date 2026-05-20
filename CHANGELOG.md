@@ -1,3 +1,9 @@
+## 0.8.4 (2026-05-20)
+
+### 🩹 Fixes
+
+- fix(mcp): descriptive 400 errors, transform-handler tool, improved docs ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.8.3 (2026-05-19)
 
 ### 🩹 Fixes
