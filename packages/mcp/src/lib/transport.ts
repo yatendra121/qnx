@@ -31,6 +31,15 @@ export function createMcpHttpHandler(config?: McpServerConfig) {
             return
         }
 
-        res.status(400).json({ error: 'Invalid MCP request' })
+        if (sessionId && !transports.has(sessionId)) {
+            res.status(400).json({
+                error: 'Session not found. The mcp-session-id header is present but does not match any active session. Re-initialize: POST {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"client","version":"1.0.0"}}}'
+            })
+            return
+        }
+
+        res.status(400).json({
+            error: 'MCP handshake required. Complete these steps first: (1) POST initialize to get mcp-session-id, (2) POST notifications/initialized with that header, (3) include mcp-session-id on all subsequent requests. See: https://github.com/yatendra121/qnx/tree/main/packages/mcp'
+        })
     }
 }

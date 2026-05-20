@@ -6,21 +6,9 @@
 https://qnx-mcp-server.vercel.app/mcp
 ```
 
-## 🛣️ Routes & Tools
+## Tool reference
 
-Each route scopes the server to a specific package. Use `/mcp` to get everything, or connect to a scoped endpoint to keep the tool list minimal.
-
-| Route | Package | Tools |
-| --- | --- | --- |
-| `/mcp` | all | All 13 tools |
-| `/mcp/errors` | `@qnx/errors` | `get-error-class-docs`, `build-api-error` |
-| `/mcp/response` | `@qnx/response` | `get-response-docs`, `build-api-response` |
-| `/mcp/client` | `@qnx/client` | `get-client-docs`, `build-client-response` |
-| `/mcp/crypto` | `@qnx/crypto` | `get-crypto-docs`, `build-crypto-snippet` |
-| `/mcp/winston` | `@qnx/winston` | `get-file-logger-docs`, `build-file-log-entry` |
-| `/mcp/log` | `@qnx/log` | `get-console-log-docs`, `build-console-log` |
-
-### Tool reference
+**`list-mcp-tools`** — call this first to get the full tool list grouped by package.
 
 **`@qnx/errors`**
 | Tool | Purpose |
@@ -33,6 +21,7 @@ Each route scopes the server to a specific package. Use `/mcp` to get everything
 | --- | --- |
 | `get-response-docs` | Code examples for handler setup, success, validation errors, Zod, unauthenticated, resource routes |
 | `build-api-response` | Show HTTP status code, response body shape, and which @qnx/response function produces it |
+| `transform-to-async-handler` | Before/after migration from callback-style Express routes to asyncValidatorHandler |
 
 **`@qnx/client`**
 | Tool | Purpose |
@@ -81,14 +70,51 @@ Or connect to a scoped endpoint to keep the tool list focused:
 ```json
 {
   "mcpServers": {
-    "qnx-crypto": {
-      "url": "https://qnx-mcp-server.vercel.app/mcp/crypto"
+    "qnx-response": {
+      "url": "https://qnx-mcp-server.vercel.app/mcp/response"
     }
   }
 }
 ```
 
 Supported scopes: `crypto` · `response` · `errors` · `client` · `winston` · `log`
+
+#### HTTP handshake (for raw HTTP / curl usage)
+
+The MCP HTTP transport requires a 3-step sequence before any tool call:
+
+**Step 1 — initialize**
+
+```bash
+curl -X POST https://qnx-mcp-server.vercel.app/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"my-client","version":"1.0.0"}}}'
+```
+
+Copy the `mcp-session-id` value from the response headers.
+
+**Step 2 — confirm initialization**
+
+```bash
+curl -X POST https://qnx-mcp-server.vercel.app/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: <session-id>" \
+  -d '{"jsonrpc":"2.0","method":"notifications/initialized"}'
+```
+
+**Step 3 — call a tool**
+
+```bash
+curl -X POST https://qnx-mcp-server.vercel.app/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: <session-id>" \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list-mcp-tools","arguments":{}}}'
+```
+
+> **SSL note:** if your HTTP client rejects the certificate, pass `-k` (curl) or the equivalent `rejectUnauthorized: false` option. This is a Vercel infrastructure certificate — the connection is still encrypted.
 
 ### Stdio
 

@@ -10,6 +10,7 @@ import { registerBuildClientResponseTool } from './tools/build-client-response.t
 import { registerCryptoDocsTool } from './tools/crypto-docs.tool'
 import { registerBuildCryptoSnippetTool } from './tools/build-crypto-snippet.tool'
 import { registerListMcpToolsTool } from './tools/list-mcp-tools.tool'
+import { registerTransformHandlerTool } from './tools/transform-handler.tool'
 // import { registerLogMessageTool } from './tools/log-message.tool'
 import { registerBuildApiResponseTool } from './tools/build-api-response.tool'
 import { registerResponsePatternTool } from './tools/response-pattern.tool'
@@ -40,7 +41,7 @@ export function createMcpServer(config: McpServerConfig = defaultConfig) {
         version: '0.8.0'
     })
 
-    if (config.response && config.errors) registerListMcpToolsTool(server)
+    registerListMcpToolsTool(server)
 
     if (config.crypto) {
         registerCryptoDocsTool(server)
@@ -50,6 +51,7 @@ export function createMcpServer(config: McpServerConfig = defaultConfig) {
     if (config.response) {
         registerBuildApiResponseTool(server)
         registerResponsePatternTool(server)
+        registerTransformHandlerTool(server)
     }
 
     if (config.winston) {

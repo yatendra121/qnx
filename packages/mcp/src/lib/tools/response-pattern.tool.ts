@@ -15,14 +15,35 @@ const patterns = [
 const examples: Record<typeof patterns[number], { description: string; code: string }> = {
     'async-handler': {
         description: 'Wrap any Express route with asyncValidatorHandler. It catches ValidationError, UnauthenticatedUserError, ZodError, and generic Error automatically and sends the correct response.',
-        code: `import { asyncValidatorHandler, initializeApiResponse } from '@qnx/response'
+        code: `// BEFORE: callback-style with manual error handling
+router.get('/users', (req, res) => {
+    connection.query('SELECT * FROM users', (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message })
+        res.json({ data: rows })
+    })
+})
 
-router.get('/items', asyncValidatorHandler(async (req, res) => {
-    return items // auto-wrapped as { data: items }
+router.post('/users', async (req, res) => {
+    try {
+        const user = await User.create(req.body)
+        res.status(201).json({ data: user, message: 'Created.' })
+    } catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+})
+
+// AFTER: asyncValidatorHandler — return data, throw errors, no res.json() needed
+import { asyncValidatorHandler, initializeApiResponse } from '@qnx/response'
+
+router.get('/users', asyncValidatorHandler(async (req) => {
+    const rows = await db.query('SELECT * FROM users')
+    return rows // auto-wrapped as { data: rows }
 }))
 
-router.post('/items', asyncValidatorHandler(async (req, res) => {
-    return initializeApiResponse().setData(newItem).setMessage('Item created successfully.')
+router.post('/users', asyncValidatorHandler(async (req) => {
+    const user = await User.create(req.body)
+    return initializeApiResponse().setData(user).setMessage('Created.')
+    // errors thrown here are caught automatically — no try/catch needed
 }))`,
     },
     'success': {

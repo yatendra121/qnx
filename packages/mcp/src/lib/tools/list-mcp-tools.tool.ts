@@ -13,6 +13,7 @@ const toolsReference = `# QNX MCP Server — Available Tools
 | --- | --- | --- |
 | \`get-response-docs\` | docs | Code examples for handler setup, success, validation errors, Zod, unauthenticated, resource routes |
 | \`build-api-response\` | build | Show HTTP status code, response body shape, and which @qnx/response function produces it |
+| \`transform-to-async-handler\` | migration | Before/after migration from callback-style Express routes to asyncValidatorHandler |
 
 ## \`@qnx/client\`
 | Tool | Type | Purpose |
@@ -44,7 +45,8 @@ const toolsReference = `# QNX MCP Server — Available Tools
 | Type | When to use |
 | --- | --- |
 | \`docs\` | Get documentation, examples, and API reference for a package |
-| \`build\` | Instantiate or generate with real values — preview output or get a ready-to-paste code snippet |`
+| \`build\` | Instantiate or generate with real values — preview output or get a ready-to-paste code snippet |
+| \`migration\` | Before/after examples for migrating existing code to a @qnx/* pattern |`
 
 export function registerListMcpToolsTool(server: McpServer) {
     server.registerTool(
