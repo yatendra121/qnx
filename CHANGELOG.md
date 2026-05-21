@@ -1,3 +1,9 @@
+## 0.8.7 (2026-05-21)
+
+### 🩹 Fixes
+
+- chore: revert npmrc auth change ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.8.6 (2026-05-20)
 
 ### 🩹 Fixes
