@@ -30,11 +30,32 @@ Welcome to the @qnx monorepository! This collection of libraries is designed to 
 
 ### @qnx/mcp
 
-[@qnx/mcp](https://github.com/yatendra121/qnx/blob/main/packages/mcp-server) is a [Model Context Protocol](https://modelcontextprotocol.io) server that exposes the qnx ecosystem as AI-callable tools. It is publicly hosted at:
+[@qnx/mcp](https://github.com/yatendra121/qnx/blob/main/packages/mcp/README.md) is a [Model Context Protocol](https://modelcontextprotocol.io) server that exposes the qnx ecosystem as AI-callable tools. It is publicly hosted at `https://qnx-mcp-server.vercel.app/mcp` and can also be run locally via `npx`:
 
+**HTTP (Streamable HTTP):**
+```json
+{
+  "mcpServers": {
+    "qnx": {
+      "url": "https://qnx-mcp-server.vercel.app/mcp"
+    }
+  }
+}
 ```
-https://qnx-mcp-server.vercel.app/mcp
+
+**stdio (via npx):**
+```json
+{
+  "mcpServers": {
+    "qnx": {
+      "command": "npx",
+      "args": ["-y", "@qnx/mcp"]
+    }
+  }
+}
 ```
+
+Works with Claude Desktop, Claude Code, Cursor, Windsurf, Cline, Continue.dev, Codex CLI, and ChatGPT Desktop.
 
 ## Getting Started
 
