@@ -1,30 +1,8 @@
-# `@qnx/crypto`
+# @qnx/crypto
 
 `@qnx/crypto` provides utility functions to generate and decrypt JSON Web Signatures (JWS) and JSON Web Encryption (JWE) using the [jose](https://www.npmjs.com/package/jose) cryptography library for secure data transmission.
 
-## 🤖 MCP Server
-
-AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
-
-**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/crypto`
-
-| Tool | Description |
-| --- | --- |
-| `get-crypto-docs` | Documentation for JWT, JWE, auth token helpers, key helpers, and supported algorithms |
-| `build-crypto-snippet` | Generate a TypeScript snippet for jwt-sign, jwt-verify, jwe-encrypt, jwe-decrypt, auth-token-generate, auth-token-decrypt |
-
-**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
-
-**Configuration:**
-```json
-{
-  "mcpServers": {
-    "qnx-crypto": {
-      "url": "https://qnx-mcp-server.vercel.app/mcp/crypto"
-    }
-  }
-}
-```
+> 🤖 MCP Server: `https://qnx-mcp-server.vercel.app/mcp/crypto`
 
 ## ✨ Features
 
@@ -34,8 +12,6 @@ AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp
 - 📦 Built on the [JOSE](https://github.com/panva/jose) standard
 
 ## 📦 Installation
-
-Install via your preferred package manager:
 
 ```bash
 # npm
@@ -48,9 +24,7 @@ yarn add @qnx/crypto
 pnpm install @qnx/crypto
 ```
 
-### 🔗 Peer Dependency
-
-Install `jose` (required):
+### Peer Dependency
 
 ```bash
 npm install jose
@@ -58,7 +32,7 @@ npm install jose
 
 ## 🚀 Usage
 
-### 🔧 Core Functions
+### Core Functions
 
 | Function     | Purpose                  |
 | ------------ | ------------------------ |
@@ -67,7 +41,7 @@ npm install jose
 | `jweEncrypt` | Encrypt a payload to JWE |
 | `jweDecrypt` | Decrypt a JWE token      |
 
-### ✅ `jwtSign`
+### `jwtSign`
 
 Signs and returns a JWT using a symmetric secret.
 
@@ -80,7 +54,7 @@ const secret = toSymmetricSecret('SECRET_STRING')
 const jwt = await jwtSign({ data }, secret, { alg: 'HS256' })
 ```
 
-### ✅ `jwtVerify`
+### `jwtVerify`
 
 Verifies the JWT format, signature, and claims set.
 
@@ -91,7 +65,7 @@ const secret = toSymmetricSecret('SECRET_STRING')
 const { payload } = await jwtVerify(jwt, secret)
 ```
 
-### 🔐 `jweEncrypt`
+### `jweEncrypt`
 
 Encrypts a string using JWE.
 
@@ -102,7 +76,7 @@ const secret = await toPKCS8Secret(process.env.ENCRYPTION_SECRET_JWE, 'ECDH-ES+A
 const jwe = await jweEncrypt('this is message.', secret)
 ```
 
-### 🔓 `jweDecrypt`
+### `jweDecrypt`
 
 Decrypts a previously encrypted JWE string.
 
@@ -113,53 +87,91 @@ const secret = await toPKCS8Secret(process.env.ENCRYPTION_SECRET_JWE, 'ECDH-ES+A
 const { plaintext } = await jweDecrypt(jwe, secret)
 ```
 
+---
+
 ## 🔐 Auth Token Management
 
-### 🔧 Environment Setup
-
-Ensure these environment variables are set:
+### Environment Setup
 
 ```bash
 ENCRYPTION_SECRET_JWT=your_jwt_secret
 ENCRYPTION_SECRET_JWE=your_jwe_secret
 ```
 
-### 🛠️ `generateAuthToken`
+### `generateAuthToken`
 
 Creates a signed and encrypted auth token.
 
 ```ts
 import { generateAuthToken } from '@qnx/crypto'
 
-const subject = 'userId'
-const { token, dbToken } = await generateAuthToken(subject)
+const { token, dbToken } = await generateAuthToken('userId')
 
-// token: Encrypted token for client
-// dbToken: Unique identifier for storage
+// token   — encrypted token to send to the client
+// dbToken — unique identifier to store in the database
 ```
 
-### 🥪 `decryptAuthToken`
+### `decryptAuthToken`
 
 Decrypts and verifies the encrypted auth token.
 
 ```ts
 import { decryptAuthToken } from '@qnx/crypto'
 
-const encryptedToken = '...' // Your token here
-
 try {
-  const decryptedPayload = await decryptAuthToken(encryptedToken)
-  // Use the decrypted payload
+  const payload = await decryptAuthToken(token)
+  // use the decrypted payload
 } catch (error) {
   console.error('Token decryption failed:', error)
 }
 ```
 
+---
+
+## 🤖 MCP Server
+
+AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
+
+**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/crypto`
+
+| Tool | Description |
+| ---- | ----------- |
+| `get-crypto-docs` | Documentation for JWT, JWE, auth token helpers, key helpers, and supported algorithms |
+| `build-crypto-snippet` | Generate a TypeScript snippet for jwt-sign, jwt-verify, jwe-encrypt, jwe-decrypt, auth-token-generate, auth-token-decrypt |
+
+**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
+
+### HTTP (Streamable HTTP)
+
+```json
+{
+  "mcpServers": {
+    "qnx-crypto": {
+      "url": "https://qnx-mcp-server.vercel.app/mcp/crypto"
+    }
+  }
+}
+```
+
+### stdio (via npx)
+
+```json
+{
+  "mcpServers": {
+    "qnx-crypto": {
+      "command": "npx",
+      "args": ["-y", "@qnx/mcp", "crypto"]
+    }
+  }
+}
+```
+
+---
+
 ## 🤝 Contributing
 
-Pull requests are welcome!
-For major changes, please open an issue first to discuss what you’d like to change.
-Make sure to update or add tests where appropriate.
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Please make sure to update tests as appropriate.
 
 ## 📄 License
 
