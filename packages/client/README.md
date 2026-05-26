@@ -1,30 +1,8 @@
-# `@qnx/client`
+# @qnx/client
 
 `@qnx/client` provides utility classes and types to help standardize and simplify handling of API responses on the client side. It supports typed access to data, messages, and errors from server responses.
 
-## 🤖 MCP Server
-
-AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
-
-**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/client`
-
-| Tool | Description |
-| --- | --- |
-| `get-client-docs` | Documentation for ApiResponse, ApiSuccessResponse, ApiErrorResponse classes, TypeScript types, and usage patterns |
-| `build-client-response` | Instantiate a response class with real values — see what each method returns |
-
-**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
-
-**Configuration:**
-```json
-{
-  "mcpServers": {
-    "qnx-client": {
-      "url": "https://qnx-mcp-server.vercel.app/mcp/client"
-    }
-  }
-}
-```
+> 🤖 MCP Server: `https://qnx-mcp-server.vercel.app/mcp/client`
 
 ## ✨ Features
 
@@ -34,8 +12,6 @@ AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp
 - Improves code readability and error handling consistency
 
 ## 📦 Installation
-
-You can install via your preferred package manager:
 
 ```bash
 # npm
@@ -116,9 +92,9 @@ const error = apiRes.getError()
 const errorCode = apiRes.getErrorCode()
 ```
 
-### Types
+## 📘 Types
 
-#### ApiResponseValue
+### `ApiResponseValue<T>`
 
 ```ts
 import type { ApiResponseValue } from '@qnx/client'
@@ -139,7 +115,7 @@ const response: ApiResponseValue<number> = {
 }
 ```
 
-#### ApiSuccessResponseValue
+### `ApiSuccessResponseValue<T>`
 
 ```ts
 import type { ApiSuccessResponseValue } from '@qnx/client'
@@ -150,7 +126,7 @@ const successResponse: ApiSuccessResponseValue<number> = {
 }
 ```
 
-#### ApiErrorResponseValue
+### `ApiErrorResponseValue`
 
 ```ts
 import type { ApiErrorResponseValue } from '@qnx/client'
@@ -165,11 +141,52 @@ const errorResponse: ApiErrorResponseValue = {
 }
 ```
 
+---
+
+## 🤖 MCP Server
+
+AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
+
+**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/client`
+
+| Tool | Description |
+| ---- | ----------- |
+| `get-client-docs` | Documentation for ApiResponse, ApiSuccessResponse, ApiErrorResponse classes, TypeScript types, and usage patterns |
+| `build-client-response` | Instantiate a response class with real values — see what each method returns |
+
+**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
+
+### HTTP (Streamable HTTP)
+
+```json
+{
+  "mcpServers": {
+    "qnx-client": {
+      "url": "https://qnx-mcp-server.vercel.app/mcp/client"
+    }
+  }
+}
+```
+
+### stdio (via npx)
+
+```json
+{
+  "mcpServers": {
+    "qnx-client": {
+      "command": "npx",
+      "args": ["-y", "@qnx/mcp", "client"]
+    }
+  }
+}
+```
+
+---
+
 ## 🤝 Contributing
 
-Pull requests are welcome!  
-For major changes, please open an issue first to discuss your proposed updates.  
-Ensure tests are updated for any feature changes.
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Please make sure to update tests as appropriate.
 
 ## 📄 License
 
