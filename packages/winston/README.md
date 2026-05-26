@@ -2,29 +2,7 @@
 
 `@qnx/winston` provides a pre-configured logger instance using the popular [winston](https://www.npmjs.com/package/winston) logging library. It simplifies logging setup by offering a ready-to-use logger with support for console and daily rotated file logs out of the box.
 
-## 🤖 MCP Server
-
-AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
-
-**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/winston`
-
-| Tool | Description |
-| --- | --- |
-| `get-file-logger-docs` | Documentation for usage, log levels, file output format, configuration, and patterns |
-| `build-file-log-entry` | Preview the JSON log entry written to file for a given level, message, and metadata |
-
-**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
-
-**Configuration:**
-```json
-{
-  "mcpServers": {
-    "qnx-winston": {
-      "url": "https://qnx-mcp-server.vercel.app/mcp/winston"
-    }
-  }
-}
-```
+> 🤖 MCP Server: `https://qnx-mcp-server.vercel.app/mcp/winston`
 
 ## ✨ Features
 
@@ -34,8 +12,6 @@ AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp
 - 🛠️ Easy plug-and-play with minimal setup
 
 ## 📦 Installation
-
-Install using your preferred package manager:
 
 ```bash
 # npm
@@ -50,23 +26,15 @@ pnpm install @qnx/winston
 
 ### Peer Dependencies
 
-This package requires [`winston-daily-rotate-file`](https://www.npmjs.com/package/winston-daily-rotate-file) as a peer dependency for daily file rotation:
-
 ```bash
 npm install winston winston-daily-rotate-file
 ```
 
 ## 🚀 Usage
 
-### Importing the Logger
-
 ```ts
 import { logger } from '@qnx/winston'
-```
 
-You can now use `logger` throughout your application for consistent logging:
-
-```ts
 logger.info('Server started on port 3000')
 logger.error('Something went wrong!', { error: err })
 logger.debug('User data:', { user })
@@ -74,12 +42,10 @@ logger.debug('User data:', { user })
 
 ## 📂 Log Output Structure
 
-Logs are output in two formats:
+Logs are written in two formats:
 
-- **Console** – Pretty-printed, colorized output with timestamps
-- **File** – JSON format, rotated daily
-
-Example file structure:
+- **Console** — Pretty-printed, colorized output with timestamps
+- **File** — JSON format, rotated daily
 
 ```
 logs/
@@ -87,17 +53,6 @@ logs/
 ├── app-2025-07-29.log
 └── error.log
 ```
-
-## 🔧 Configuration Details
-
-The `@qnx/winston` logger comes pre-configured with the following transports:
-
-- **Console Transport**: For development visibility
-- **Daily Rotate File Transport**: For persistent log storage
-
-Log files are saved in a `logs` directory by default.
-
-You can fork or wrap this library if you want to customize formats, paths, or levels.
 
 ## 🧪 Example
 
@@ -116,10 +71,51 @@ try {
 }
 ```
 
+---
+
+## 🤖 MCP Server
+
+AI tools for this package are available via the [QNX MCP Server](https://qnx-mcp-server.vercel.app).
+
+**Endpoint:** `https://qnx-mcp-server.vercel.app/mcp/winston`
+
+| Tool | Description |
+| ---- | ----------- |
+| `get-file-logger-docs` | Documentation for usage, log levels, file output format, configuration, and patterns |
+| `build-file-log-entry` | Preview the JSON log entry written to file for a given level, message, and metadata |
+
+**Supported clients:** Claude Desktop · Claude Code · Cursor · Windsurf · Cline · Continue.dev · Codex CLI · ChatGPT Desktop
+
+### HTTP (Streamable HTTP)
+
+```json
+{
+  "mcpServers": {
+    "qnx-winston": {
+      "url": "https://qnx-mcp-server.vercel.app/mcp/winston"
+    }
+  }
+}
+```
+
+### stdio (via npx)
+
+```json
+{
+  "mcpServers": {
+    "qnx-winston": {
+      "command": "npx",
+      "args": ["-y", "@qnx/mcp", "winston"]
+    }
+  }
+}
+```
+
+---
+
 ## 🤝 Contributing
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 Please make sure to update tests as appropriate.
 
 ## 📄 License
