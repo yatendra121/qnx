@@ -183,7 +183,7 @@ app.get(
         throw new Error('Logger testing.')
     })
 )
-//@ts-ignore
+//@ts-expect-error - intentionally passing undefined to test invalid function value handling
 app.get('/check-invalid-function-value', asyncValidatorHandler(undefined))
 
 app.get(

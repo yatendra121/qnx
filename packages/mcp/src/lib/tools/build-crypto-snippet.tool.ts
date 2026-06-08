@@ -64,7 +64,7 @@ export function registerBuildCryptoSnippetTool(server: McpServer) {
         },
         async ({ operation, keyType, payload, alg, enc, subject, issuer, expirationTime, jti, plaintext }) => {
             let snippet: string
-            let notes: string[] = []
+            const notes: string[] = []
 
             if (operation === 'jwt-sign') {
                 if (!keyType) {

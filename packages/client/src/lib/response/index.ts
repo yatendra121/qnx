@@ -2,7 +2,6 @@ type ApiErrorCode = string
 type ApiErrors = Record<string, string[]>
 type ApiMessage = string
 type ApiError = string
-type ApiServerError = any
 
 /**
  * Interface defining methods to access various properties of an API response.

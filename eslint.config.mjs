@@ -11,7 +11,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['**/dist', '**/out-tsc']
+    ignores: ['**/dist', '**/out-tsc', '**/vite.config.*.ts', '**/vite.config.ts', 'packages/mcp/http/**', 'packages/mcp/stdio/**']
   },
   ...nx.configs['flat/base'],
   {

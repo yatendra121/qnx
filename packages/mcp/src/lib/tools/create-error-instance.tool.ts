@@ -21,7 +21,7 @@ new ApiError(message: string, code: number, option?: { errRes?: ErrorResponse })
 | Method | Returns | Description |
 | --- | --- | --- |
 | \`getCode()\` | \`number\` | The HTTP status code passed to the constructor |
-| \`getErrorResponse()\` | \`ErrorResponse \| undefined\` | The error response object, if provided |
+| \`getErrorResponse()\` | \`ErrorResponse | undefined\` | The error response object, if provided |
 
 **Example**
 \`\`\`ts

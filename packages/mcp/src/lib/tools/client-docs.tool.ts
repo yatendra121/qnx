@@ -34,11 +34,11 @@ new ApiResponse<T>(response?: ApiResponseValue<T>)
 **Methods**
 | Method | Returns | Description |
 | --- | --- | --- |
-| \`getData()\` | \`T \| undefined\` | The response payload |
-| \`getMessage()\` | \`string \| undefined\` | Human-readable success message |
-| \`getError()\` | \`string \| undefined\` | Top-level error message |
-| \`getErrors()\` | \`Record<string, string[]> \| undefined\` | Field-level validation errors |
-| \`getErrorCode()\` | \`string \| undefined\` | Machine-readable error code |
+| \`getData()\` | \`T | undefined\` | The response payload |
+| \`getMessage()\` | \`string | undefined\` | Human-readable success message |
+| \`getError()\` | \`string | undefined\` | Top-level error message |
+| \`getErrors()\` | \`Record<string, string[]> | undefined\` | Field-level validation errors |
+| \`getErrorCode()\` | \`string | undefined\` | Machine-readable error code |
 
 **Example**
 \`\`\`ts
@@ -123,8 +123,8 @@ new ApiErrorResponse(response: ApiErrorResponseValue)
 | Method | Returns | Description |
 | --- | --- | --- |
 | \`getError()\` | \`string\` | Top-level error message (always defined) |
-| \`getErrors()\` | \`Record<string, string[]> \| undefined\` | Field-level validation errors |
-| \`getErrorCode()\` | \`string \| undefined\` | Machine-readable error code |
+| \`getErrors()\` | \`Record<string, string[]> | undefined\` | Field-level validation errors |
+| \`getErrorCode()\` | \`string | undefined\` | Machine-readable error code |
 
 **Example**
 \`\`\`ts
