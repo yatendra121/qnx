@@ -19,27 +19,42 @@ return { id: 1, name: 'Item' }`,
         imports: ['initializeApiResponse']
     },
     'validation-error': {
-        functions: ['invalidApiResponse', 'throw ValidationError'],
-        example: `const errors = ApiResponseErrorsValue.getInstance()
+        functions: ['throw ValidationError (recommended)', 'invalidApiResponse'],
+        example: `// ✅ Recommended — throw from anywhere inside asyncValidatorHandler
+import { ValidationError } from '@qnx/errors'
+import { ApiResponseErrorsValue } from '@qnx/response'
+const errors = ApiResponseErrorsValue.getInstance()
     .addError('email', 'Email is required.')
     .addError('name', 'Name is required.')
     .getErrors()
+throw new ValidationError('Validation failed', { errRes: { errors } })
+
+// Alternative — direct response (requires res, only at route handler level)
 return invalidApiResponse(res, errors)`,
-        imports: ['invalidApiResponse', 'ApiResponseErrorsValue']
+        imports: ['ValidationError from @qnx/errors', 'ApiResponseErrorsValue']
     },
     'invalid-value': {
-        functions: ['invalidValueApiResponse', 'throwInvalidValueApiResponse', 'throw InvalidValueError'],
-        example: `return invalidValueApiResponse(res, 'email', 'Email is required.')
-// or throw (caught by asyncValidatorHandler)
-throwInvalidValueApiResponse('email', 'Email is required.')`,
-        imports: ['invalidValueApiResponse', 'throwInvalidValueApiResponse']
+        functions: ['throw InvalidValueError (recommended)', 'throwInvalidValueApiResponse', 'invalidValueApiResponse'],
+        example: `// ✅ Recommended — throw from anywhere inside asyncValidatorHandler
+import { InvalidValueError } from '@qnx/errors'
+throw new InvalidValueError('Email is required.', { key: 'email' })
+
+// Alternative shorthand alias
+throwInvalidValueApiResponse('email', 'Email is required.')
+
+// Alternative — direct response (requires res, only at route handler level)
+return invalidValueApiResponse(res, 'email', 'Email is required.')`,
+        imports: ['InvalidValueError from @qnx/errors']
     },
     'unauthenticated': {
-        functions: ['unauthenticateApiResponse', 'throw UnauthenticatedUserError'],
-        example: `return unauthenticateApiResponse(res)
-// or throw (caught by asyncValidatorHandler)
-throw new UnauthenticatedUserError('Not authenticated')`,
-        imports: ['unauthenticateApiResponse']
+        functions: ['throw UnauthenticatedUserError (recommended)', 'unauthenticateApiResponse'],
+        example: `// ✅ Recommended — throw from anywhere inside asyncValidatorHandler
+import { UnauthenticatedUserError } from '@qnx/errors'
+throw new UnauthenticatedUserError('Not authenticated')
+
+// Alternative — direct response (requires res, only at route handler level)
+return unauthenticateApiResponse(res)`,
+        imports: ['UnauthenticatedUserError from @qnx/errors']
     },
     'server-error': {
         functions: ['serverErrorApiResponse', 'throw Error (auto-caught)'],

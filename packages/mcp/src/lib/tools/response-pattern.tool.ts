@@ -65,42 +65,57 @@ return ApiResponse.getInstance()
     .setAdditional({ meta: { total: 10 } })`,
     },
     'validation-error': {
-        description: 'Return a validation error with multiple field errors. Status: VALIDATION_ERROR_CODE (default 400). Body: { errors: { field: [msg] }, error: firstMsg }',
-        code: `import { invalidApiResponse, ApiResponseErrorsValue } from '@qnx/response'
+        description: 'Throw a multi-field validation error from inside asyncValidatorHandler. Status: VALIDATION_ERROR_CODE (default 400). Body: { errors: { field: [msg] }, error: firstMsg }. Recommended: throw ValidationError — works from anywhere in the call stack, not just route handlers.',
+        code: `// ✅ Recommended — throw from anywhere inside asyncValidatorHandler
+import { ValidationError } from '@qnx/errors'
+import { ApiResponseErrorsValue } from '@qnx/response'
 
 const errors = ApiResponseErrorsValue.getInstance()
     .addError('email', 'Email is required.')
     .addError('name', 'Name must be at least 2 characters.')
     .getErrors()
+throw new ValidationError('Validation failed', { errRes: { errors } })
+// → { errors: { email: ['Email is required.'], name: ['Name must be...'] }, error: 'Email is required.' }
 
-return invalidApiResponse(res, errors)
-// → { errors: { email: ['Email is required.'], name: ['Name must be...'] }, error: 'Email is required.' }`,
+// Alternative — direct response (only works at route handler level, requires res)
+import { invalidApiResponse, ApiResponseErrorsValue } from '@qnx/response'
+return invalidApiResponse(res, errors)`,
     },
     'invalid-value': {
-        description: 'Return a single-field validation error. Status: VALIDATION_ERROR_CODE (default 400). Body: { errors: { field: [msg] }, error: msg }',
-        code: `import { invalidValueApiResponse } from '@qnx/response'
+        description: 'Throw a single-field validation error from inside asyncValidatorHandler. Status: VALIDATION_ERROR_CODE (default 400). Body: { errors: { field: [msg] }, error: msg }. Recommended: throw InvalidValueError — works from anywhere in the call stack, not just route handlers.',
+        code: `// ✅ Recommended — throw from anywhere inside asyncValidatorHandler
+import { InvalidValueError } from '@qnx/errors'
 
-return invalidValueApiResponse(res, 'email', 'Email is required.')
-// → { errors: { email: ['Email is required.'] }, error: 'Email is required.' }`,
-    },
-    'throw-validation': {
-        description: 'Throw a validation error from anywhere inside asyncValidatorHandler — it is caught and the correct error response is sent automatically.',
-        code: `import { throwInvalidValueApiResponse } from '@qnx/response'
-import { ValidationError, InvalidValueError } from '@qnx/errors'
-import { ApiResponseErrorsValue } from '@qnx/response'
+throw new InvalidValueError('Email is required.', { key: 'email' })
+// → { errors: { email: ['Email is required.'] }, error: 'Email is required.' }
 
-// Single field shorthand
+// Alternative shorthand — also throwable, but only a thin wrapper
+import { throwInvalidValueApiResponse } from '@qnx/response'
 throwInvalidValueApiResponse('email', 'Email is required.')
 
-// Single field via error class
-throw new InvalidValueError('Email is required.', { key: 'email' })
+// Alternative — direct response (only works at route handler level, requires res)
+import { invalidValueApiResponse } from '@qnx/response'
+return invalidValueApiResponse(res, 'email', 'Email is required.')`,
+    },
+    'throw-validation': {
+        description: 'Quick reference: which error class to throw for each case inside asyncValidatorHandler.',
+        code: `import { InvalidValueError, ValidationError } from '@qnx/errors'
+import { ApiResponseErrorsValue } from '@qnx/response'
 
-// Multiple fields
+// ✅ Single field — use InvalidValueError
+throw new InvalidValueError('Email is required.', { key: 'email' })
+// → getErrorResponse() = { errors: { email: ['Email is required.'] } }
+
+// ✅ Multiple fields — use ValidationError
 const errors = ApiResponseErrorsValue.getInstance()
     .addError('email', 'Email is required.')
     .addError('name', 'Name is required.')
     .getErrors()
-throw new ValidationError('Validation failed', { errRes: { errors } })`,
+throw new ValidationError('Validation failed', { errRes: { errors } })
+// → getErrorResponse() = { errors: { email: [...], name: [...] } }
+
+// ⚠️  throwInvalidValueApiResponse is a shorthand alias for throw new InvalidValueError
+//    prefer the explicit class for clarity and reuse outside route handlers`,
     },
     'zod-validation': {
         description: 'Use Zod schema parsing inside asyncValidatorHandler. ZodErrors are caught automatically and converted to { errors: { "field.path": [msg] }, error: firstMsg }. Nested paths use dot notation.',
