@@ -118,6 +118,19 @@ describe('Response Integration Testing', function () {
         expect('Conflict detected.').toEqual(response.body.message)
     })
 
+    it('foreignZodErrorTreatedAsValidationError', async function () {
+        const response = await request(app)
+            .get('/zod-foreign-error')
+            .set('Accept', 'application/json')
+        expect(response.status).toEqual(400)
+        expect({
+            errors: {
+                email: ['Email is required.']
+            },
+            error: 'Email is required.'
+        }).toEqual(response.body)
+    })
+
     it('ValidationErrorResponse With some fields', async function () {
         const response = await request(app)
             .post('/zod-validation-error')

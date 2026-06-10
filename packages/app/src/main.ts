@@ -140,6 +140,18 @@ app.get(
     })
 )
 
+app.get(
+    '/zod-foreign-error',
+    asyncValidatorHandler(async () => {
+        // Simulates a ZodError thrown by a different zod module instance
+        // (e.g. zod v3 or a duplicated install), where instanceof would fail.
+        const error = new Error('Email is required.')
+        error.name = 'ZodError'
+        Object.assign(error, { issues: [{ path: ['email'], message: 'Email is required.' }] })
+        throw error
+    })
+)
+
 app.post(
     '/zod-validation-error',
     asyncValidatorHandler(async (req) => {
