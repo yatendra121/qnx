@@ -123,6 +123,16 @@ app.get(
     })
 )
 
+app.get(
+    '/double-send',
+    asyncValidatorHandler(async (req, res) => {
+        // Intentionally missing `return` — the handler keeps running after the
+        // response is sent and the headersSent guard must swallow the second send.
+        invalidValueApiResponse(res, 'foo', 'Foo is required.')
+        return { message: 'should never be sent' }
+    })
+)
+
 app.post(
     '/zod-validation-error',
     asyncValidatorHandler(async (req) => {

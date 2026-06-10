@@ -101,6 +101,17 @@ describe('Response Integration Testing', function () {
         }).toEqual(response.body)
     })
 
+    it('doubleSendGuard', async function () {
+        const response = await request(app).get('/double-send').set('Accept', 'application/json')
+        expect(response.status).toEqual(400)
+        expect({
+            errors: {
+                foo: ['Foo is required.']
+            },
+            error: 'Foo is required.'
+        }).toEqual(response.body)
+    })
+
     it('ValidationErrorResponse With some fields', async function () {
         const response = await request(app)
             .post('/zod-validation-error')

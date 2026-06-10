@@ -125,11 +125,14 @@ export class ApiResponse<T = unknown> {
 
     /**
      * Sends the API response using the provided Express response object.
+     * If a response has already been sent (e.g. a direct `*ApiResponse` call without `return`),
+     * this is a no-op instead of raising ERR_HTTP_HEADERS_SENT.
      *
      * @param response - The Express response object to send the response with.
      * @returns The response sent by the Express response object.
      */
     response(response: ExResponse) {
+        if (response.headersSent) return response
         if (this.errors) this.error = this.errors[Object.keys(this.errors)?.[0]]?.[0]
         return response.status(this.#statusCode).send({ ...this.#additionalData, ...this })
     }
