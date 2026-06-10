@@ -135,7 +135,8 @@ router.post('/users', asyncValidatorHandler(async (req) => {
 Use `InvalidValueError` to signal that a specific field is invalid. The handler catches it and sends a 400 response:
 
 ```ts
-import { asyncValidatorHandler, InvalidValueError } from '@qnx/response'
+import { asyncValidatorHandler } from '@qnx/response'
+import { InvalidValueError } from '@qnx/errors'
 
 router.get('/users/:id', asyncValidatorHandler(async (req) => {
   const user = await User.findById(req.params.id)
@@ -153,7 +154,8 @@ router.get('/users/:id', asyncValidatorHandler(async (req) => {
 Use `ApiResponseErrorsValue` to collect multiple field errors, then throw `ValidationError`:
 
 ```ts
-import { asyncValidatorHandler, ValidationError, ApiResponseErrorsValue, initializeApiResponse } from '@qnx/response'
+import { asyncValidatorHandler, ApiResponseErrorsValue, initializeApiResponse } from '@qnx/response'
+import { ValidationError } from '@qnx/errors'
 
 router.post('/register', asyncValidatorHandler(async (req) => {
   const { email, password } = req.body
