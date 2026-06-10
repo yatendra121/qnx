@@ -20,6 +20,7 @@ import { logger } from '@qnx/winston'
 import express, { urlencoded } from 'express'
 import type { Express } from 'express'
 import z from 'zod/v4'
+import * as zm from 'zod/v4/mini'
 import * as path from 'path'
 import { json } from 'body-parser'
 import { ApiError, InvalidValueError } from '@qnx/errors'
@@ -177,6 +178,20 @@ app.post(
                     tagUsers: z.array(z.string())
                 })
             )
+        })
+
+        const userData = UserSchema.parse(req.body)
+
+        return initializeApiResponse().setData(userData).setMessage('User created successfully.')
+    })
+)
+
+app.post(
+    '/zod-mini-validation-error',
+    asyncValidatorHandler(async (req) => {
+        // zod-mini errors carry name '$ZodError' instead of 'ZodError'
+        const UserSchema = zm.object({
+            email: zm.string()
         })
 
         const userData = UserSchema.parse(req.body)

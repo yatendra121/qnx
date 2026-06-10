@@ -212,6 +212,19 @@ describe('Response Integration Testing', function () {
         }).toEqual(response.body)
     })
 
+    it('ValidationErrorResponse using zod-mini', async function () {
+        const response = await request(app)
+            .post('/zod-mini-validation-error')
+            .send({})
+            .set('Accept', 'application/json')
+        expect(response.status).toEqual(400)
+
+        expect({
+            errors: { email: ['Invalid input: expected string, received undefined'] },
+            error: 'Invalid input: expected string, received undefined'
+        }).toEqual(response.body)
+    })
+
     it('Unauthenticated', async function () {
         const response = await request(app)
             .get('/unauthenticated')
