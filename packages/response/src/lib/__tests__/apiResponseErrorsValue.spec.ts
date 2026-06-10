@@ -41,6 +41,22 @@ describe('ApiResponseErrorsValue', () => {
         expect(errorResponse).toEqual({ errors: { [errorKey]: [errorMessage] } })
     })
 
+    test('hasErrors should return false when no errors have been collected', () => {
+        expect(apiResponseErrorsValue.hasErrors()).toBe(false)
+    })
+
+    test('hasErrors should return true when an error has been set', () => {
+        apiResponseErrorsValue.setError('key', 'Error message')
+
+        expect(apiResponseErrorsValue.hasErrors()).toBe(true)
+    })
+
+    test('hasErrors should return true when an error has been added', () => {
+        apiResponseErrorsValue.addError('key', 'Error message')
+
+        expect(apiResponseErrorsValue.hasErrors()).toBe(true)
+    })
+
     test('getErrors should return the errors', () => {
         const errorKey = 'key'
         const errorMessage = 'Error message'

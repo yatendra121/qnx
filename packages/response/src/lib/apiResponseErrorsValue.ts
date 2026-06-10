@@ -56,4 +56,13 @@ export class ApiResponseErrorsValue {
     getErrors() {
         return this.errors
     }
+
+    /**
+     * Checks whether any errors have been collected.
+     *
+     * @returns True if at least one error has been set, otherwise false.
+     */
+    hasErrors(): boolean {
+        return !!this.errors && Object.keys(this.errors).length > 0
+    }
 }
