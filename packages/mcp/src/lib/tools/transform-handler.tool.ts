@@ -47,11 +47,12 @@ router.post('/users', asyncValidatorHandler(async (req) => {
         })
         .catch(err => res.status(500).json({ error: err.message }))
 })`,
-        after: `import { asyncValidatorHandler, throwInvalidValueApiResponse } from '@qnx/response'
+        after: `import { asyncValidatorHandler } from '@qnx/response'
+import { InvalidValueError } from '@qnx/errors'
 
 router.get('/users/:id', asyncValidatorHandler(async (req) => {
     const user = await User.findById(req.params.id)
-    if (!user) throwInvalidValueApiResponse('id', 'User not found.')
+    if (!user) throw new InvalidValueError('User not found.', { key: 'id' })
     return user // auto-wrapped as { data: user }
 }))`,
     },

@@ -77,7 +77,7 @@ const errors = ApiResponseErrorsValue.getInstance()
 throw new ValidationError('Validation failed', { errRes: { errors } })
 // → { errors: { email: ['Email is required.'], name: ['Name must be...'] }, error: 'Email is required.' }
 
-// Alternative — direct response (only works at route handler level, requires res)
+// Escape hatch — only for code outside asyncValidatorHandler (requires res)
 import { invalidApiResponse, ApiResponseErrorsValue } from '@qnx/response'
 return invalidApiResponse(res, errors)`,
     },
@@ -89,13 +89,8 @@ import { InvalidValueError } from '@qnx/errors'
 throw new InvalidValueError('Email is required.', { key: 'email' })
 // → { errors: { email: ['Email is required.'] }, error: 'Email is required.' }
 
-// Alternative shorthand — also throwable, but only a thin wrapper
-import { throwInvalidValueApiResponse } from '@qnx/response'
-throwInvalidValueApiResponse('email', 'Email is required.')
-
-// Alternative — direct response (only works at route handler level, requires res)
-import { invalidValueApiResponse } from '@qnx/response'
-return invalidValueApiResponse(res, 'email', 'Email is required.')`,
+// ⚠️ Deprecated — throwInvalidValueApiResponse and invalidValueApiResponse
+// produce the same response; use InvalidValueError instead.`,
     },
     'throw-validation': {
         description: 'Quick reference: which error class to throw for each case inside asyncValidatorHandler.',
@@ -114,8 +109,7 @@ const errors = ApiResponseErrorsValue.getInstance()
 throw new ValidationError('Validation failed', { errRes: { errors } })
 // → getErrorResponse() = { errors: { email: [...], name: [...] } }
 
-// ⚠️  throwInvalidValueApiResponse is a shorthand alias for throw new InvalidValueError
-//    prefer the explicit class for clarity and reuse outside route handlers`,
+// ⚠️  throwInvalidValueApiResponse is deprecated — throw new InvalidValueError instead`,
     },
     'zod-validation': {
         description: 'Use Zod schema parsing inside asyncValidatorHandler. ZodErrors are caught automatically and converted to { errors: { "field.path": [msg] }, error: firstMsg }. Nested paths use dot notation.',

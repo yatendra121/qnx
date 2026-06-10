@@ -19,7 +19,7 @@ return { id: 1, name: 'Item' }`,
         imports: ['initializeApiResponse']
     },
     'validation-error': {
-        functions: ['throw ValidationError (recommended)', 'invalidApiResponse'],
+        functions: ['throw ValidationError (recommended)', 'invalidApiResponse (escape hatch outside asyncValidatorHandler)'],
         example: `// ✅ Recommended — throw from anywhere inside asyncValidatorHandler
 import { ValidationError } from '@qnx/errors'
 import { ApiResponseErrorsValue } from '@qnx/response'
@@ -29,21 +29,18 @@ const errors = ApiResponseErrorsValue.getInstance()
     .getErrors()
 throw new ValidationError('Validation failed', { errRes: { errors } })
 
-// Alternative — direct response (requires res, only at route handler level)
+// Escape hatch — only for code outside asyncValidatorHandler (requires res)
 return invalidApiResponse(res, errors)`,
         imports: ['ValidationError from @qnx/errors', 'ApiResponseErrorsValue']
     },
     'invalid-value': {
-        functions: ['throw InvalidValueError (recommended)', 'throwInvalidValueApiResponse', 'invalidValueApiResponse'],
+        functions: ['throw InvalidValueError (recommended)', 'throwInvalidValueApiResponse (deprecated)', 'invalidValueApiResponse (deprecated)'],
         example: `// ✅ Recommended — throw from anywhere inside asyncValidatorHandler
 import { InvalidValueError } from '@qnx/errors'
 throw new InvalidValueError('Email is required.', { key: 'email' })
 
-// Alternative shorthand alias
-throwInvalidValueApiResponse('email', 'Email is required.')
-
-// Alternative — direct response (requires res, only at route handler level)
-return invalidValueApiResponse(res, 'email', 'Email is required.')`,
+// ⚠️ Deprecated — throwInvalidValueApiResponse and invalidValueApiResponse
+// produce the same response; use InvalidValueError instead.`,
         imports: ['InvalidValueError from @qnx/errors']
     },
     'unauthenticated': {
