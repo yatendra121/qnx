@@ -368,21 +368,21 @@ Throw these inside `asyncValidatorHandler` — the handler catches them and send
 
 ### Error Response Helpers
 
-Call these directly when you have access to `res` — they send the response immediately without throwing.
+Call these directly only where throwing is not an option — e.g. plain Express middleware outside `asyncValidatorHandler`. Inside the handler, throw the error classes above instead.
 
-#### `invalidValueApiResponse(res, key, message)`
+#### `invalidValueApiResponse(res, key, message)` — deprecated
 
-Sends a 400 response with a single field error:
-
-```ts
-import { asyncValidatorHandler, invalidValueApiResponse } from '@qnx/response'
-
-router.get('/users/:id', asyncValidatorHandler(async (req, res) => {
-  const user = await User.findById(req.params.id)
-  if (!user) return invalidValueApiResponse(res, 'id', 'User not found.')
-  return user
-}))
-```
+> **Deprecated:** throw `InvalidValueError` instead — it produces the identical response, needs no `res`, and halts execution:
+>
+> ```ts
+> import { InvalidValueError } from '@qnx/errors'
+>
+> router.get('/users/:id', asyncValidatorHandler(async (req) => {
+>   const user = await User.findById(req.params.id)
+>   if (!user) throw new InvalidValueError('User not found.', { key: 'id' })
+>   return user
+> }))
+> ```
 
 ```json
 { "error": "User not found.", "errors": { "id": ["User not found."] } }
@@ -418,7 +418,7 @@ router.post('/register', asyncValidatorHandler(async (req, res) => {
 }
 ```
 
-> **Throw vs Return:** Use `InvalidValueError` / `ValidationError` when you want to exit the handler from anywhere (deeply nested logic). Use `invalidValueApiResponse` / `invalidApiResponse` when you prefer an explicit `return` style at the top level.
+> **Throw vs Return:** Inside `asyncValidatorHandler`, always throw `InvalidValueError` / `ValidationError` — it exits from any depth, needs no `res`, and TypeScript narrows types after the throw. Reserve `invalidApiResponse` for code that runs outside the handler (plain Express middleware), where a thrown error has no catcher.
 
 ---
 

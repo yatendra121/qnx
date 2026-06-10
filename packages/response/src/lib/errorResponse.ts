@@ -6,6 +6,9 @@ import type { Response as ExResponse } from 'express'
 /**
  * Sends a validation API response with multiple validation errors.
  *
+ * Prefer throwing `ValidationError` inside `asyncValidatorHandler`; use this function
+ * only where throwing is not an option (e.g. plain Express middleware outside the handler).
+ *
  * @param response - The Express response object to send the response with.
  * @param errors - An object containing multiple validation errors.
  * @param statusCode - The HTTP status code to respond with. Defaults to the configured validation error code.
@@ -24,6 +27,10 @@ export function invalidApiResponse(
 /**
  * Sends a validation API response with a single validation error.
  *
+ * @deprecated Throw `InvalidValueError` from `@qnx/errors` instead — it produces the identical
+ * response via `asyncValidatorHandler`, needs no `res`, and halts execution:
+ * `throw new InvalidValueError('Email is required.', { key: 'email' })`
+ *
  * @param response - The Express response object to send the response with.
  * @param errorKey - The key associated with the validation error.
  * @param errorMessage - The validation error message to be sent.
@@ -39,6 +46,9 @@ export function invalidValueApiResponse(
 
 /**
  * Throws a ValidationError with a single validation error.
+ *
+ * @deprecated Throw `InvalidValueError` from `@qnx/errors` instead — same behavior with a
+ * meaningful error message: `throw new InvalidValueError(errorMessage, { key: errorKey })`
  *
  * @param errorKey - The key associated with the validation error.
  * @param errorMessage - The validation error message.
