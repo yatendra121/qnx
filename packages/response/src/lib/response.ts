@@ -43,9 +43,9 @@ export function errorApiResponse(
         if (errors) apiRes.setErrors(errors)
         return apiRes.setStatusCode(error.getCode()).response(response)
     } else {
-        setTimeout(() => {
+        queueMicrotask(() => {
             callbackObj.logger?.serverError(error)
-        }, 100)
+        })
         return serverErrorApiResponse(response, error)
     }
 }
