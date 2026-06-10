@@ -1,5 +1,5 @@
 import { errorCodes } from '@qnx/errors'
-import { ValidationError, UnauthenticatedUserError } from '@qnx/errors'
+import { ApiError, ValidationError, UnauthenticatedUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
 import { invalidApiResponse } from './errorResponse'
 import { ZodError } from 'zod/v4'
@@ -32,11 +32,16 @@ export function errorApiResponse(
     error: ValidationError | UnauthenticatedUserError | Error
 ) {
     if (error instanceof ValidationError) {
-        return invalidApiResponse(response, error.getErrorResponse()?.errors)
+        return invalidApiResponse(response, error.getErrorResponse()?.errors, error.getCode())
     } else if (error instanceof UnauthenticatedUserError) {
         return unauthenticateApiResponse(response)
     } else if (error.name === 'ZodError' && error instanceof ZodError) {
         return invalidApiResponse(response, collectErrorsFromZodError(error))
+    } else if (error instanceof ApiError) {
+        const apiRes = ApiResponse.getInstance().setMessage(error.message)
+        const errors = error.getErrorResponse()?.errors
+        if (errors) apiRes.setErrors(errors)
+        return apiRes.setStatusCode(error.getCode()).response(response)
     } else {
         setTimeout(() => {
             callbackObj.logger?.serverError(error)

@@ -112,6 +112,12 @@ describe('Response Integration Testing', function () {
         }).toEqual(response.body)
     })
 
+    it('customApiErrorStatusCode', async function () {
+        const response = await request(app).get('/api-error').set('Accept', 'application/json')
+        expect(response.status).toEqual(409)
+        expect('Conflict detected.').toEqual(response.body.message)
+    })
+
     it('ValidationErrorResponse With some fields', async function () {
         const response = await request(app)
             .post('/zod-validation-error')

@@ -8,12 +8,17 @@ import type { Response as ExResponse } from 'express'
  *
  * @param response - The Express response object to send the response with.
  * @param errors - An object containing multiple validation errors.
+ * @param statusCode - The HTTP status code to respond with. Defaults to the configured validation error code.
  * @returns The API response with a validation error code and errors.
  */
-export function invalidApiResponse(response: ExResponse, errors: ApiResponseErrors | undefined) {
+export function invalidApiResponse(
+    response: ExResponse,
+    errors: ApiResponseErrors | undefined,
+    statusCode: number = errorCodes.VALIDATION_ERROR_CODE
+) {
     const apiRes = ApiResponse.getInstance()
     if (errors) apiRes.setErrors(errors)
-    return apiRes.setStatusCode(errorCodes.VALIDATION_ERROR_CODE).response(response)
+    return apiRes.setStatusCode(statusCode).response(response)
 }
 
 /**

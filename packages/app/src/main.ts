@@ -22,7 +22,7 @@ import type { Express } from 'express'
 import z from 'zod/v4'
 import * as path from 'path'
 import { json } from 'body-parser'
-import { InvalidValueError } from '@qnx/errors'
+import { ApiError, InvalidValueError } from '@qnx/errors'
 import { decryptAuthToken, generateAuthToken } from '@qnx/crypto'
 
 const app = express()
@@ -130,6 +130,13 @@ app.get(
         // response is sent and the headersSent guard must swallow the second send.
         invalidValueApiResponse(res, 'foo', 'Foo is required.')
         return { message: 'should never be sent' }
+    })
+)
+
+app.get(
+    '/api-error',
+    asyncValidatorHandler(async () => {
+        throw new ApiError('Conflict detected.', 409)
     })
 )
 
