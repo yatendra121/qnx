@@ -365,6 +365,7 @@ Throw these inside `asyncValidatorHandler` — the handler catches them and send
 | ----- | -------- |
 | `InvalidValueError(message, { key })` | Single field validation error |
 | `ValidationError(message, { errRes: { errors } })` | Multiple field errors — pair with `ApiResponseErrorsValue` |
+| `ApiError(message, statusCode, { errRes }?)` | Any other HTTP status — e.g. `throw new ApiError('Conflict detected.', 409)` responds `409 { message }` |
 
 ### Error Response Helpers
 

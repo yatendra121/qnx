@@ -6,6 +6,7 @@ const patterns = [
     'success',
     'validation-error',
     'invalid-value',
+    'custom-error',
     'throw-validation',
     'zod-validation',
     'unauthenticated',
@@ -92,6 +93,18 @@ throw new InvalidValueError('Email is required.', { key: 'email' })
 // ⚠️ Deprecated — throwInvalidValueApiResponse and invalidValueApiResponse
 // produce the same response; use InvalidValueError instead.`,
     },
+    'custom-error': {
+        description: 'Throw an error with a custom HTTP status code from inside asyncValidatorHandler. ApiError responds with the given status and { message }; pass errRes to also include field errors.',
+        code: `import { ApiError } from '@qnx/errors'
+
+// Custom status code → 409 { message: 'Conflict detected.' }
+throw new ApiError('Conflict detected.', 409)
+
+// With field errors → 409 { message: ..., errors: { email: [...] }, error: 'Email already exists.' }
+throw new ApiError('Conflict detected.', 409, {
+    errRes: { errors: { email: ['Email already exists.'] } }
+})`,
+    },
     'throw-validation': {
         description: 'Quick reference: which error class to throw for each case inside asyncValidatorHandler.',
         code: `import { InvalidValueError, ValidationError } from '@qnx/errors'
@@ -167,7 +180,7 @@ export function registerResponsePatternTool(server: McpServer) {
             description: 'Get documentation for @qnx/response — Express handler utilities that standardize HTTP response shapes. asyncValidatorHandler auto-catches @qnx/errors and ZodErrors; initializeApiResponse controls the success response body. Use this to understand the full response pattern.',
             inputSchema: {
                 pattern: z.enum(patterns).describe(
-                    'async-handler | success | validation-error | invalid-value | throw-validation | zod-validation | unauthenticated | resource-route'
+                    'async-handler | success | validation-error | invalid-value | custom-error | throw-validation | zod-validation | unauthenticated | resource-route'
                 )
             }
         },
