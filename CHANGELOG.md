@@ -1,3 +1,13 @@
+## 0.8.8 (2026-06-13)
+
+### 🩹 Fixes
+
+- fix(response): error-handling hardening (double-send guard, ApiError status codes, zod-mini/core detection), hasErrors(), deprecate invalidValueApiResponse/throwInvalidValueApiResponse; docs(mcp): tool guidance updates ([9557577](https://github.com/yatendra121/qnx/commit/9557577))
+
+### ❤️ Thank You
+
+- yatendra121
+
 ## 0.8.7 (2026-05-21)
 
 ### 🩹 Fixes
