@@ -1,8 +1,8 @@
 import { errorCodes } from '@qnx/errors'
-import { ValidationError, UnauthenticatedUserError } from '@qnx/errors'
+import { ApiError, ValidationError, UnauthenticatedUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
 import { invalidApiResponse } from './errorResponse'
-import { ZodError } from 'zod/v4'
+import type { $ZodError } from 'zod/v4/core'
 import type { Response as ExResponse } from 'express'
 
 type CallbackObj = { logger?: { serverError: (error: Error) => void | undefined } }
@@ -32,15 +32,20 @@ export function errorApiResponse(
     error: ValidationError | UnauthenticatedUserError | Error
 ) {
     if (error instanceof ValidationError) {
-        return invalidApiResponse(response, error.getErrorResponse()?.errors)
+        return invalidApiResponse(response, error.getErrorResponse()?.errors, error.getCode())
     } else if (error instanceof UnauthenticatedUserError) {
         return unauthenticateApiResponse(response)
-    } else if (error.name === 'ZodError' && error instanceof ZodError) {
+    } else if (isZodError(error)) {
         return invalidApiResponse(response, collectErrorsFromZodError(error))
+    } else if (error instanceof ApiError) {
+        const apiRes = ApiResponse.getInstance().setMessage(error.message)
+        const errors = error.getErrorResponse()?.errors
+        if (errors) apiRes.setErrors(errors)
+        return apiRes.setStatusCode(error.getCode()).response(response)
     } else {
-        setTimeout(() => {
+        queueMicrotask(() => {
             callbackObj.logger?.serverError(error)
-        }, 100)
+        })
         return serverErrorApiResponse(response, error)
     }
 }
@@ -75,12 +80,28 @@ export function serverErrorApiResponse(response: ExResponse, error: unknown) {
 }
 
 /**
+ * Detects a ZodError by shape rather than `instanceof`, so errors thrown by a different
+ * zod module instance (e.g. zod v3, or a duplicated install) are still treated as
+ * validation errors instead of falling through to a 500 server error.
+ * zod classic and v3 name the error 'ZodError'; zod-mini throws the core '$ZodError'.
+ *
+ * @param error - The error to check.
+ * @returns True if the error looks like a ZodError.
+ */
+const isZodError = (error: Error): error is $ZodError => {
+    return (
+        (error.name === 'ZodError' || error.name === '$ZodError') &&
+        Array.isArray((error as $ZodError).issues)
+    )
+}
+
+/**
  * Collects and formats errors from a ZodError.
  *
  * @param error - The ZodError to collect errors from.
  * @returns A record of errors formatted for an API response.
  */
-const collectErrorsFromZodError = (error: ZodError) => {
+const collectErrorsFromZodError = (error: $ZodError) => {
     return error.issues.reduce(
         (errors, item) => {
             const path = item.path.join('.')

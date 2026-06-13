@@ -2,7 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { errorCodes } from '@qnx/errors'
 import { z } from 'zod'
 
-const responseTypes = ['success', 'validation-error', 'invalid-value', 'unauthenticated', 'server-error'] as const
+const responseTypes = ['success', 'validation-error', 'invalid-value', 'custom-error', 'unauthenticated', 'server-error'] as const
 
 type ProducedBy = {
     functions: string[]
@@ -19,7 +19,7 @@ return { id: 1, name: 'Item' }`,
         imports: ['initializeApiResponse']
     },
     'validation-error': {
-        functions: ['throw ValidationError (recommended)', 'invalidApiResponse'],
+        functions: ['throw ValidationError (recommended)', 'invalidApiResponse (escape hatch outside asyncValidatorHandler)'],
         example: `// ✅ Recommended — throw from anywhere inside asyncValidatorHandler
 import { ValidationError } from '@qnx/errors'
 import { ApiResponseErrorsValue } from '@qnx/response'
@@ -29,22 +29,31 @@ const errors = ApiResponseErrorsValue.getInstance()
     .getErrors()
 throw new ValidationError('Validation failed', { errRes: { errors } })
 
-// Alternative — direct response (requires res, only at route handler level)
+// Escape hatch — only for code outside asyncValidatorHandler (requires res)
 return invalidApiResponse(res, errors)`,
         imports: ['ValidationError from @qnx/errors', 'ApiResponseErrorsValue']
     },
     'invalid-value': {
-        functions: ['throw InvalidValueError (recommended)', 'throwInvalidValueApiResponse', 'invalidValueApiResponse'],
+        functions: ['throw InvalidValueError (recommended)', 'throwInvalidValueApiResponse (deprecated)', 'invalidValueApiResponse (deprecated)'],
         example: `// ✅ Recommended — throw from anywhere inside asyncValidatorHandler
 import { InvalidValueError } from '@qnx/errors'
 throw new InvalidValueError('Email is required.', { key: 'email' })
 
-// Alternative shorthand alias
-throwInvalidValueApiResponse('email', 'Email is required.')
-
-// Alternative — direct response (requires res, only at route handler level)
-return invalidValueApiResponse(res, 'email', 'Email is required.')`,
+// ⚠️ Deprecated — throwInvalidValueApiResponse and invalidValueApiResponse
+// produce the same response; use InvalidValueError instead.`,
         imports: ['InvalidValueError from @qnx/errors']
+    },
+    'custom-error': {
+        functions: ['throw ApiError'],
+        example: `// Throw from anywhere inside asyncValidatorHandler — responds with the given status code
+import { ApiError } from '@qnx/errors'
+throw new ApiError('Conflict detected.', 409)
+
+// With field errors → { message: ..., errors: { email: [...] }, error: 'Email already exists.' }
+throw new ApiError('Conflict detected.', 409, {
+    errRes: { errors: { email: ['Email already exists.'] } }
+})`,
+        imports: ['ApiError from @qnx/errors']
     },
     'unauthenticated': {
         functions: ['throw UnauthenticatedUserError (recommended)', 'unauthenticateApiResponse'],
@@ -74,12 +83,13 @@ export function registerBuildApiResponseTool(server: McpServer) {
                 '  success          → data (optional), message (optional)',
                 '  validation-error → errors (required)',
                 '  invalid-value    → field (required), error (required)',
+                '  custom-error     → error (required), statusCode (required)',
                 '  unauthenticated  → no extra fields',
                 '  server-error     → error (optional)'
             ].join('\n'),
             inputSchema: {
                 type: z.enum(responseTypes).describe(
-                    'success | validation-error | invalid-value | unauthenticated | server-error'
+                    'success | validation-error | invalid-value | custom-error | unauthenticated | server-error'
                 ),
                 data: z.record(z.string(), z.unknown()).optional().describe(
                     'success only — response payload, wrapped as { data: ... }'
@@ -88,17 +98,20 @@ export function registerBuildApiResponseTool(server: McpServer) {
                     'success only — human-readable success message'
                 ),
                 errors: z.record(z.string(), z.array(z.string())).optional().describe(
-                    'validation-error only (required) — field errors map: { fieldName: ["error msg"] }'
+                    'validation-error (required) | custom-error (optional) — field errors map: { fieldName: ["error msg"] }'
                 ),
                 field: z.string().optional().describe(
                     'invalid-value only (required) — the name of the invalid field'
                 ),
                 error: z.string().optional().describe(
-                    'invalid-value | server-error only — the error message'
+                    'invalid-value | custom-error | server-error only — the error message'
+                ),
+                statusCode: z.number().optional().describe(
+                    'custom-error only (required) — the HTTP status code, e.g. 409'
                 )
             }
         },
-        async ({ type, data, message, errors, field, error }) => {
+        async ({ type, data, message, errors, field, error, statusCode: customStatusCode }) => {
             let statusCode: number
             let body: Record<string, unknown>
 
@@ -116,6 +129,13 @@ export function registerBuildApiResponseTool(server: McpServer) {
                 const key = field ?? 'field'
                 const msg = error ?? 'Invalid value'
                 body = { errors: { [key]: [msg] }, error: msg }
+            } else if (type === 'custom-error') {
+                statusCode = customStatusCode ?? 400
+                body = { message: error ?? 'Error' }
+                if (errors) {
+                    body.errors = errors
+                    body.error = Object.values(errors)[0]?.[0] ?? ''
+                }
             } else if (type === 'unauthenticated') {
                 statusCode = errorCodes.UNAUTHENTICATED_USER_ERROR_CODE
                 body = { errorCode: 'unauthenticated', message: 'Unauthenticated' }

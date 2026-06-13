@@ -20,9 +20,10 @@ import { logger } from '@qnx/winston'
 import express, { urlencoded } from 'express'
 import type { Express } from 'express'
 import z from 'zod/v4'
+import * as zm from 'zod/v4/mini'
 import * as path from 'path'
 import { json } from 'body-parser'
-import { InvalidValueError } from '@qnx/errors'
+import { ApiError, InvalidValueError } from '@qnx/errors'
 import { decryptAuthToken, generateAuthToken } from '@qnx/crypto'
 
 const app = express()
@@ -123,6 +124,35 @@ app.get(
     })
 )
 
+app.get(
+    '/double-send',
+    asyncValidatorHandler(async (req, res) => {
+        // Intentionally missing `return` — the handler keeps running after the
+        // response is sent and the headersSent guard must swallow the second send.
+        invalidValueApiResponse(res, 'foo', 'Foo is required.')
+        return { message: 'should never be sent' }
+    })
+)
+
+app.get(
+    '/api-error',
+    asyncValidatorHandler(async () => {
+        throw new ApiError('Conflict detected.', 409)
+    })
+)
+
+app.get(
+    '/zod-foreign-error',
+    asyncValidatorHandler(async () => {
+        // Simulates a ZodError thrown by a different zod module instance
+        // (e.g. zod v3 or a duplicated install), where instanceof would fail.
+        const error = new Error('Email is required.')
+        error.name = 'ZodError'
+        Object.assign(error, { issues: [{ path: ['email'], message: 'Email is required.' }] })
+        throw error
+    })
+)
+
 app.post(
     '/zod-validation-error',
     asyncValidatorHandler(async (req) => {
@@ -148,6 +178,20 @@ app.post(
                     tagUsers: z.array(z.string())
                 })
             )
+        })
+
+        const userData = UserSchema.parse(req.body)
+
+        return initializeApiResponse().setData(userData).setMessage('User created successfully.')
+    })
+)
+
+app.post(
+    '/zod-mini-validation-error',
+    asyncValidatorHandler(async (req) => {
+        // zod-mini errors carry name '$ZodError' instead of 'ZodError'
+        const UserSchema = zm.object({
+            email: zm.string()
         })
 
         const userData = UserSchema.parse(req.body)

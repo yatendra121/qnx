@@ -6,18 +6,30 @@ import type { Response as ExResponse } from 'express'
 /**
  * Sends a validation API response with multiple validation errors.
  *
+ * Prefer throwing `ValidationError` inside `asyncValidatorHandler`; use this function
+ * only where throwing is not an option (e.g. plain Express middleware outside the handler).
+ *
  * @param response - The Express response object to send the response with.
  * @param errors - An object containing multiple validation errors.
+ * @param statusCode - The HTTP status code to respond with. Defaults to the configured validation error code.
  * @returns The API response with a validation error code and errors.
  */
-export function invalidApiResponse(response: ExResponse, errors: ApiResponseErrors | undefined) {
+export function invalidApiResponse(
+    response: ExResponse,
+    errors: ApiResponseErrors | undefined,
+    statusCode: number = errorCodes.VALIDATION_ERROR_CODE
+) {
     const apiRes = ApiResponse.getInstance()
     if (errors) apiRes.setErrors(errors)
-    return apiRes.setStatusCode(errorCodes.VALIDATION_ERROR_CODE).response(response)
+    return apiRes.setStatusCode(statusCode).response(response)
 }
 
 /**
  * Sends a validation API response with a single validation error.
+ *
+ * @deprecated Throw `InvalidValueError` from `@qnx/errors` instead — it produces the identical
+ * response via `asyncValidatorHandler`, needs no `res`, and halts execution:
+ * `throw new InvalidValueError('Email is required.', { key: 'email' })`
  *
  * @param response - The Express response object to send the response with.
  * @param errorKey - The key associated with the validation error.
@@ -34,6 +46,9 @@ export function invalidValueApiResponse(
 
 /**
  * Throws a ValidationError with a single validation error.
+ *
+ * @deprecated Throw `InvalidValueError` from `@qnx/errors` instead — same behavior with a
+ * meaningful error message: `throw new InvalidValueError(errorMessage, { key: errorKey })`
  *
  * @param errorKey - The key associated with the validation error.
  * @param errorMessage - The validation error message.

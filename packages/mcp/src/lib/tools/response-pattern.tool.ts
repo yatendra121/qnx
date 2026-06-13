@@ -6,6 +6,7 @@ const patterns = [
     'success',
     'validation-error',
     'invalid-value',
+    'custom-error',
     'throw-validation',
     'zod-validation',
     'unauthenticated',
@@ -77,7 +78,7 @@ const errors = ApiResponseErrorsValue.getInstance()
 throw new ValidationError('Validation failed', { errRes: { errors } })
 // → { errors: { email: ['Email is required.'], name: ['Name must be...'] }, error: 'Email is required.' }
 
-// Alternative — direct response (only works at route handler level, requires res)
+// Escape hatch — only for code outside asyncValidatorHandler (requires res)
 import { invalidApiResponse, ApiResponseErrorsValue } from '@qnx/response'
 return invalidApiResponse(res, errors)`,
     },
@@ -89,13 +90,20 @@ import { InvalidValueError } from '@qnx/errors'
 throw new InvalidValueError('Email is required.', { key: 'email' })
 // → { errors: { email: ['Email is required.'] }, error: 'Email is required.' }
 
-// Alternative shorthand — also throwable, but only a thin wrapper
-import { throwInvalidValueApiResponse } from '@qnx/response'
-throwInvalidValueApiResponse('email', 'Email is required.')
+// ⚠️ Deprecated — throwInvalidValueApiResponse and invalidValueApiResponse
+// produce the same response; use InvalidValueError instead.`,
+    },
+    'custom-error': {
+        description: 'Throw an error with a custom HTTP status code from inside asyncValidatorHandler. ApiError responds with the given status and { message }; pass errRes to also include field errors.',
+        code: `import { ApiError } from '@qnx/errors'
 
-// Alternative — direct response (only works at route handler level, requires res)
-import { invalidValueApiResponse } from '@qnx/response'
-return invalidValueApiResponse(res, 'email', 'Email is required.')`,
+// Custom status code → 409 { message: 'Conflict detected.' }
+throw new ApiError('Conflict detected.', 409)
+
+// With field errors → 409 { message: ..., errors: { email: [...] }, error: 'Email already exists.' }
+throw new ApiError('Conflict detected.', 409, {
+    errRes: { errors: { email: ['Email already exists.'] } }
+})`,
     },
     'throw-validation': {
         description: 'Quick reference: which error class to throw for each case inside asyncValidatorHandler.',
@@ -114,8 +122,7 @@ const errors = ApiResponseErrorsValue.getInstance()
 throw new ValidationError('Validation failed', { errRes: { errors } })
 // → getErrorResponse() = { errors: { email: [...], name: [...] } }
 
-// ⚠️  throwInvalidValueApiResponse is a shorthand alias for throw new InvalidValueError
-//    prefer the explicit class for clarity and reuse outside route handlers`,
+// ⚠️  throwInvalidValueApiResponse is deprecated — throw new InvalidValueError instead`,
     },
     'zod-validation': {
         description: 'Use Zod schema parsing inside asyncValidatorHandler. ZodErrors are caught automatically and converted to { errors: { "field.path": [msg] }, error: firstMsg }. Nested paths use dot notation.',
@@ -173,7 +180,7 @@ export function registerResponsePatternTool(server: McpServer) {
             description: 'Get documentation for @qnx/response — Express handler utilities that standardize HTTP response shapes. asyncValidatorHandler auto-catches @qnx/errors and ZodErrors; initializeApiResponse controls the success response body. Use this to understand the full response pattern.',
             inputSchema: {
                 pattern: z.enum(patterns).describe(
-                    'async-handler | success | validation-error | invalid-value | throw-validation | zod-validation | unauthenticated | resource-route'
+                    'async-handler | success | validation-error | invalid-value | custom-error | throw-validation | zod-validation | unauthenticated | resource-route'
                 )
             }
         },

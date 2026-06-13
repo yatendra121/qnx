@@ -135,7 +135,8 @@ router.post('/users', asyncValidatorHandler(async (req) => {
 Use `InvalidValueError` to signal that a specific field is invalid. The handler catches it and sends a 400 response:
 
 ```ts
-import { asyncValidatorHandler, InvalidValueError } from '@qnx/response'
+import { asyncValidatorHandler } from '@qnx/response'
+import { InvalidValueError } from '@qnx/errors'
 
 router.get('/users/:id', asyncValidatorHandler(async (req) => {
   const user = await User.findById(req.params.id)
@@ -153,7 +154,8 @@ router.get('/users/:id', asyncValidatorHandler(async (req) => {
 Use `ApiResponseErrorsValue` to collect multiple field errors, then throw `ValidationError`:
 
 ```ts
-import { asyncValidatorHandler, ValidationError, ApiResponseErrorsValue, initializeApiResponse } from '@qnx/response'
+import { asyncValidatorHandler, ApiResponseErrorsValue, initializeApiResponse } from '@qnx/response'
+import { ValidationError } from '@qnx/errors'
 
 router.post('/register', asyncValidatorHandler(async (req) => {
   const { email, password } = req.body
@@ -365,24 +367,25 @@ Throw these inside `asyncValidatorHandler` — the handler catches them and send
 | ----- | -------- |
 | `InvalidValueError(message, { key })` | Single field validation error |
 | `ValidationError(message, { errRes: { errors } })` | Multiple field errors — pair with `ApiResponseErrorsValue` |
+| `ApiError(message, statusCode, { errRes }?)` | Any other HTTP status — e.g. `throw new ApiError('Conflict detected.', 409)` responds `409 { message }` |
 
 ### Error Response Helpers
 
-Call these directly when you have access to `res` — they send the response immediately without throwing.
+Call these directly only where throwing is not an option — e.g. plain Express middleware outside `asyncValidatorHandler`. Inside the handler, throw the error classes above instead.
 
-#### `invalidValueApiResponse(res, key, message)`
+#### `invalidValueApiResponse(res, key, message)` — deprecated
 
-Sends a 400 response with a single field error:
-
-```ts
-import { asyncValidatorHandler, invalidValueApiResponse } from '@qnx/response'
-
-router.get('/users/:id', asyncValidatorHandler(async (req, res) => {
-  const user = await User.findById(req.params.id)
-  if (!user) return invalidValueApiResponse(res, 'id', 'User not found.')
-  return user
-}))
-```
+> **Deprecated:** throw `InvalidValueError` instead — it produces the identical response, needs no `res`, and halts execution:
+>
+> ```ts
+> import { InvalidValueError } from '@qnx/errors'
+>
+> router.get('/users/:id', asyncValidatorHandler(async (req) => {
+>   const user = await User.findById(req.params.id)
+>   if (!user) throw new InvalidValueError('User not found.', { key: 'id' })
+>   return user
+> }))
+> ```
 
 ```json
 { "error": "User not found.", "errors": { "id": ["User not found."] } }
@@ -418,7 +421,7 @@ router.post('/register', asyncValidatorHandler(async (req, res) => {
 }
 ```
 
-> **Throw vs Return:** Use `InvalidValueError` / `ValidationError` when you want to exit the handler from anywhere (deeply nested logic). Use `invalidValueApiResponse` / `invalidApiResponse` when you prefer an explicit `return` style at the top level.
+> **Throw vs Return:** Inside `asyncValidatorHandler`, always throw `InvalidValueError` / `ValidationError` — it exits from any depth, needs no `res`, and TypeScript narrows types after the throw. Reserve `invalidApiResponse` for code that runs outside the handler (plain Express middleware), where a thrown error has no catcher.
 
 ---
 

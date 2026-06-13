@@ -101,6 +101,36 @@ describe('Response Integration Testing', function () {
         }).toEqual(response.body)
     })
 
+    it('doubleSendGuard', async function () {
+        const response = await request(app).get('/double-send').set('Accept', 'application/json')
+        expect(response.status).toEqual(400)
+        expect({
+            errors: {
+                foo: ['Foo is required.']
+            },
+            error: 'Foo is required.'
+        }).toEqual(response.body)
+    })
+
+    it('customApiErrorStatusCode', async function () {
+        const response = await request(app).get('/api-error').set('Accept', 'application/json')
+        expect(response.status).toEqual(409)
+        expect('Conflict detected.').toEqual(response.body.message)
+    })
+
+    it('foreignZodErrorTreatedAsValidationError', async function () {
+        const response = await request(app)
+            .get('/zod-foreign-error')
+            .set('Accept', 'application/json')
+        expect(response.status).toEqual(400)
+        expect({
+            errors: {
+                email: ['Email is required.']
+            },
+            error: 'Email is required.'
+        }).toEqual(response.body)
+    })
+
     it('ValidationErrorResponse With some fields', async function () {
         const response = await request(app)
             .post('/zod-validation-error')
@@ -179,6 +209,19 @@ describe('Response Integration Testing', function () {
                 'posts.0.tagUsers.2': ['Invalid input: expected string, received number']
             },
             error: 'Invalid input: expected string, received number'
+        }).toEqual(response.body)
+    })
+
+    it('ValidationErrorResponse using zod-mini', async function () {
+        const response = await request(app)
+            .post('/zod-mini-validation-error')
+            .send({})
+            .set('Accept', 'application/json')
+        expect(response.status).toEqual(400)
+
+        expect({
+            errors: { email: ['Invalid input: expected string, received undefined'] },
+            error: 'Invalid input: expected string, received undefined'
         }).toEqual(response.body)
     })
 
