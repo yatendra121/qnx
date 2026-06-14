@@ -1,6 +1,11 @@
 import { errorCodes } from './codes'
 import type { ErrorResponse } from './types'
 
+/** V8-only Error.captureStackTrace, typed locally to avoid a hard @types/node dependency. */
+type ErrorWithCapture = {
+    captureStackTrace?: (targetObject: object, constructorOpt?: unknown) => void
+}
+
 /**
  * Used for create custom error instance
  */
@@ -23,6 +28,10 @@ export class ApiError extends Error {
         this.name = 'ApiError'
         this.errorCode = code
         this.errorResponse = option?.errRes
+        // Omit the constructor frames from the stack so it points at the throw site.
+        // Typed locally because captureStackTrace is V8-only and absent from the
+        // browser-targeted lib types this package builds against.
+        ;(Error as ErrorWithCapture).captureStackTrace?.(this, new.target)
     }
 
     /**
