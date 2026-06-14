@@ -22,7 +22,6 @@ export class ApiError extends Error {
      */
     constructor(m: string, code: number, option?: { errRes?: ErrorResponse }) {
         super(m)
-        Object.setPrototypeOf(this, ApiError.prototype)
         // String literal (not this.constructor.name) so the name survives bundler
         // minification, which mangles class names. Subclasses override below.
         this.name = 'ApiError'
@@ -66,7 +65,6 @@ export class ValidationError extends ApiError {
      */
     constructor(m: string, option: { errRes: ErrorResponse }) {
         super(m, errorCodes.VALIDATION_ERROR_CODE, option)
-        Object.setPrototypeOf(this, ValidationError.prototype)
         this.name = 'ValidationError'
     }
 }
@@ -84,7 +82,6 @@ export class InvalidValueError extends ValidationError {
      */
     constructor(m: string, { key }: { key: string }) {
         super(m, { errRes: { errors: { [key]: [m] } } })
-        Object.setPrototypeOf(this, InvalidValueError.prototype)
         this.name = 'InvalidValueError'
     }
 }
@@ -101,7 +98,6 @@ export class UnauthenticatedUserError extends ApiError {
      */
     constructor(m: string) {
         super(m, errorCodes.UNAUTHENTICATED_USER_ERROR_CODE)
-        Object.setPrototypeOf(this, UnauthenticatedUserError.prototype)
         this.name = 'UnauthenticatedUserError'
     }
 }
@@ -118,7 +114,6 @@ export class ServerError extends ApiError {
      */
     constructor(m: string) {
         super(m, errorCodes.SERVER_ERROR_CODE)
-        Object.setPrototypeOf(this, ServerError.prototype)
         this.name = 'ServerError'
     }
 }
