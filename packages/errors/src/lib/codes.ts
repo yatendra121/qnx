@@ -21,6 +21,12 @@ export const errorCodes: ErrorCodes = {
  * Updates the existing errorCodes object with new values.
  * Only provided properties in the Partial<ErrorCodes> object are updated.
  *
+ * This mutates a process-global singleton, so call it once during application
+ * startup, before any errors are constructed or thrown. The built-in error
+ * subclasses (ValidationError, UnauthenticatedUserError, ServerError) capture
+ * their status code at construction time, so reconfiguring the codes afterwards
+ * does not affect errors that already exist — only ones created later.
+ *
  * @param obj - Partial object containing new error codes.
  */
 export const setErrorCodes = (obj: Partial<ErrorCodes>) => {
