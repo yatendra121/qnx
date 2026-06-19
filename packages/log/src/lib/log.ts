@@ -32,6 +32,7 @@ const config: Record<Type, ColorName> = {
  * consoleLog('This is an info message', { type: 'info' })
  * consoleLog('This is an error message', { type: 'error' })
  */
-export function consoleLog(message: string, { type }: { type: Type } = { type: 'info' }): void {
-    log(chalk[config[type]](message))
+export function consoleLog(message: string, { type = 'info' }: { type?: Type } = {}): void {
+    const color = config[type] ?? config.info
+    log(chalk[color](message))
 }
