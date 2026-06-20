@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 /** Strips ANSI color/style escape codes so the plain text can be asserted. */
-const stripAnsi = (value: string) => value.replace(/\[[0-9;]*m/g, '')
+const stripAnsi = (value: string) => value.replace(/\[[0-9;]*m/g, '')
 
 describe('log', () => {
     let logSpy: ReturnType<typeof vi.spyOn>
@@ -34,11 +34,11 @@ describe('log', () => {
     })
 
     it.each([
-        { type: 'info', icon: 'ℹ', label: 'INFO', color: '[36m', bg: '[46m' },
-        { type: 'success', icon: '✔', label: 'SUCCESS', color: '[32m', bg: '[42m' },
-        { type: 'warning', icon: '⚠', label: 'WARNING', color: '[33m', bg: '[43m' },
-        { type: 'error', icon: '✖', label: 'ERROR', color: '[31m', bg: '[41m' }
-    ] as const)('renders $type with its icon, label and color', ({ type, icon, label, color, bg }) => {
+        { type: 'info', icon: 'ℹ', label: 'info', color: '[36m' },
+        { type: 'success', icon: '✔', label: 'success', color: '[32m' },
+        { type: 'warning', icon: '⚠', label: 'warning', color: '[33m' },
+        { type: 'error', icon: '✖', label: 'error', color: '[31m' }
+    ] as const)('renders $type with its icon, label and color', ({ type, icon, label, color }) => {
         consoleLog('the message', { type })
 
         const plain = lastPlain()
@@ -46,27 +46,26 @@ describe('log', () => {
         expect(plain).toContain(label)
         expect(plain).toContain('the message')
 
-        const raw = lastRaw()
-        expect(raw).toContain(color) // icon accent color
-        expect(raw).toContain(bg) // label badge background
+        // The accent color wraps both the icon and the label.
+        expect(lastRaw()).toContain(color)
     })
 
     it('defaults to the info style when no options are given', () => {
         consoleLog('no options')
 
-        expect(lastPlain()).toContain('INFO')
-        expect(lastRaw()).toContain('[46m')
+        expect(lastPlain()).toContain('info')
+        expect(lastRaw()).toContain('[36m')
     })
 
     it('falls back to the info style for an empty options object', () => {
         expect(() => consoleLog('empty options', {})).not.toThrow()
-        expect(lastPlain()).toContain('INFO')
+        expect(lastPlain()).toContain('info')
     })
 
     it('falls back to the info style for an unknown type', () => {
         // Untyped JS callers can pass a type outside the Type union.
         expect(() => consoleLog('bad type', { type: 'debug' as never })).not.toThrow()
-        expect(lastPlain()).toContain('INFO')
+        expect(lastPlain()).toContain('info')
     })
 
     it('pads labels so messages stay aligned across types', () => {
