@@ -133,3 +133,30 @@ describe('Testing with change Codes', () => {
         expect(serverError.getCode()).toBe(200)
     })
 })
+
+describe('Error code capture timing', () => {
+    beforeAll(() => {
+        setErrorCodes({ VALIDATION_ERROR_CODE: 400 })
+    })
+
+    afterAll(() => {
+        setErrorCodes({
+            VALIDATION_ERROR_CODE: 400,
+            UNAUTHENTICATED_USER_ERROR_CODE: 401,
+            SERVER_ERROR_CODE: 500
+        })
+    })
+
+    it('captures the error code at construction time, not at read time', () => {
+        const error = new ValidationError('Validation error', { errRes: { errors: {} } })
+        expect(error.getCode()).toBe(400)
+
+        // Reconfiguring codes after construction must not affect an existing error.
+        setErrorCodes({ VALIDATION_ERROR_CODE: 422 })
+        expect(error.getCode()).toBe(400)
+
+        // Only errors constructed after the change pick up the new code.
+        const newError = new ValidationError('Validation error', { errRes: { errors: {} } })
+        expect(newError.getCode()).toBe(422)
+    })
+})
