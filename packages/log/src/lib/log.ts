@@ -1,37 +1,51 @@
 import chalk from 'chalk'
 
 /**
- * Type representing the possible color names for log messages.
+ * Type representing the accent color used for each log type.
  */
-type ColorName = 'red' | 'green' | 'cyan' | 'yellow'
+type ColorName = 'blue' | 'green' | 'yellow' | 'red' | 'magenta' | 'cyan'
 
 /**
  * Type representing the possible types of log messages.
  */
-type Type = 'info' | 'error' | 'success' | 'warning'
+type Type = 'info' | 'success' | 'warn' | 'error' | 'debug' | 'trace'
 
 const log = console.log
 
 /**
- * Configuration object mapping each log type to a corresponding color.
+ * Presentation details for a log type: the color and its outline icon.
  */
-const config: Record<Type, ColorName> = {
-    info: 'cyan',
-    error: 'red',
-    success: 'green',
-    warning: 'yellow'
+interface TypeStyle {
+    color: ColorName
+    icon: string
 }
 
 /**
- * Logs a message to the console with a specific color based on the type.
+ * Configuration object mapping each log type to its color and outline icon.
+ */
+const config: Record<Type, TypeStyle> = {
+    info: { color: 'blue', icon: 'ⓘ' },
+    success: { color: 'green', icon: '✓' },
+    warn: { color: 'yellow', icon: '⚠' },
+    error: { color: 'red', icon: '✗' },
+    debug: { color: 'magenta', icon: '◇' },
+    trace: { color: 'cyan', icon: '☆' }
+}
+
+/**
+ * Logs a message to the console, prefixed with an outline icon and colored
+ * according to its type.
  *
  * @param message - The message to be logged.
  * @param options - An object containing the type of the message. Defaults to 'info'.
  *
  * @example
- * consoleLog('This is an info message', { type: 'info' })
- * consoleLog('This is an error message', { type: 'error' })
+ * consoleLog('Server started successfully', { type: 'info' })
+ * // ⓘ  Server started successfully
+ * consoleLog('Failed to connect to database', { type: 'error' })
+ * // ✗  Failed to connect to database
  */
-export function consoleLog(message: string, { type }: { type: Type } = { type: 'info' }): void {
-    log(chalk[config[type]](message))
+export function consoleLog(message: string, { type = 'info' }: { type?: Type } = {}): void {
+    const { color, icon } = config[type] ?? config.info
+    log(chalk[color](`${icon}  ${message}`))
 }
