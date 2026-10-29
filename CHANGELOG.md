@@ -1,3 +1,9 @@
+## 0.8.10 (2026-10-29)
+
+### 🩹 Fixes
+
+- chore: republish packages (0.8.9 failed to publish to npm); includes the 0.8.9 log and errors fixes ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.8.9 (2026-10-29)
 
 ### 🩹 Fixes
