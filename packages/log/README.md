@@ -1,13 +1,14 @@
 # `@qnx/log`
 
-`@qnx/log` provides a console logger using the [Chalk](https://www.npmjs.com/package/chalk) library for colorful output. It supports different message types — `info`, `error`, `success`, and `warning` — each rendered in a distinct color.
+`@qnx/log` provides a console logger using the [Chalk](https://www.npmjs.com/package/chalk) library for colorful output. It supports six message types — `info`, `success`, `warn`, `error`, `debug`, and `trace` — each rendered in a distinct color with an outline icon.
 
 > 🤖 MCP Server: `https://qnx-mcp-server.vercel.app/mcp/log`
 
 ## ✨ Features
 
 - 🎨 Colorized console output via Chalk
-- 📢 Four built-in message types: `info`, `error`, `success`, `warning`
+- 📢 Six built-in message types: `info`, `success`, `warn`, `error`, `debug`, `trace` (`warning` is an alias of `warn`)
+- 🧵 Errors are printed with their stack trace and `cause` chain
 - 🛠️ Simple, minimal API
 
 ## 📦 Installation
@@ -34,11 +35,29 @@ npm install chalk
 ```ts
 import { consoleLog } from '@qnx/log'
 
-consoleLog('Server started', { type: 'info' })
-consoleLog('An error occurred!', { type: 'error' })
-consoleLog('Operation successful', { type: 'success' })
-consoleLog('Proceed with caution', { type: 'warning' })
+consoleLog('Server started', { type: 'info' })        // ⓘ  Server started
+consoleLog('Operation successful', { type: 'success' }) // ✓  Operation successful
+consoleLog('Proceed with caution', { type: 'warn' })    // ⚠  Proceed with caution
+consoleLog('An error occurred!', { type: 'error' })     // ✗  An error occurred!
+consoleLog('Fetching user data...', { type: 'debug' })  // ◇  Fetching user data...
+consoleLog('Request ID: 7f3a2b1e', { type: 'trace' })   // ☆  Request ID: 7f3a2b1e
 ```
+
+Pass an `Error` (for example, straight from a `catch` block) to print its stack trace and `cause` chain:
+
+```ts
+try {
+    await connect()
+} catch (err) {
+    consoleLog(err, { type: 'error' })
+}
+// ✗  Error: Failed to connect to database
+//     at connect (db.ts:12:11)
+// Caused by: Error: ECONNREFUSED 127.0.0.1:5432
+//     at ...
+```
+
+Other values (objects, numbers, …) are converted to text; plain objects are JSON-formatted.
 
 The `type` option defaults to `'info'` if omitted:
 

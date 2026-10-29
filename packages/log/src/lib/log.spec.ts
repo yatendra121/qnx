@@ -60,4 +60,58 @@ describe('log', () => {
         expect(() => consoleLog('bad type', { type: 'verbose' as never })).not.toThrow()
         expect(lastRaw()).toContain('[34m')
     })
+
+    it('keeps `warning` as an alias of `warn`', () => {
+        consoleLog('careful', { type: 'warning' })
+        expect(lastRaw()).toContain('[33m')
+        expect(lastRaw()).toContain('⚠')
+    })
+
+    it('prints the stack trace of an Error', () => {
+        const error = new Error('db down')
+        consoleLog(error, { type: 'error' })
+
+        const raw = lastRaw()
+        expect(raw).toContain('✗  Error: db down')
+        expect(raw).toContain(error.stack?.split('\n')[1]?.trim())
+        // stack frames are dimmed
+        expect(raw).toContain('[2m')
+    })
+
+    it('falls back to name and message when an Error has no stack', () => {
+        const error = new TypeError('bad input')
+        error.stack = undefined
+        consoleLog(error, { type: 'error' })
+        expect(lastRaw()).toContain('TypeError: bad input')
+    })
+
+    it('prints the cause chain of an Error', () => {
+        const root = new Error('socket closed')
+        const error = new Error('db down')
+        ;(error as { cause?: unknown }).cause = root
+        consoleLog(error, { type: 'error' })
+
+        const raw = lastRaw()
+        expect(raw).toContain('Error: db down')
+        expect(raw).toContain('Caused by: Error: socket closed')
+    })
+
+    it('does not loop forever on a cyclic cause chain', () => {
+        const error = new Error('loop')
+        ;(error as { cause?: unknown }).cause = error
+        expect(() => consoleLog(error, { type: 'error' })).not.toThrow()
+    })
+
+    it('stringifies non-string values', () => {
+        consoleLog({ id: 7 })
+        expect(lastRaw()).toContain('"id": 7')
+
+        consoleLog(42)
+        expect(lastRaw()).toContain('42')
+
+        const circular: Record<string, unknown> = {}
+        circular.self = circular
+        expect(() => consoleLog(circular)).not.toThrow()
+        expect(lastRaw()).toContain('[object Object]')
+    })
 })
