@@ -53,6 +53,12 @@ router.post('/users', asyncValidatorHandler(async (req) => {
   - [Throw a single field error](#throw-a-single-field-error)
   - [Throw multiple field errors](#throw-multiple-field-errors)
   - [Zod validation](#zod-validation)
+  - [What the handler does with your return value](#what-the-handler-does-with-your-return-value)
+  - [How thrown errors become responses](#how-thrown-errors-become-responses)
+  - [CRUD routes with resourceRoute](#crud-routes-with-resourceroute)
+  - [Log unexpected errors](#log-unexpected-errors)
+  - [Change the default status codes](#change-the-default-status-codes)
+  - [Typed requests](#typed-requests)
 - [Migrating Existing Routes](#-migrating-existing-routes)
 - [API Reference](#-api-reference)
 - [Contributing](#-contributing)
@@ -87,15 +93,21 @@ bun install @qnx/response
 
 ### Peer Dependencies
 
-@qnx/response requires @qnx/errors as a peer dependency:
+@qnx/response needs these packages alongside it:
+
+| Package       | Version  |
+| ------------- | -------- |
+| `@qnx/errors` | `>=0.8.0` |
+| `express`     | `4.x` or `5.x` |
+| `zod`         | `4.x`    |
 
 ```bash
-npm install @qnx/errors
+npm install @qnx/errors express zod
 ```
 
 ## 💡 Usage
 
-All examples use `asyncValidatorHandler` as the outer wrapper. Everything you `return` is sent as the response body.
+All examples use `asyncValidatorHandler` as the outer wrapper. What you `return` becomes the response body, with [a few exceptions](#what-the-handler-does-with-your-return-value).
 
 ### Return data
 
@@ -172,13 +184,15 @@ router.post('/register', asyncValidatorHandler(async (req) => {
 
 ```json
 {
-  "error": "Validation failed",
+  "error": "Email is required.",
   "errors": {
     "email": ["Email is required."],
     "password": ["Password is required."]
   }
 }
 ```
+
+The top-level `error` is always the first message of the first field. The message passed to `ValidationError` is not sent to the client.
 
 ### Zod validation
 
@@ -189,8 +203,8 @@ import { asyncValidatorHandler, initializeApiResponse } from '@qnx/response'
 import { z } from 'zod'
 
 const CreateUserSchema = z.object({
-  name: z.string({ required_error: 'Name is required.' }),
-  email: z.string({ required_error: 'Email is required.' }).email('Invalid email.')
+  name: z.string({ error: 'Name is required.' }),
+  email: z.email({ error: 'Invalid email.' })
 })
 
 router.post('/users', asyncValidatorHandler(async (req) => {
@@ -211,6 +225,136 @@ router.post('/users', asyncValidatorHandler(async (req) => {
 ```json
 { "error": "Name is required.", "errors": { "name": ["Name is required."] } }
 ```
+
+Nested fields use dot-separated keys, such as `address.city` or `tags.0`. Errors are recognised by their shape rather than `instanceof`, so an error from a second copy of zod is still treated as a validation error.
+
+### What the handler does with your return value
+
+| You return | What happens |
+| ---------- | ------------ |
+| An `ApiResponse` (from `initializeApiResponse()`) | It is sent with its own status code and fields |
+| Any other value, including `null`, `0` and `''` | `200 { "data": value }` |
+| `res` (for example `return res.status(202).send(...)`) | Nothing more is sent |
+| `undefined`, or nothing at all | `next()` is called and the next matching route or middleware runs |
+
+If nothing else matches, a handler that forgets to return falls through to a 404. You can also use this on purpose to write middleware:
+
+```ts
+router.use(asyncValidatorHandler(async (req, res) => {
+  res.locals.user = await getUser(req)
+  // returns undefined, so the next handler runs
+}))
+```
+
+If a response has already been sent, later responses are ignored, so `ERR_HTTP_HEADERS_SENT` isn't raised. The first response wins.
+
+### How thrown errors become responses
+
+| Thrown inside the handler | Status | Body |
+| ------------------------- | ------ | ---- |
+| `ValidationError`, `InvalidValueError` | 400 | `{ error, errors }` |
+| `ZodError` | 400 | `{ error, errors }` |
+| `UnauthenticatedUserError` | 401 | `{ errorCode: "unauthenticated", message: "Unauthenticated" }` |
+| `ApiError` | The code you pass | `{ message }`, or `{ message, error, errors }` if `errRes` has errors |
+| `ServerError` | 500 | `{ message }` |
+| Anything else | 500 | `{ serverError: { name, message, stack } }` |
+
+- The message passed to `UnauthenticatedUserError` is not sent. The response always says `Unauthenticated`.
+- Only the last row calls the [`setCallback`](#log-unexpected-errors) logger.
+
+> ⚠️ **Unexpected errors reach the client.** The last row includes the error's message and stack trace in the response, in every environment, and it can't be turned off. Throw `ServerError` or `ApiError` when the message is safe to show, and catch errors that could contain sensitive details, such as database connection strings.
+
+### CRUD routes with resourceRoute
+
+`resourceRoute` registers a route for each function you provide, wrapping each one in `asyncValidatorHandler`. All of the functions are optional.
+
+```ts
+import express from 'express'
+import { resourceRoute, initializeApiResponse } from '@qnx/response'
+
+const router = express.Router()
+
+resourceRoute(router, {
+  findAll: async () => User.findAll(),
+  findOne: async (req) => User.findById(req.params.id),
+  create: async (req) => {
+    const user = await User.create(req.body)
+    return initializeApiResponse().setData(user).setStatusCode(201)
+  },
+  update: async (req) => User.update(req.params.id, req.body),
+  remove: async (req) => User.delete(req.params.id),
+  changeStatus: async (req) => User.toggleStatus(req.params.id)
+})
+
+app.use('/users', router)
+```
+
+| Function       | Method   | Path                 |
+| -------------- | -------- | -------------------- |
+| `findAll`      | `GET`    | `/`                  |
+| `findOne`      | `GET`    | `/:id`               |
+| `create`       | `POST`   | `/`                  |
+| `update`       | `PUT`    | `/:id`               |
+| `remove`       | `DELETE` | `/:id`               |
+| `changeStatus` | `PUT`    | `/change-status/:id` |
+
+The methods and paths are fixed. Add other routes to the same router in the usual way.
+
+### Log unexpected errors
+
+Use `setCallback` once at startup to pass unexpected errors to your logger:
+
+```ts
+import { setCallback } from '@qnx/response'
+import { logger } from '@qnx/winston'
+
+setCallback({
+  logger: {
+    serverError: (error) => logger.error('API Handler:', error)
+  }
+})
+```
+
+- It's called only for the "anything else" row in [the table above](#how-thrown-errors-become-responses), not for validation, authentication, `ApiError` or `ServerError` errors.
+- It runs just after the response is sent, without being awaited.
+- Anything can be thrown in JavaScript, so `error` isn't always an `Error` at runtime.
+- Calling `serverErrorApiResponse` yourself doesn't call the logger.
+
+### Change the default status codes
+
+Use `setErrorCodes` from `@qnx/errors` once at startup, for example to send validation errors as 422:
+
+```ts
+import { setErrorCodes } from '@qnx/errors'
+
+setErrorCodes({ VALIDATION_ERROR_CODE: 422 })
+```
+
+| Key                               | Default |
+| --------------------------------- | ------- |
+| `VALIDATION_ERROR_CODE`           | 400     |
+| `UNAUTHENTICATED_USER_ERROR_CODE` | 401     |
+| `SERVER_ERROR_CODE`               | 500     |
+
+Errors created before the call keep their old status code.
+
+### Typed requests
+
+Pass your own request type to type `req`. It must extend Express's `Request`:
+
+```ts
+import type { Request } from 'express'
+
+interface AuthRequest extends Request {
+  user: { id: number }
+}
+
+router.get('/me', asyncValidatorHandler<AuthRequest>(async (req) => {
+  return await User.findById(req.user.id)
+}))
+```
+
+`resourceRoute<AuthRequest>(router, controller)` works the same way.
 
 ---
 
@@ -309,9 +453,30 @@ asyncValidatorHandler(async (req, res) => {
 })
 ```
 
+The function also receives `next` as its third argument. See [what the handler does with your return value](#what-the-handler-does-with-your-return-value) and [how thrown errors become responses](#how-thrown-errors-become-responses).
+
+### `resourceRoute(router, controller)`
+
+Registers CRUD routes on an Express router from an object of optional functions. See [CRUD routes with resourceRoute](#crud-routes-with-resourceroute).
+
+### `setCallback({ logger })`
+
+Sets the logger for unexpected errors. See [Log unexpected errors](#log-unexpected-errors). The current value is available as `callbackObj`.
+
 ### `initializeApiResponse()`
 
-Creates a chainable response builder. Return the result from inside `asyncValidatorHandler`.
+Creates a chainable response builder. Return the result from inside `asyncValidatorHandler`. It's a shorthand for `ApiResponse.getInstance()` or `new ApiResponse()`.
+
+The response body can contain any of these fields. Fields you don't set are left out.
+
+| Field         | Set by             |
+| ------------- | ------------------ |
+| `data`        | `.setData()`       |
+| `message`     | `.setMessage()`    |
+| `error`       | `.setError()`, or the first message in `errors` |
+| `errors`      | `.setErrors()`     |
+| `errorCode`   | `.setErrorCode()`  |
+| `serverError` | `.setServerError()` |
 
 #### ✅ Success & Data
 
@@ -324,16 +489,18 @@ Creates a chainable response builder. Return the result from inside `asyncValida
 
 | Method                  | Description                          | Example                                        |
 | ----------------------- | ------------------------------------ | ---------------------------------------------- |
-| `.setError(message)`    | Sets a top-level error message       | `.setError('Internal Server Error')`           |
+| `.setError(message)`    | Sets a top-level error message. If `errors` is also set, the first field's first message replaces it | `.setError('Internal Server Error')`           |
 | `.setErrors(errors)`    | Sets field-level errors              | `.setErrors({ email: ['Invalid format'] })`    |
 | `.setErrorCode(code)`   | Sets a custom error code string      | `.setErrorCode('E123')`                        |
+| `.setServerError(err)`  | Sets `serverError` to the error's `name`, `message` and `stack`. These reach the client, so don't use it with sensitive errors | `.setServerError(err)`                         |
 
 #### 📦 Additional Meta
 
 | Method                  | Description                          | Example                                        |
 | ----------------------- | ------------------------------------ | ---------------------------------------------- |
-| `.setStatusCode(code)`  | Sets the HTTP status code            | `.setStatusCode(201)`                          |
-| `.setAdditional(data)`  | Attaches extra metadata to the body  | `.setAdditional({ traceId: 'xyz-001' })`       |
+| `.setStatusCode(code)`  | Sets the HTTP status code. Defaults to 200 | `.setStatusCode(201)`                          |
+| `.setAdditional(data)`  | Attaches extra top-level fields to the body. Calling it again replaces the earlier fields, and fields set by the other methods win if a name is used twice | `.setAdditional({ traceId: 'xyz-001' })`       |
+| `.response(res)`        | Sends the response. You don't need it when returning from `asyncValidatorHandler`. Does nothing if a response was already sent | `.response(res)`                               |
 
 ---
 
@@ -346,15 +513,15 @@ Builds field-level error objects in `{ field: [messages] }` format.
 | Method                    | Description                                  | Example                                   |
 | ------------------------- | -------------------------------------------- | ----------------------------------------- |
 | `.getInstance()`          | Returns a new instance                       |                                           |
-| `.addError(key, message)` | Appends a message to a field's error list    | `.addError('email', 'Invalid format')`    |
-| `.setError(key, message)` | Replaces all messages for a field            | `.setError('email', 'Required')`          |
+| `.addError(key, message)` | Sets a field's error and keeps other fields. Calling it again for the same field replaces its message | `.addError('email', 'Invalid format')`    |
+| `.setError(key, message)` | Clears the errors for **all** fields, then sets this one | `.setError('email', 'Required')`          |
 | `.hasErrors()`            | Returns `true` if any errors have been added |                                           |
 
 #### 📤 Get Structured Errors
 
 | Method                | Returns                              | Example               |
 | --------------------- | ------------------------------------ | --------------------- |
-| `.getErrors()`        | `{ field: [messages] }`              | `.getErrors()`        |
+| `.getErrors()`        | `{ field: [messages] }`, or `undefined` if there are no errors | `.getErrors()`        |
 | `.getErrorResponse()` | `{ errors: { field: [messages] } }`  | `.getErrorResponse()` |
 
 ---
@@ -368,6 +535,10 @@ Throw these inside `asyncValidatorHandler` — the handler catches them and send
 | `InvalidValueError(message, { key })` | Single field validation error |
 | `ValidationError(message, { errRes: { errors } })` | Multiple field errors — pair with `ApiResponseErrorsValue` |
 | `ApiError(message, statusCode, { errRes }?)` | Any other HTTP status — e.g. `throw new ApiError('Conflict detected.', 409)` responds `409 { message }` |
+| `UnauthenticatedUserError(message)` | The user isn't signed in — responds `401`. The message isn't sent to the client |
+| `ServerError(message)` | A 500 with a message that's safe to show — responds `500 { message }`, with no stack trace |
+
+All of these are imported from `@qnx/errors`. See [how thrown errors become responses](#how-thrown-errors-become-responses) for the exact bodies.
 
 ### Error Response Helpers
 
@@ -413,7 +584,7 @@ router.post('/register', asyncValidatorHandler(async (req, res) => {
 
 ```json
 {
-  "error": "Validation failed",
+  "error": "Email is required.",
   "errors": {
     "email": ["Email is required."],
     "password": ["Password is required."]
@@ -421,7 +592,56 @@ router.post('/register', asyncValidatorHandler(async (req, res) => {
 }
 ```
 
+The optional third argument sets the status code, for example `invalidApiResponse(res, errors, 422)`. It defaults to `VALIDATION_ERROR_CODE`. If `errors` is `undefined`, the body is `{}`.
+
 > **Throw vs Return:** Inside `asyncValidatorHandler`, always throw `InvalidValueError` / `ValidationError` — it exits from any depth, needs no `res`, and TypeScript narrows types after the throw. Reserve `invalidApiResponse` for code that runs outside the handler (plain Express middleware), where a thrown error has no catcher.
+
+#### `errorApiResponse(res, error)`
+
+Sends the same response the handler would send for `error`, following [the same rules](#how-thrown-errors-become-responses). Use it in a `catch` block or an Express error handler outside `asyncValidatorHandler`:
+
+```ts
+import { errorApiResponse } from '@qnx/response'
+
+app.use((err, req, res, next) => {
+  errorApiResponse(res, err)
+})
+```
+
+#### `unauthenticateApiResponse(res)`
+
+Sends `401 { "errorCode": "unauthenticated", "message": "Unauthenticated" }`. Useful in auth middleware:
+
+```ts
+import { unauthenticateApiResponse } from '@qnx/response'
+
+const requireAuth = (req, res, next) => {
+  if (!req.headers.authorization) return unauthenticateApiResponse(res)
+  next()
+}
+```
+
+#### `serverErrorApiResponse(res, error)`
+
+Sends `500 { "serverError": { "name", "message", "stack" } }`. The stack trace reaches the client and the `setCallback` logger isn't called.
+
+#### `throwInvalidValueApiResponse(key, message)` — deprecated
+
+> **Deprecated:** use `throw new InvalidValueError(message, { key })` instead.
+
+Throws a `ValidationError` for one field. The handler turns it into the same 400 response.
+
+#### `errorFormatter({ msg })`
+
+Returns `[msg]`, so each field's errors are an array. It's meant for express-validator's `formatWith`, to match the `{ field: [messages] }` format:
+
+```ts
+import { validationResult } from 'express-validator'
+import { errorFormatter, invalidApiResponse } from '@qnx/response'
+
+const result = validationResult(req).formatWith(errorFormatter)
+if (!result.isEmpty()) return invalidApiResponse(res, result.mapped())
+```
 
 ---
 
