@@ -32,6 +32,17 @@ describe('ApiResponseErrorsValue', () => {
         })
     })
 
+    test('addError should keep earlier messages for the same key', () => {
+        apiResponseErrorsValue.addError('key1', 'Error message 1')
+        apiResponseErrorsValue.addError('key2', 'Error message 2')
+        apiResponseErrorsValue.addError('key1', 'Error message 3')
+
+        expect(apiResponseErrorsValue.getErrors()).toEqual({
+            key1: ['Error message 1', 'Error message 3'],
+            key2: ['Error message 2']
+        })
+    })
+
     test('getErrorResponse should return the error response', () => {
         const errorKey = 'key'
         const errorMessage = 'Error message'

@@ -35,7 +35,8 @@ export class ApiResponseErrorsValue {
      * @returns The current ApiResponseErrorsValue instance.
      */
     addError(errorKey: string, errorMessage: string) {
-        this.errors = { ...this.errors, ...{ [errorKey]: [errorMessage] } }
+        const existing = this.errors?.[errorKey] ?? []
+        this.errors = { ...this.errors, [errorKey]: [...existing, errorMessage] }
         return this
     }
 

@@ -101,6 +101,7 @@ const errors = ApiResponseErrorsValue.getInstance()
 
 if (!email) errors.addError('email', 'Email is required.')
 if (password.length < 8) errors.addError('password', 'Must be at least 8 characters.')
+if (!/\d/.test(password)) errors.addError('password', 'Must contain a number.')
 
 if (errors.hasErrors()) {
   throw new ValidationError('Validation failed', { errRes: errors.getErrorResponse() })
@@ -113,7 +114,7 @@ If every check fails, `getErrorResponse()` returns:
 {
   errors: {
     email: ['Email is required.'],
-    password: ['Must be at least 8 characters.']
+    password: ['Must be at least 8 characters.', 'Must contain a number.']
   }
 }
 ```
@@ -303,7 +304,7 @@ Error
 | Method | Returns | Description |
 | ------ | ------- | ----------- |
 | `ApiResponseErrorsValue.getInstance()` | `ApiResponseErrorsValue` | Creates a new, empty instance. Same as `new ApiResponseErrorsValue()` |
-| `.addError(key, message)` | `this` | Sets a field's error and keeps other fields. Calling it again for the same field replaces its message |
+| `.addError(key, message)` | `this` | Appends a message to a field's list and keeps other fields |
 | `.setError(key, message)` | `this` | Clears the errors for **all** fields, then sets this one |
 | `.hasErrors()` | `boolean` | Whether any errors have been added |
 | `.getErrors()` | `ApiResponseErrors \| undefined` | The `{ field: [messages] }` map, or `undefined` if there are no errors |
