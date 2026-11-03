@@ -41,6 +41,6 @@
   "devDependencies": {},
   "peerDependencies": {
     "jose": "^6.0.0",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0 || ^14.0.0"
   }
 }
