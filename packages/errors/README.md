@@ -16,6 +16,9 @@
   - [UnauthenticatedUserError](#unauthenticatedusererror)
   - [ServerError](#servererror)
   - [ApiError](#apierror)
+  - [Custom error classes](#custom-error-classes)
+  - [Handling errors](#handling-errors)
+  - [Using with @qnx/response](#using-with-qnxresponse)
 - [Customizing Error Codes](#-customizing-error-codes)
 - [Error Class Reference](#-error-class-reference)
 - [MCP Server](#-mcp-server)
@@ -27,9 +30,9 @@
 | Feature | Description |
 | ------- | ----------- |
 | 🎯 **Typed errors** | Each scenario has its own class — no guessing what went wrong |
-| 📦 **Consistent shape** | Every error produces the same `{ error, errors }` response structure |
+| 📦 **Consistent API** | Every class has the same `getCode()` and `getErrorResponse()` methods |
 | ⚙️ **Configurable codes** | Default HTTP status codes work out of the box, override them if needed |
-| 🔗 **Built for `@qnx/response`** | Errors thrown inside `asyncValidatorHandler` are caught and formatted automatically |
+| 🔗 **Works with `@qnx/response`** | [Optional](#using-with-qnxresponse): it turns these errors into HTTP responses for you |
 
 ## 📦 Installation
 
@@ -43,15 +46,142 @@ yarn add @qnx/errors
 pnpm add @qnx/errors
 ```
 
+The package has no dependencies.
+
 ---
 
 ## 💡 Usage
 
-All examples below show errors thrown inside `asyncValidatorHandler` from `@qnx/response`. The handler catches them and sends the formatted HTTP response automatically.
-
 ### `InvalidValueError`
 
-Use when a single field fails validation. Pass the field name as `key` and a message.
+Use when a single field is invalid. Pass the field name as `key`, and the message becomes that field's error.
+
+```ts
+import { InvalidValueError } from '@qnx/errors'
+
+const error = new InvalidValueError('User not found.', { key: 'id' })
+
+error.getCode()          // 400
+error.getErrorResponse() // { errors: { id: ['User not found.'] } }
+```
+
+---
+
+### `ValidationError`
+
+Use when multiple fields fail validation. Build the `errors` object and pass it as `errRes`.
+
+```ts
+import { ValidationError } from '@qnx/errors'
+
+const error = new ValidationError('Validation failed', {
+  errRes: {
+    errors: {
+      email: ['Email is required.'],
+      password: ['Password must be at least 8 characters.']
+    }
+  }
+})
+
+error.getCode()          // 400
+error.getErrorResponse() // { errors: { email: [...], password: [...] } }
+```
+
+---
+
+### `UnauthenticatedUserError`
+
+Use when a request is missing authentication or the token is invalid.
+
+```ts
+import { UnauthenticatedUserError } from '@qnx/errors'
+
+const error = new UnauthenticatedUserError('Authentication required.')
+
+error.getCode()          // 401
+error.getErrorResponse() // undefined
+```
+
+---
+
+### `ServerError`
+
+Use for failures that the user cannot fix, such as a database being down or a third-party API being unreachable.
+
+```ts
+import { ServerError } from '@qnx/errors'
+
+const error = new ServerError('Report generation failed.')
+
+error.getCode()          // 500
+error.getErrorResponse() // undefined
+```
+
+---
+
+### `ApiError`
+
+The base class. Use it when none of the above fit and you need a custom status code. The third argument is optional.
+
+```ts
+import { ApiError } from '@qnx/errors'
+
+const error = new ApiError('Payment declined.', 402, {
+  errRes: { errors: { card: ['Insufficient funds.'] } }
+})
+
+error.getCode()          // 402
+error.getErrorResponse() // { errors: { card: ['Insufficient funds.'] } }
+
+new ApiError('Conflict detected.', 409).getErrorResponse() // undefined
+```
+
+---
+
+### Custom error classes
+
+Extend `ApiError` to give a status code its own class. Set `name` yourself, otherwise it stays `'ApiError'`.
+
+```ts
+import { ApiError } from '@qnx/errors'
+
+class NotFoundError extends ApiError {
+  constructor(message: string) {
+    super(message, 404)
+    this.name = 'NotFoundError'
+  }
+}
+
+new NotFoundError('User not found.').getCode() // 404
+```
+
+---
+
+### Handling errors
+
+The classes are ordinary `Error` subclasses, so you can check them with `instanceof`. Check the most specific class first, because they all extend `ApiError`.
+
+```ts
+import { ApiError, ValidationError } from '@qnx/errors'
+
+try {
+  await saveUser(input)
+} catch (err) {
+  if (err instanceof ValidationError) {
+    console.error('Invalid fields:', err.getErrorResponse()?.errors)
+  } else if (err instanceof ApiError) {
+    console.error(`Failed with ${err.getCode()}: ${err.message}`)
+  } else {
+    throw err
+  }
+}
+```
+
+---
+
+### Using with `@qnx/response`
+
+Throw any of these errors inside `asyncValidatorHandler`, and [`@qnx/response`](https://github.com/yatendra121/qnx/tree/main/packages/response) sends the HTTP response for you. See [how thrown errors become responses](https://github.com/yatendra121/qnx/tree/main/packages/response#how-thrown-errors-become-responses) for the status and body of each class.
 
 ```ts
 import { asyncValidatorHandler } from '@qnx/response'
@@ -62,139 +192,6 @@ router.get('/users/:id', asyncValidatorHandler(async (req) => {
   if (!user) throw new InvalidValueError('User not found.', { key: 'id' })
   return user
 }))
-```
-
-**HTTP 400 response:**
-
-```json
-{
-  "error": "User not found.",
-  "errors": {
-    "id": ["User not found."]
-  }
-}
-```
-
----
-
-### `ValidationError`
-
-Use when multiple fields fail validation. Build the `errors` object manually and pass it in.
-
-```ts
-import { asyncValidatorHandler, initializeApiResponse } from '@qnx/response'
-import { ValidationError } from '@qnx/errors'
-
-router.post('/register', asyncValidatorHandler(async (req) => {
-  const { email, password } = req.body
-  const errors: Record<string, string[]> = {}
-
-  if (!email) errors.email = ['Email is required.']
-  if (!password) errors.password = ['Password must be at least 8 characters.']
-
-  if (Object.keys(errors).length) {
-    throw new ValidationError('Validation failed', { errRes: { errors } })
-  }
-
-  const user = await User.create({ email, password })
-  return initializeApiResponse().setData(user).setMessage('Registered.')
-}))
-```
-
-**HTTP 400 response:**
-
-```json
-{
-  "error": "Validation failed",
-  "errors": {
-    "email": ["Email is required."],
-    "password": ["Password must be at least 8 characters."]
-  }
-}
-```
-
----
-
-### `UnauthenticatedUserError`
-
-Use when a request is missing authentication or the token is invalid.
-
-```ts
-import { asyncValidatorHandler } from '@qnx/response'
-import { UnauthenticatedUserError } from '@qnx/errors'
-
-router.get('/profile', asyncValidatorHandler(async (req) => {
-  if (!req.headers.authorization) {
-    throw new UnauthenticatedUserError('Authentication required.')
-  }
-  return await User.findById(req.user.id)
-}))
-```
-
-**HTTP 401 response:**
-
-```json
-{
-  "error": "Authentication required."
-}
-```
-
----
-
-### `ServerError`
-
-Use for unexpected failures that the user cannot fix — database down, third-party API unreachable, etc.
-
-```ts
-import { asyncValidatorHandler } from '@qnx/response'
-import { ServerError } from '@qnx/errors'
-
-router.get('/reports', asyncValidatorHandler(async (req) => {
-  const result = await ReportService.generate().catch(() => {
-    throw new ServerError('Report generation failed. Please try again later.')
-  })
-  return result
-}))
-```
-
-**HTTP 500 response:**
-
-```json
-{
-  "error": "Report generation failed. Please try again later."
-}
-```
-
----
-
-### `ApiError`
-
-The base class — use it when none of the above fit and you need a custom HTTP status code.
-
-```ts
-import { asyncValidatorHandler } from '@qnx/response'
-import { ApiError } from '@qnx/errors'
-
-router.post('/payment', asyncValidatorHandler(async (req) => {
-  const result = await PaymentService.charge(req.body)
-  if (result.status === 'declined') {
-    throw new ApiError('Payment declined.', 402, {
-      errRes: { errors: { card: ['Insufficient funds.'] } }
-    })
-  }
-  return result
-}))
-```
-
-**HTTP 402 response:**
-
-```json
-{
-  "error": "Payment declined.",
-  "errors": {
-    "card": ["Insufficient funds."]
-  }
-}
 ```
 
 ---
@@ -213,7 +210,17 @@ setErrorCodes({
 })
 ```
 
-This affects all `ValidationError`, `InvalidValueError`, and `UnauthenticatedUserError` instances globally.
+Only the codes you pass change, and the others keep their current values.
+
+The change applies to the whole process, so call it before any errors are created. Errors that already exist keep the code they were created with.
+
+The current values are available as `errorCodes`:
+
+```ts
+import { errorCodes } from '@qnx/errors'
+
+errorCodes.VALIDATION_ERROR_CODE // 422
+```
 
 ---
 
@@ -225,15 +232,68 @@ This affects all `ValidationError`, `InvalidValueError`, and `UnauthenticatedUse
 | `ValidationError` | `(message, { errRes: { errors } })` | 400 | Multiple fields fail validation |
 | `UnauthenticatedUserError` | `(message)` | 401 | Auth token missing or invalid |
 | `ServerError` | `(message)` | 500 | Internal failure the user can't fix |
-| `ApiError` | `(message, code, { errRes? })` | Custom | Any scenario needing a custom code |
+| `ApiError` | `(message, code, { errRes }?)` | Custom | Any scenario needing a custom code |
+
+### Inheritance
+
+Every class extends `ApiError`, so `err instanceof ApiError` matches all of them:
+
+```text
+Error
+└── ApiError
+    ├── ValidationError
+    │   └── InvalidValueError
+    ├── UnauthenticatedUserError
+    └── ServerError
+```
 
 ### Methods available on all classes
 
 | Method | Returns | Description |
 | ------ | ------- | ----------- |
 | `.getCode()` | `number` | The HTTP status code |
-| `.getErrorResponse()` | `ErrorResponse \| undefined` | The structured error payload |
+| `.getErrorResponse()` | `ErrorResponse \| undefined` | The structured error payload. Always `undefined` for `UnauthenticatedUserError` and `ServerError` |
+
+### Properties available on all classes
+
+| Property | Type | Description |
+| -------- | ---- | ----------- |
 | `.message` | `string` | The error message (from `Error`) |
+| `.name` | `string` | The class name, such as `'ValidationError'`. It's set as a string, so it survives minification |
+| `.stack` | `string \| undefined` | The stack trace (from `Error`) |
+| `.errorCode` | `number` | The value returned by `.getCode()` |
+| `.errorResponse` | `ErrorResponse \| undefined` | The value returned by `.getErrorResponse()` |
+
+- `JSON.stringify(error)` includes only `name`, `errorCode` and `errorResponse`. `message` and `stack` are left out, so log them separately.
+- The constructors don't accept a `cause` option, and passing one is ignored.
+
+### Other exports
+
+| Export | Description |
+| ------ | ----------- |
+| `setErrorCodes(codes)` | Changes the default status codes. See [Customizing Error Codes](#-customizing-error-codes) |
+| `errorCodes` | The current status codes |
+
+### Types
+
+```ts
+import type { ApiResponseErrors, ErrorCodes, ErrorResponse } from '@qnx/errors'
+
+// Field names mapped to their messages
+type ApiResponseErrors = Record<string, string[]>
+
+// The `errRes` option and the return value of getErrorResponse()
+interface ErrorResponse {
+  errors?: ApiResponseErrors
+}
+
+// The argument to setErrorCodes() is Partial<ErrorCodes>
+interface ErrorCodes {
+  VALIDATION_ERROR_CODE: number
+  UNAUTHENTICATED_USER_ERROR_CODE: number
+  SERVER_ERROR_CODE: number
+}
+```
 
 ---
 

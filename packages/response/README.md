@@ -260,7 +260,9 @@ If a response has already been sent, later responses are ignored, so `ERR_HTTP_H
 | Anything else | 500 | `{ serverError: { name, message, stack } }` |
 
 - The message passed to `UnauthenticatedUserError` is not sent. The response always says `Unauthenticated`.
-- Only the last row calls the [`setCallback`](#log-unexpected-errors) logger.
+- A `ValidationError` needs at least one field. With `errRes: {}` the body is `{}`, and with `errors: {}` it's `{ "errors": {} }`, so the client gets no message.
+- Your own classes that extend `ApiError` are handled the same way as `ApiError`.
+- Only the last row calls the [`setCallback`](#log-unexpected-errors) logger, so log the original error yourself before replacing it with a `ServerError`.
 
 > ⚠️ **Unexpected errors reach the client.** The last row includes the error's message and stack trace in the response, in every environment, and it can't be turned off. Throw `ServerError` or `ApiError` when the message is safe to show, and catch errors that could contain sensitive details, such as database connection strings.
 
@@ -336,7 +338,7 @@ setErrorCodes({ VALIDATION_ERROR_CODE: 422 })
 | `UNAUTHENTICATED_USER_ERROR_CODE` | 401     |
 | `SERVER_ERROR_CODE`               | 500     |
 
-Errors created before the call keep their old status code.
+Errors created before the call keep their old status code, except `UnauthenticatedUserError`, whose response always uses the current code.
 
 ### Typed requests
 
