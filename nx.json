@@ -14,12 +14,7 @@
     "build": {
       "cache": true
     },
-    "@nx/vite:build": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^default"]
-    },
-    "@nx/vitest:test": {
+    "test": {
       "cache": true,
       "inputs": ["default", "^default"]
     }
@@ -31,11 +26,62 @@
       "options": {
         "targetName": "lint"
       }
+    },
+    {
+      "plugin": "@nx/js/typescript",
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        }
+      }
+    },
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "devTargetName": "dev",
+        "typecheckTargetName": "typecheck",
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static"
+      },
+      "include": ["packages/my-lib/**/*"]
+    },
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "devTargetName": "dev",
+        "typecheckTargetName": "typecheck",
+        "buildTargetName": "build-nx",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static"
+      },
+      "include": ["packages/winston/**/*"]
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testMode": "run",
+        "testTargetName": "test"
+      }
+    },
+    {
+      "plugin": "@nx/webpack/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
+        "serveTargetName": "serve"
+      }
     }
   ],
   "release": {
     "versionPlans": true
   },
   "defaultBase": "main",
-  "analytics": true
+  "analytics": true,
+  "affected": {
+    "legacy": true
+  }
 }

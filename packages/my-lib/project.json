@@ -6,23 +6,16 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{projectRoot}/{options.outDir}", "{projectRoot}/dist"],
       "options": {
-        "outputPath": "dist/packages/my-lib"
+        "outDir": "../../dist/packages/my-lib"
       }
     },
     "test": {
-      "executor": "@nx/vitest:test",
-      "outputs": ["{workspaceRoot}/coverage/packages/my-lib"],
       "options": {
         "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/packages/my-lib"
+        "coverage.reportsDirectory": "../../coverage/packages/my-lib"
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
     }
   }
 }

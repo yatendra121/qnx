@@ -7,11 +7,11 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/packages/mcp/stdio"],
       "options": {
         "command": "pnpm run build:stdio",
         "cwd": "packages/mcp"
-      },
-      "outputs": ["{workspaceRoot}/packages/mcp/stdio"]
+      }
     },
     "publish": {
       "executor": "nx:run-commands",
@@ -22,6 +22,7 @@
     },
     "build:stdio": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/packages/mcp/stdio"],
       "options": {
         "commands": [
           {
@@ -29,11 +30,11 @@
           }
         ],
         "cwd": "packages/mcp"
-      },
-      "outputs": ["{workspaceRoot}/packages/mcp/stdio"]
+      }
     },
     "build:http": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/packages/mcp/http"],
       "options": {
         "commands": [
           {
@@ -41,20 +42,16 @@
           }
         ],
         "cwd": "packages/mcp"
-      },
-      "outputs": ["{workspaceRoot}/packages/mcp/http"]
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      }
     },
     "test": {
-      "executor": "@nx/vitest:test",
+      "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/packages/mcp"],
       "options": {
-        "config": "packages/mcp/vite.config.ts",
+        "command": "vitest run",
+        "cwd": "packages/mcp",
         "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/packages/mcp"
+        "coverage.reportsDirectory": "../../coverage/packages/mcp"
       }
     }
   }

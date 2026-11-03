@@ -26,7 +26,11 @@
       "@qnx/response": ["./packages/response/src/index.ts"],
       "@qnx/winston": ["./packages/winston/src/index.ts"],
       "@qnx/mcp": ["./packages/mcp/src/index.ts"]
-    }
+    },
+    "noUncheckedSideEffectImports": false,
+    "types": ["*"],
+    "esModuleInterop": false,
+    "ignoreDeprecations": "6.0"
   },
   "exclude": ["node_modules", "tmp"]
 }

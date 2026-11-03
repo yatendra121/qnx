@@ -3,9 +3,11 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/message/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/packages/message/dist"],
       "options": {
         "commands": [
           {
@@ -15,8 +17,7 @@
         ],
         "cwd": "packages/message",
         "outputPath": "packages/message/dist"
-      },
-      "outputs": ["{workspaceRoot}/packages/message/dist"]
+      }
     },
     "publish": {
       "executor": "nx:run-commands",
@@ -24,19 +25,15 @@
         "command": "tsx tools/scripts/publish.ts message "
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "test": {
-      "executor": "@nx/vitest:test",
+      "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/packages/message"],
       "options": {
-        "config": "packages/message/vite.config.ts",
+        "command": "vitest run",
+        "cwd": "packages/message",
         "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/packages/message"
+        "coverage.reportsDirectory": "../../coverage/packages/message"
       }
-    },
-  },
-  "tags": []
+    }
+  }
 }

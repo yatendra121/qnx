@@ -1,11 +1,13 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite'
 
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import dts from 'vite-plugin-dts'
 import { joinPathFragments } from '@nx/devkit'
 
 export default defineConfig({
+    resolve: {
+        tsconfigPaths: true
+    },
     cacheDir: '../../node_modules/.vite/my-lib',
 
     plugins: [
@@ -13,9 +15,7 @@ export default defineConfig({
             entryRoot: 'src',
             tsConfigFilePath: joinPathFragments(__dirname, 'tsconfig.lib.json'),
             skipDiagnostics: true
-        }),
-
-        nxViteTsPaths()
+        })
     ],
 
     // Uncomment this if you are using workers.
@@ -39,7 +39,7 @@ export default defineConfig({
             // Don't forgot to update your package.json as well.
             formats: ['es', 'cjs']
         },
-        rollupOptions: {
+        rolldownOptions: {
             // External packages that should not be bundled into your library.
             external: []
         }

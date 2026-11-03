@@ -3,7 +3,7 @@ import { collectViteConfig } from '../../vite.config.base'
 import packageJson from './package.json'
 
 const option = {
-    rollupOptions: {
+    rolldownOptions: {
         external: ['winston', 'winston-daily-rotate-file', 'fs', 'path']
     }
 }

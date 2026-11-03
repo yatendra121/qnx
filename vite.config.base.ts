@@ -2,10 +2,18 @@
 
 import { resolve, join } from 'path'
 import { defineConfig } from 'vite'
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
+import tsconfigBase from './tsconfig.base.json'
+
+// resolve.tsconfigPaths skips files no tsconfig includes, so tests alias workspace packages to their source.
+export const workspaceTestAlias = Object.fromEntries(
+    Object.entries(tsconfigBase.compilerOptions.paths).map(([name, [path]]) => [
+        name,
+        resolve(__dirname, path)
+    ])
+)
 
 export function collectViteConfig(packageJson: any, dirName: string, option = {}) {
-    const { rollupOptions } = option as any
+    const { rolldownOptions } = option as any
     const getPackageName = (): string => {
         return packageJson.name.substring(5)
     }
@@ -28,7 +36,9 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
         // root: __dirname,  #do wants uncomment, verify tests cases
         cacheDir: `../../node_modules/.vite/${getPackageName()}`,
         base: './',
-        plugins: [nxViteTsPaths()],
+        resolve: {
+            tsconfigPaths: true
+        },
         build: {
             lib: {
                 entry: resolve(dirName, 'src/index.ts'),
@@ -36,9 +46,10 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
                 formats: ['es', 'cjs', 'iife'],
                 fileName: (format) => fileName[format]
             },
-            rollupOptions
+            rolldownOptions
         },
         test: {
+            alias: workspaceTestAlias,
             globals: true,
             // cache: {
             //     dir: '../node_modules/.vitest'
