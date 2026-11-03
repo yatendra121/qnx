@@ -3,9 +3,8 @@
  * This is only a minimal backend to get started.
  */
 
-import { ValidationError } from '@qnx/errors'
+import { ApiResponseErrorsValue, ValidationError } from '@qnx/errors'
 import {
-    ApiResponseErrorsValue,
     asyncValidatorHandler,
     initializeApiResponse,
     invalidApiResponse,

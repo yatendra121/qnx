@@ -1,4 +1,4 @@
-import { ApiResponseErrorsValue } from '../apiResponseErrorsValue'
+import { ApiResponseErrorsValue } from './apiResponseErrorsValue'
 import { describe, test, expect, beforeEach } from 'vitest'
 describe('ApiResponseErrorsValue', () => {
     let apiResponseErrorsValue: ApiResponseErrorsValue

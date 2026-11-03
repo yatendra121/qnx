@@ -13,6 +13,7 @@
 - [Usage](#-usage)
   - [InvalidValueError](#invalidvalueerror)
   - [ValidationError](#validationerror)
+  - [ApiResponseErrorsValue](#apiresponseerrorsvalue)
   - [UnauthenticatedUserError](#unauthenticatedusererror)
   - [ServerError](#servererror)
   - [ApiError](#apierror)
@@ -85,6 +86,36 @@ const error = new ValidationError('Validation failed', {
 
 error.getCode()          // 400
 error.getErrorResponse() // { errors: { email: [...], password: [...] } }
+```
+
+---
+
+### `ApiResponseErrorsValue`
+
+A helper that collects field errors one at a time, so you don't have to build the `errors` object by hand. It isn't an error class, so you create it, add to it, and pass the result to `ValidationError`.
+
+```ts
+import { ApiResponseErrorsValue, ValidationError } from '@qnx/errors'
+
+const errors = ApiResponseErrorsValue.getInstance()
+
+if (!email) errors.addError('email', 'Email is required.')
+if (password.length < 8) errors.addError('password', 'Must be at least 8 characters.')
+
+if (errors.hasErrors()) {
+  throw new ValidationError('Validation failed', { errRes: errors.getErrorResponse() })
+}
+```
+
+If every check fails, `getErrorResponse()` returns:
+
+```ts
+{
+  errors: {
+    email: ['Email is required.'],
+    password: ['Must be at least 8 characters.']
+  }
+}
 ```
 
 ---
@@ -266,6 +297,17 @@ Error
 
 - `JSON.stringify(error)` includes only `name`, `errorCode` and `errorResponse`. `message` and `stack` are left out, so log them separately.
 - The constructors don't accept a `cause` option, and passing one is ignored.
+
+### `ApiResponseErrorsValue` methods
+
+| Method | Returns | Description |
+| ------ | ------- | ----------- |
+| `ApiResponseErrorsValue.getInstance()` | `ApiResponseErrorsValue` | Creates a new, empty instance. Same as `new ApiResponseErrorsValue()` |
+| `.addError(key, message)` | `this` | Sets a field's error and keeps other fields. Calling it again for the same field replaces its message |
+| `.setError(key, message)` | `this` | Clears the errors for **all** fields, then sets this one |
+| `.hasErrors()` | `boolean` | Whether any errors have been added |
+| `.getErrors()` | `ApiResponseErrors \| undefined` | The `{ field: [messages] }` map, or `undefined` if there are no errors |
+| `.getErrorResponse()` | `ErrorResponse` | The same map as `{ errors }`, ready to pass as `errRes` |
 
 ### Other exports
 

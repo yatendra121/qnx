@@ -1,4 +1,4 @@
-import type { ApiResponseErrors, ErrorResponse } from '@qnx/errors'
+import type { ApiResponseErrors, ErrorResponse } from './types'
 
 /**
  * Class for collecting and setting errors for API response errors.

@@ -21,8 +21,7 @@ return { id: 1, name: 'Item' }`,
     'validation-error': {
         functions: ['throw ValidationError (recommended)', 'invalidApiResponse (escape hatch outside asyncValidatorHandler)'],
         example: `// ✅ Recommended — throw from anywhere inside asyncValidatorHandler
-import { ValidationError } from '@qnx/errors'
-import { ApiResponseErrorsValue } from '@qnx/response'
+import { ApiResponseErrorsValue, ValidationError } from '@qnx/errors'
 const errors = ApiResponseErrorsValue.getInstance()
     .addError('email', 'Email is required.')
     .addError('name', 'Name is required.')
@@ -31,7 +30,7 @@ throw new ValidationError('Validation failed', { errRes: { errors } })
 
 // Escape hatch — only for code outside asyncValidatorHandler (requires res)
 return invalidApiResponse(res, errors)`,
-        imports: ['ValidationError from @qnx/errors', 'ApiResponseErrorsValue']
+        imports: ['ApiResponseErrorsValue from @qnx/errors', 'ValidationError from @qnx/errors']
     },
     'invalid-value': {
         functions: ['throw InvalidValueError (recommended)', 'throwInvalidValueApiResponse (deprecated)', 'invalidValueApiResponse (deprecated)'],

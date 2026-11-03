@@ -166,8 +166,8 @@ router.get('/users/:id', asyncValidatorHandler(async (req) => {
 Use `ApiResponseErrorsValue` to collect multiple field errors, then throw `ValidationError`:
 
 ```ts
-import { asyncValidatorHandler, ApiResponseErrorsValue, initializeApiResponse } from '@qnx/response'
-import { ValidationError } from '@qnx/errors'
+import { asyncValidatorHandler, initializeApiResponse } from '@qnx/response'
+import { ApiResponseErrorsValue, ValidationError } from '@qnx/errors'
 
 router.post('/register', asyncValidatorHandler(async (req) => {
   const { email, password } = req.body
@@ -508,23 +508,17 @@ The response body can contain any of these fields. Fields you don't set are left
 
 ### `ApiResponseErrorsValue`
 
-Builds field-level error objects in `{ field: [messages] }` format.
+This class now lives in `@qnx/errors`. See [its documentation](https://github.com/yatendra121/qnx/tree/main/packages/errors#apiresponseerrorsvalue).
 
-#### ✏️ Add / Set Errors
+Importing it from `@qnx/response` still works but is deprecated, so update your imports:
 
-| Method                    | Description                                  | Example                                   |
-| ------------------------- | -------------------------------------------- | ----------------------------------------- |
-| `.getInstance()`          | Returns a new instance                       |                                           |
-| `.addError(key, message)` | Sets a field's error and keeps other fields. Calling it again for the same field replaces its message | `.addError('email', 'Invalid format')`    |
-| `.setError(key, message)` | Clears the errors for **all** fields, then sets this one | `.setError('email', 'Required')`          |
-| `.hasErrors()`            | Returns `true` if any errors have been added |                                           |
+```ts
+// Before
+import { ApiResponseErrorsValue } from '@qnx/response'
 
-#### 📤 Get Structured Errors
-
-| Method                | Returns                              | Example               |
-| --------------------- | ------------------------------------ | --------------------- |
-| `.getErrors()`        | `{ field: [messages] }`, or `undefined` if there are no errors | `.getErrors()`        |
-| `.getErrorResponse()` | `{ errors: { field: [messages] } }`  | `.getErrorResponse()` |
+// After
+import { ApiResponseErrorsValue } from '@qnx/errors'
+```
 
 ---
 
@@ -569,7 +563,8 @@ Call these directly only where throwing is not an option — e.g. plain Express 
 Sends a 400 response with multiple field errors:
 
 ```ts
-import { asyncValidatorHandler, invalidApiResponse, ApiResponseErrorsValue } from '@qnx/response'
+import { asyncValidatorHandler, initializeApiResponse, invalidApiResponse } from '@qnx/response'
+import { ApiResponseErrorsValue } from '@qnx/errors'
 
 router.post('/register', asyncValidatorHandler(async (req, res) => {
   const { email, password } = req.body

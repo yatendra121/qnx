@@ -68,8 +68,7 @@ return ApiResponse.getInstance()
     'validation-error': {
         description: 'Throw a multi-field validation error from inside asyncValidatorHandler. Status: VALIDATION_ERROR_CODE (default 400). Body: { errors: { field: [msg] }, error: firstMsg }. Recommended: throw ValidationError — works from anywhere in the call stack, not just route handlers.',
         code: `// ✅ Recommended — throw from anywhere inside asyncValidatorHandler
-import { ValidationError } from '@qnx/errors'
-import { ApiResponseErrorsValue } from '@qnx/response'
+import { ApiResponseErrorsValue, ValidationError } from '@qnx/errors'
 
 const errors = ApiResponseErrorsValue.getInstance()
     .addError('email', 'Email is required.')
@@ -79,7 +78,7 @@ throw new ValidationError('Validation failed', { errRes: { errors } })
 // → { errors: { email: ['Email is required.'], name: ['Name must be...'] }, error: 'Email is required.' }
 
 // Escape hatch — only for code outside asyncValidatorHandler (requires res)
-import { invalidApiResponse, ApiResponseErrorsValue } from '@qnx/response'
+import { invalidApiResponse } from '@qnx/response'
 return invalidApiResponse(res, errors)`,
     },
     'invalid-value': {
@@ -107,8 +106,7 @@ throw new ApiError('Conflict detected.', 409, {
     },
     'throw-validation': {
         description: 'Quick reference: which error class to throw for each case inside asyncValidatorHandler.',
-        code: `import { InvalidValueError, ValidationError } from '@qnx/errors'
-import { ApiResponseErrorsValue } from '@qnx/response'
+        code: `import { ApiResponseErrorsValue, InvalidValueError, ValidationError } from '@qnx/errors'
 
 // ✅ Single field — use InvalidValueError
 throw new InvalidValueError('Email is required.', { key: 'email' })
