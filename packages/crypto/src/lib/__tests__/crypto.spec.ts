@@ -56,6 +56,21 @@ describe('Crypto Functions Testing', function () {
         expect(dataVal).toEqual(payload.data)
     })
 
+    it('honours an expirationTime of 0 instead of issuing a token that never expires', async function () {
+        const secret = toSymmetricSecret('xyz')
+        const jwt = await jwtSign({}, secret, { alg: 'HS256', expirationTime: 0 })
+
+        await expect(jwtVerify(jwt, secret)).rejects.toThrow('"exp" claim timestamp check failed')
+    })
+
+    it('sets no expiry when expirationTime is omitted or empty', async function () {
+        const secret = toSymmetricSecret('xyz')
+        for (const options of [{ alg: 'HS256' }, { alg: 'HS256', expirationTime: '' }]) {
+            const { payload } = await jwtVerify(await jwtSign({}, secret, options), secret)
+            expect(payload.exp).toBeUndefined()
+        }
+    })
+
     it('Encrypt JWE & descrypt JWE using PKCS8 secret', async function () {
         const ecPublicKey = await importSPKI(process.env['JWE_PUBLIC_KEY'] ?? '', 'ECDH-ES+A128KW')
         const dataVal = 'this is message.'

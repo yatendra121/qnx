@@ -79,7 +79,11 @@ export const jwtSign = (
     if (options?.jti) signJWT = signJWT.setJti(options.jti)
     if (options?.subject) signJWT = signJWT.setSubject(options.subject)
     if (options?.issuer) signJWT = signJWT.setIssuer(options.issuer)
-    if (options?.expirationTime) signJWT = signJWT.setExpirationTime(options.expirationTime)
+    // 0 is a valid timestamp: skipping it would silently produce a token that never expires.
+    const expirationTime = options?.expirationTime
+    if (expirationTime || expirationTime === 0) {
+        signJWT = signJWT.setExpirationTime(expirationTime)
+    }
 
     return signJWT.sign(key, options)
 }
