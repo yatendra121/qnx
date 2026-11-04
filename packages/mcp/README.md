@@ -145,6 +145,16 @@ curl -X POST https://qnx-mcp-server.vercel.app/mcp \
 
 > **SSL note:** if your HTTP client rejects the certificate, pass `-k` (curl) or the equivalent `rejectUnauthorized: false` option. This is a Vercel infrastructure certificate — the connection is still encrypted.
 
+#### Self-hosting the HTTP server
+
+Each endpoint keeps at most 1000 sessions. A session closes after 30 minutes with no traffic and no open request, and the least recently used idle session closes first when an endpoint is full. A request for a closed session gets a `404`, which MCP clients answer by starting a new session. If every session has an open request, new sessions get a `503`.
+
+The server is open by default. Set `MCP_AUTH_TOKEN` to require `Authorization: Bearer <token>` on every request. Anything else gets a `401`.
+
+```bash
+MCP_AUTH_TOKEN=<token> node main.js
+```
+
 ### stdio (via npx)
 
 Connect to the full server:

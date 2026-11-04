@@ -1,5 +1,6 @@
 export { createMcpServer } from './server'
 export { createMcpHttpHandler } from './transport'
+export type { McpHttpHandlerOptions } from './transport'
 export { registerFormatErrorTool } from './tools'
 export { registerLogMessageTool } from './tools'
 export type { McpServerConfig } from './server'
