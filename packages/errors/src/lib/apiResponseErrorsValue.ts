@@ -1,4 +1,4 @@
-import type { ApiResponseErrors, ErrorResponse } from '@qnx/errors'
+import type { ApiResponseErrors, ErrorResponse } from './types'
 
 /**
  * Class for collecting and setting errors for API response errors.
@@ -35,7 +35,8 @@ export class ApiResponseErrorsValue {
      * @returns The current ApiResponseErrorsValue instance.
      */
     addError(errorKey: string, errorMessage: string) {
-        this.errors = { ...this.errors, ...{ [errorKey]: [errorMessage] } }
+        const existing = this.errors?.[errorKey] ?? []
+        this.errors = { ...this.errors, [errorKey]: [...existing, errorMessage] }
         return this
     }
 

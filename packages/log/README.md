@@ -34,13 +34,29 @@ npm install chalk
 ```ts
 import { consoleLog } from '@qnx/log'
 
-consoleLog('Server started', { type: 'info' })
-consoleLog('An error occurred!', { type: 'error' })
-consoleLog('Operation successful', { type: 'success' })
-consoleLog('Proceed with caution', { type: 'warn' })
-consoleLog('Cache miss for user 42', { type: 'debug' })
-consoleLog('Entering checkout flow', { type: 'trace' })
+consoleLog('Server started', { type: 'info' })        // ⓘ  Server started
+consoleLog('Operation successful', { type: 'success' }) // ✓  Operation successful
+consoleLog('Proceed with caution', { type: 'warn' })    // ⚠  Proceed with caution
+consoleLog('An error occurred!', { type: 'error' })     // ✗  An error occurred!
+consoleLog('Fetching user data...', { type: 'debug' })  // ◇  Fetching user data...
+consoleLog('Request ID: 7f3a2b1e', { type: 'trace' })   // ☆  Request ID: 7f3a2b1e
 ```
+
+Pass an `Error` (for example, straight from a `catch` block) to print its stack trace and `cause` chain:
+
+```ts
+try {
+    await connect()
+} catch (err) {
+    consoleLog(err, { type: 'error' })
+}
+// ✗  Error: Failed to connect to database
+//     at connect (db.ts:12:11)
+// Caused by: Error: ECONNREFUSED 127.0.0.1:5432
+//     at ...
+```
+
+Other values (objects, numbers, …) are converted to text; plain objects are JSON-formatted.
 
 The `type` option defaults to `'info'` if omitted:
 
