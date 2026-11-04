@@ -1,7 +1,6 @@
 export * from './lib/generator'
+export { collectTypeValue } from './lib'
 
 export function isFunction(functionToCheck: unknown): boolean {
-    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]'
-        ? true
-        : false
+    return typeof functionToCheck === 'function'
 }

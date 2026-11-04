@@ -35,7 +35,7 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Package Install
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v4
@@ -43,6 +43,12 @@ jobs:
       - run: |
           echo "BASE: ${{ env.NX_BASE }}"
           echo "HEAD: ${{ env.NX_HEAD }}"
+
+      - name: Lint
+        run: pnpm affected:lint
+
+      - name: Typecheck
+        run: pnpm affected:typecheck
 
       - name: Unit Test
         run: pnpm affected:test

@@ -17,15 +17,16 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "require": "./dist/interfaces.cjs",
       "import": "./dist/interfaces.mjs"
     }
   },
-  "unpkg": "./index.iife.js",
-  "jsdelivr": "./index.iife.js",
+  "unpkg": "./dist/interfaces.iife.js",
+  "jsdelivr": "./dist/interfaces.iife.js",
   "scripts": {
     "dev": "vite --host",
-    "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
+    "build": "tsc -p tsconfig.lib.json --noEmit && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "lint:scripts": "eslint . --ext .ts",

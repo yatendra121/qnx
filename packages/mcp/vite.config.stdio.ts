@@ -1,12 +1,6 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
-import {
-    copyReadme,
-    external,
-    generatePackageJson,
-    packageJson,
-    qnxDependencies
-} from './vite.config'
+import { copyReadme, external, generatePackageJson, packageJson } from './vite.config'
 
 const {
     name,
@@ -17,11 +11,8 @@ const {
     funding,
     homepage,
     keywords,
-    repository,
-    dependencies
+    repository
 } = packageJson
-const { express: _, ...depsWithoutExpress } = dependencies
-const resolvedDependencies = { ...depsWithoutExpress, ...qnxDependencies }
 
 export default defineConfig({
     resolve: {
@@ -39,7 +30,6 @@ export default defineConfig({
             homepage,
             keywords,
             repository,
-            dependencies: resolvedDependencies,
             type: 'module',
             main: './stdio.js',
             bin: { 'qnx-mcp': './stdio.js' }

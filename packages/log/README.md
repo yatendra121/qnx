@@ -1,14 +1,13 @@
 # `@qnx/log`
 
-`@qnx/log` provides a console logger using the [Chalk](https://www.npmjs.com/package/chalk) library for colorful output. It supports six message types — `info`, `success`, `warn`, `error`, `debug`, and `trace` — each rendered in a distinct color with an outline icon.
+`@qnx/log` provides a console logger using the [Chalk](https://www.npmjs.com/package/chalk) library for colorful output. It supports different message types — `info`, `success`, `warn`, `error`, `debug`, and `trace` — each rendered in a distinct color.
 
 > 🤖 MCP Server: `https://qnx-mcp-server.vercel.app/mcp/log`
 
 ## ✨ Features
 
 - 🎨 Colorized console output via Chalk
-- 📢 Six built-in message types: `info`, `success`, `warn`, `error`, `debug`, `trace` (`warning` is an alias of `warn`)
-- 🧵 Errors are printed with their stack trace and `cause` chain
+- 📢 Six built-in message types: `info`, `success`, `warn`, `error`, `debug`, `trace` (`warning` still works as a deprecated alias of `warn`)
 - 🛠️ Simple, minimal API
 
 ## 📦 Installation

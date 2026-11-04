@@ -25,7 +25,6 @@
     "test/**",
     ".history/**",
     "jest.config.ts",
-    "vite.config.ts",
-    "**/*.spec.ts"
+    "vite.config.ts"
   ]
 }

@@ -17,17 +17,18 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "require": "./dist/core-helpers.cjs",
       "import": "./dist/core-helpers.mjs"
     }
   },
-  "unpkg": "./index.iife.js",
-  "jsdelivr": "./index.iife.js",
+  "unpkg": "./dist/core-helpers.iife.js",
+  "jsdelivr": "./dist/core-helpers.iife.js",
   "scripts": {
     "dev": "vite --host",
-    "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
-    "test": "jest --runInBand",
-    "test:coverage": "jest --runInBand --coverage",
+    "build": "tsc -p tsconfig.lib.json --noEmit && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint:scripts": "eslint . --ext .ts",
     "format:scripts": "prettier . --write",
     "format": "npm run format:scripts"

@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
+import { quote } from './quote'
 
 const operations = ['jwt-sign', 'jwt-verify', 'jwe-encrypt', 'jwe-decrypt', 'auth-token-generate', 'auth-token-decrypt'] as const
 
@@ -131,7 +132,7 @@ export function registerBuildCryptoSnippetTool(server: McpServer) {
                     `import { jweEncrypt, toSPKISecret } from '@qnx/crypto'`,
                     ``,
                     `const publicKey = await toSPKISecret(process.env.JWE_PUBLIC_KEY, '${alg ?? 'ECDH-ES+A128KW'}')`,
-                    `const jwe = await jweEncrypt('${plaintext}'${encOptions ? `, publicKey${encOptions}` : ', publicKey'})`
+                    `const jwe = await jweEncrypt(${quote(plaintext)}${encOptions ? `, publicKey${encOptions}` : ', publicKey'})`
                 ].join('\n')
             } else if (operation === 'jwe-decrypt') {
                 snippet = [
@@ -150,7 +151,7 @@ export function registerBuildCryptoSnippetTool(server: McpServer) {
                 snippet = [
                     `import { generateAuthToken } from '@qnx/crypto'`,
                     ``,
-                    `const { token, dbToken } = await generateAuthToken('${subject}')`,
+                    `const { token, dbToken } = await generateAuthToken(${quote(subject)})`,
                     ``,
                     `// token   → JWE-encrypted token, send to client`,
                     `// dbToken → UUID (jti), store in DB to track/revoke sessions`

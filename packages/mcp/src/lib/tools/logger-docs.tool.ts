@@ -40,9 +40,8 @@ Winston uses the following levels in order of severity (lowest → highest):
 | \`warn\` | \`logger.warn()\` | Recoverable issues or deprecations |
 | \`error\` | \`logger.error()\` | Failures that need attention |
 
-**Active level by environment**
-- \`development\` → \`debug\` and above are logged
-- \`production\` → \`warn\` and above are logged
+**Active level**
+\`debug\` and above are logged in every environment. \`NODE_ENV\` is not consulted.
 
 **Passing metadata**
 \`\`\`ts
@@ -52,7 +51,7 @@ logger.error('DB connection failed', { error: err, retries: 3 })
 
     output: `## Log Output Structure
 
-Logs are written in two destinations:
+Logs are written to a daily rotated file. There is no console transport.
 
 ### File (daily rotated)
 - Format: **JSON** with timestamp and stack trace on errors
@@ -96,7 +95,7 @@ The logger comes pre-configured — no setup needed. Key defaults:
 | Retention | \`14 days\` |
 | Archive | Gzip compressed |
 | Exception handling | Enabled (unhandled exceptions are logged) |
-| Exit on error | \`false\` (process stays alive on handled exceptions) |
+| Exit on error | \`false\` (the process keeps running after an uncaught exception) |
 | File format | JSON + timestamp + error stack |
 
 **Customizing**

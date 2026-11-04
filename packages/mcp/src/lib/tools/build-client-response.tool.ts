@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
+import { quote } from './quote'
 
 const responseClasses = ['ApiResponse', 'ApiSuccessResponse', 'ApiErrorResponse'] as const
 
@@ -65,7 +66,7 @@ export function registerBuildClientResponseTool(server: McpServer) {
                     snippet: [
                         `import { ApiSuccessResponse } from '@qnx/client'`,
                         ``,
-                        `const res = new ApiSuccessResponse({ data: ${JSON.stringify(data)}, message: '${message}' })`,
+                        `const res = new ApiSuccessResponse({ data: ${JSON.stringify(data)}, message: ${quote(message)} })`,
                         ``,
                         `res.getData()    // ${JSON.stringify(data)}`,
                         `res.getMessage() // '${message}'`

@@ -1,5 +1,5 @@
 import { createLogger, transports, format } from 'winston'
-import { existsSync, mkdirSync } from 'fs'
+import { mkdirSync } from 'fs'
 import { resolve } from 'path'
 import 'winston-daily-rotate-file'
 
@@ -10,10 +10,8 @@ let dir = logDirectory
 if (!dir) dir = resolve('logs')
 
 // create directory if it is not present
-if (!existsSync(dir)) {
-    // Create the directory if it does not exist
-    mkdirSync(dir)
-}
+// recursive: no EEXIST when several processes (e.g. cluster workers) start at once
+mkdirSync(dir, { recursive: true })
 
 const logLevel = environment === 'development' ? 'debug' : 'warn'
 

@@ -7,7 +7,9 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/packages/crypto/dist"],
+      "outputs": [
+        "{workspaceRoot}/packages/crypto/dist"
+      ],
       "options": {
         "commands": [
           {
@@ -33,7 +35,9 @@
     },
     "test": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/packages/crypto"],
+      "outputs": [
+        "{workspaceRoot}/coverage/packages/crypto"
+      ],
       "options": {
         "command": "vitest run",
         "cwd": "packages/crypto",
@@ -47,18 +51,6 @@
         "commands": [
           {
             "command": "pnpm test",
-            "forwardAllArgs": true
-          }
-        ],
-        "cwd": "packages/crypto"
-      }
-    },
-    "type": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          {
-            "command": "npm run type",
             "forwardAllArgs": true
           }
         ],

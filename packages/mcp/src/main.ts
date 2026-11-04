@@ -4,13 +4,15 @@ import { createMcpHttpHandler } from './lib/transport'
 const app = express()
 app.use(express.json())
 
-app.all('/mcp',          createMcpHttpHandler())
-app.all('/mcp/crypto',   createMcpHttpHandler({ crypto: true }))
-app.all('/mcp/response', createMcpHttpHandler({ response: true }))
-app.all('/mcp/errors',   createMcpHttpHandler({ errors: true }))
-app.all('/mcp/client',   createMcpHttpHandler({ client: true }))
-app.all('/mcp/winston',  createMcpHttpHandler({ winston: true }))
-app.all('/mcp/log',      createMcpHttpHandler({ log: true }))
+const options = { authToken: process.env.MCP_AUTH_TOKEN }
+
+app.all('/mcp',          createMcpHttpHandler(undefined, options))
+app.all('/mcp/crypto',   createMcpHttpHandler({ crypto: true }, options))
+app.all('/mcp/response', createMcpHttpHandler({ response: true }, options))
+app.all('/mcp/errors',   createMcpHttpHandler({ errors: true }, options))
+app.all('/mcp/client',   createMcpHttpHandler({ client: true }, options))
+app.all('/mcp/winston',  createMcpHttpHandler({ winston: true }, options))
+app.all('/mcp/log',      createMcpHttpHandler({ log: true }, options))
 
 const port = process.env.PORT || 4000
 app.listen(port, () => {
