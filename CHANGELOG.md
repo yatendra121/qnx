@@ -1,3 +1,18 @@
+## 0.8.15 (2026-11-04)
+
+### 🩹 Fixes
+
+- update dependencies, keep additional data in ApiResponse and widen chalk and uuid peer ranges ([7d7ee24](https://github.com/yatendra121/qnx/commit/7d7ee24))
+- fix(log): print stack trace and cause chain for errors, accept any value, and restore the 'warning' type alias ([84e613a](https://github.com/yatendra121/qnx/commit/84e613a))
+- refactor(errors): move ApiResponseErrorsValue to @qnx/errors and keep a deprecated re-export in @qnx/response ([ec83ace](https://github.com/yatendra121/qnx/commit/ec83ace))
+- fix(errors): keep earlier messages when ApiResponseErrorsValue.addError is called twice for a field ([2ecdb4b](https://github.com/yatendra121/qnx/commit/2ecdb4b))
+- fix handler chain control and thrown value handling in response, jwt expiry of 0 in crypto, isFunction and sub-array size in core-helpers, restore warning type in log, correct package exports and mcp tool output ([7e41569](https://github.com/yatendra121/qnx/commit/7e41569))
+- limit mcp http sessions, add optional bearer auth to the mcp http server and publish only the dependencies its bundles import ([762914e](https://github.com/yatendra121/qnx/commit/762914e))
+
+### ❤️ Thank You
+
+- yatendra121
+
 ## 0.8.10 (2026-10-29)
 
 ### 🩹 Fixes
