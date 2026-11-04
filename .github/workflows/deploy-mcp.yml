@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - 'packages/mcp/**'
+      - '.github/workflows/deploy-mcp.yml'
+      - '.github/scripts/deploy-mcp.sh'
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -32,13 +35,7 @@ jobs:
         run: pnpm --filter @qnx/mcp run build:http
 
       - name: Push to deployment repo
-        run: |
-          git clone https://x-access-token:${{ secrets.DEPLOY_REPO_TOKEN }}@github.com/${{ secrets.DEPLOY_REPO }} deploy-repo
-          cp -r packages/mcp/http/. deploy-repo/
-          cd deploy-repo
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git config user.name "${{ github.actor }}"
-          git add .
-          git diff --staged --quiet && echo "No changes to deploy" && exit 0
-          git commit -m "deploy: ${{ github.sha }}"
-          git push
+        run: bash .github/scripts/deploy-mcp.sh
+        env:
+          DEPLOY_REPO: ${{ secrets.DEPLOY_REPO }}
+          DEPLOY_REPO_TOKEN: ${{ secrets.DEPLOY_REPO_TOKEN }}
