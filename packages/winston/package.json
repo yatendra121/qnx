@@ -30,8 +30,8 @@
       "import": "./dist/winston.mjs"
     }
   },
-  "unpkg": "./winston.iife.js",
-  "jsdelivr": "./winston.iife.js",
+  "unpkg": "./dist/winston.iife.js",
+  "jsdelivr": "./dist/winston.iife.js",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",

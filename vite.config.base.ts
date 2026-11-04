@@ -59,7 +59,7 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
 
             reporters: ['default'],
             coverage: {
-                reportsDirectory: `../coverage/${getPackageName()}`,
+                reportsDirectory: `../../coverage/packages/${getPackageName()}`,
                 provider: 'v8'
             }
         }

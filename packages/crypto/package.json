@@ -27,8 +27,8 @@
       "import": "./dist/crypto.mjs"
     }
   },
-  "unpkg": "./index.iife.js",
-  "jsdelivr": "./index.iife.js",
+  "unpkg": "./dist/crypto.iife.js",
+  "jsdelivr": "./dist/crypto.iife.js",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",

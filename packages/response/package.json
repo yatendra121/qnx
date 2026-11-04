@@ -31,13 +31,13 @@
       "import": "./dist/response.mjs"
     }
   },
-  "unpkg": "./response.iife.js",
-  "jsdelivr": "./response.iife.js",
+  "unpkg": "./dist/response.iife.js",
+  "jsdelivr": "./dist/response.iife.js",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
     "test": "vitest",
-    "test:coverage": "jest --runInBand --coverage",
+    "test:coverage": "vitest run --coverage",
     "lint:scripts": "eslint . --ext .ts",
     "format:scripts": "prettier . --write",
     "format": "npm run format:scripts"

@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "rootDir": ".",
+    "rootDir": "../..",
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -18,16 +18,6 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["vite/client", "node"]
   },
-  "include": ["**/*.ts"],
-  "exclude": [
-    "**/*.test.ts",
-    "**/*.ts",
-    "node_modules",
-    "test/**",
-    ".history/**",
-    "jest.config.ts",
-    "vite.config.ts",
-    "**/*.spec.ts",
-    "@qnx/*"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "src/**/*.spec.ts", "src/**/*.test.ts", "src/**/__tests__/**"]
 }
