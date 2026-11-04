@@ -38,7 +38,7 @@ error.getCode()        // 500
 error.getErrorResponse() // { errors: { generic: ['Unexpected error occurred'] } }
 \`\`\`
 
-> **Note:** \`ApiError\` is an internal base class and is not exported from \`@qnx/errors\`. Use the specialized subclasses instead.`,
+> **Note:** \`ApiError\` is exported from \`@qnx/errors\`. Use it for custom status codes (e.g. 409); prefer the specialized subclasses where one fits.`,
 
     ValidationError: `## \`ValidationError\`
 
@@ -46,7 +46,7 @@ error.getErrorResponse() // { errors: { generic: ['Unexpected error occurred'] }
 
 **Extends:** \`ApiError\`
 
-**Default code:** \`errorCodes.VALIDATION_ERROR_CODE\` (default: \`422\`)
+**Default code:** \`errorCodes.VALIDATION_ERROR_CODE\` (default: \`400\`)
 
 **Constructor**
 \`\`\`ts
@@ -56,7 +56,7 @@ new ValidationError(message: string, option: { errRes: ErrorResponse })
 **Methods**
 | Method | Returns | Description |
 | --- | --- | --- |
-| \`getCode()\` | \`number\` | \`VALIDATION_ERROR_CODE\` (default 422) |
+| \`getCode()\` | \`number\` | \`VALIDATION_ERROR_CODE\` (default 400) |
 | \`getErrorResponse()\` | \`ErrorResponse\` | The full field-level error map |
 
 **Example**
@@ -81,7 +81,7 @@ throw new ValidationError('Validation failed', {
 
 **Extends:** \`ValidationError\` → \`ApiError\`
 
-**Default code:** \`errorCodes.VALIDATION_ERROR_CODE\` (default: \`422\`)
+**Default code:** \`errorCodes.VALIDATION_ERROR_CODE\` (default: \`400\`)
 
 **Constructor**
 \`\`\`ts
@@ -93,7 +93,7 @@ The \`key\` becomes the field name in \`errorResponse.errors\`, with the message
 **Methods**
 | Method | Returns | Description |
 | --- | --- | --- |
-| \`getCode()\` | \`number\` | \`VALIDATION_ERROR_CODE\` (default 422) |
+| \`getCode()\` | \`number\` | \`VALIDATION_ERROR_CODE\` (default 400) |
 | \`getErrorResponse()\` | \`ErrorResponse\` | \`{ errors: { [key]: [message] } }\` |
 
 **Example**
@@ -174,9 +174,9 @@ const summaryTable = `## Summary
 
 | Error Class | Purpose | Default Code | Use When |
 | --- | --- | --- | --- |
-| \`ApiError\` | Generic base error | Custom | Internal base — use subclasses instead |
-| \`ValidationError\` | Multi-field validation | 422 | Input or schema validation fails |
-| \`InvalidValueError\` | Single-field validation | 422 | One field like \`email\` or \`username\` is bad |
+| \`ApiError\` | Generic base error | Custom | No subclass fits, e.g. a 409 conflict |
+| \`ValidationError\` | Multi-field validation | 400 | Input or schema validation fails |
+| \`InvalidValueError\` | Single-field validation | 400 | One field like \`email\` or \`username\` is bad |
 | \`UnauthenticatedUserError\` | Auth failure | 401 | User not logged in or token missing |
 | \`ServerError\` | Internal system failure | 500 | Something broke that the user cannot fix |`
 

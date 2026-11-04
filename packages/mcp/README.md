@@ -62,7 +62,7 @@ https://qnx-mcp-server.vercel.app/mcp
 
 | Tool | Type | Purpose |
 | ---- | ---- | ------- |
-| `get-console-log-docs` | docs | Usage, message types (info/error/success/warning), and patterns |
+| `get-console-log-docs` | docs | Usage, message types (info/success/warn/error/debug/trace), and patterns |
 | `build-console-log` | build | Preview console output and get the consoleLog() call |
 
 ---

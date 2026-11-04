@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
+import { quote } from './quote'
 
 const logLevels = ['error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly'] as const
 
@@ -58,7 +59,7 @@ export function registerBuildLogEntryTool(server: McpServer) {
                 ? `, ${JSON.stringify(metadata)}`
                 : ''
 
-            const snippet = `import { logger } from '@qnx/winston'\n\nlogger.${level}('${message}'${metaArg})`
+            const snippet = `import { logger } from '@qnx/winston'\n\nlogger.${level}(${quote(message)}${metaArg})`
 
             const result = {
                 level,

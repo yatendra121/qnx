@@ -1,4 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
+import packageJson from '../../package.json'
 import { registerFormatErrorTool } from './tools/format-error.tool'
 import { registerCreateErrorInstanceTool } from './tools/create-error-instance.tool'
 import { registerLoggerDocsTool } from './tools/logger-docs.tool'
@@ -38,7 +39,7 @@ const defaultConfig: McpServerConfig = {
 export function createMcpServer(config: McpServerConfig = defaultConfig) {
     const server = new McpServer({
         name: 'qnx-mcp',
-        version: '0.8.0'
+        version: packageJson.version
     })
 
     registerListMcpToolsTool(server)

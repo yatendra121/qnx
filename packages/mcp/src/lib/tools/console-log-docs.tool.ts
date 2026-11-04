@@ -21,7 +21,7 @@ import { consoleLog } from '@qnx/log'
 consoleLog('Server started', { type: 'info' })
 consoleLog('An error occurred!', { type: 'error' })
 consoleLog('Operation successful', { type: 'success' })
-consoleLog('Proceed with caution', { type: 'warning' })
+consoleLog('Proceed with caution', { type: 'warn' })
 \`\`\`
 
 > The \`type\` option defaults to \`'info'\` if omitted:
@@ -33,14 +33,17 @@ consoleLog('This is an informational message')
 
 | Type | Color | When to use |
 | --- | --- | --- |
-| \`info\` | Cyan | General informational messages (default) |
-| \`error\` | Red | Errors and failures |
+| \`info\` | Blue | General informational messages (default) |
 | \`success\` | Green | Successful operations |
-| \`warning\` | Yellow | Warnings or things to be cautious about |
+| \`warn\` | Yellow | Warnings or things to be cautious about |
+| \`warning\` | Yellow | Deprecated alias of \`warn\` |
+| \`error\` | Red | Errors and failures |
+| \`debug\` | Magenta | Development diagnostics |
+| \`trace\` | Cyan | Detailed flow tracing |
 
 **Signature**
 \`\`\`ts
-consoleLog(message: string, { type }: { type: 'info' | 'error' | 'success' | 'warning' } = { type: 'info' }): void
+consoleLog(message: string, { type }: { type?: 'info' | 'success' | 'warn' | 'warning' | 'error' | 'debug' | 'trace' } = {}): void
 \`\`\`
 
 > Output is colorized in the terminal via [Chalk](https://www.npmjs.com/package/chalk). No file output — console only.`,
@@ -53,7 +56,7 @@ import { consoleLog } from '@qnx/log'
 
 consoleLog('Server started on port 3000', { type: 'success' })
 consoleLog('Connected to database', { type: 'success' })
-consoleLog('Running in development mode', { type: 'warning' })
+consoleLog('Running in development mode', { type: 'warn' })
 \`\`\`
 
 ### Script feedback
