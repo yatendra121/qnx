@@ -4,6 +4,8 @@
 
 > 🤖 MCP Server: `https://qnx-mcp-server.vercel.app/mcp/crypto`
 
+> **Node.js:** `jose` is ESM-only, so `require('@qnx/crypto')` needs Node.js 20.19+ or 22.12+. `import` has no such limit.
+
 ## ✨ Features
 
 - 🔐 JWT signing and verification

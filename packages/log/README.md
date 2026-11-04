@@ -4,6 +4,8 @@
 
 > 🤖 MCP Server: `https://qnx-mcp-server.vercel.app/mcp/log`
 
+> **Node.js:** `chalk` is ESM-only, so `require('@qnx/log')` needs Node.js 20.19+ or 22.12+. `import` has no such limit. `chalk` 6 itself needs Node.js 22+, so use `chalk` 5 on older versions.
+
 ## ✨ Features
 
 - 🎨 Colorized console output via Chalk
