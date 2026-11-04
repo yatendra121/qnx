@@ -8,7 +8,15 @@ type ColorName = 'blue' | 'green' | 'yellow' | 'red' | 'magenta' | 'cyan'
 /**
  * Type representing the possible types of log messages.
  */
-type Type = 'info' | 'success' | 'warn' | 'error' | 'debug' | 'trace'
+type Type =
+    | 'info'
+    | 'success'
+    | 'warn'
+    /** @deprecated Use `warn`. Kept so callers written before `warn` was added stay yellow. */
+    | 'warning'
+    | 'error'
+    | 'debug'
+    | 'trace'
 
 const log = console.log
 
@@ -27,6 +35,7 @@ const config: Record<Type, TypeStyle> = {
     info: { color: 'blue', icon: 'ⓘ' },
     success: { color: 'green', icon: '✓' },
     warn: { color: 'yellow', icon: '⚠' },
+    warning: { color: 'yellow', icon: '⚠' },
     error: { color: 'red', icon: '✗' },
     debug: { color: 'magenta', icon: '◇' },
     trace: { color: 'cyan', icon: '☆' }

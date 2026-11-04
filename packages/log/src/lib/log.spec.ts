@@ -45,6 +45,15 @@ describe('log', () => {
         expect(raw).toContain(color)
     })
 
+    it('keeps the deprecated warning type yellow', () => {
+        consoleLog('careful', { type: 'warning' })
+
+        const raw = lastRaw()
+        expect(raw).toContain('careful')
+        expect(raw).toContain('⚠')
+        expect(raw).toContain('[33m')
+    })
+
     it('defaults to the info color when no options are given', () => {
         consoleLog('no options')
         expect(lastRaw()).toContain('[34m')
