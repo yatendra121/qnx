@@ -1,4 +1,4 @@
-import { ApiResponseErrorsValue } from '../apiResponseErrorsValue'
+import { ApiResponseErrorsValue } from './apiResponseErrorsValue'
 import { describe, test, expect, beforeEach } from 'vitest'
 describe('ApiResponseErrorsValue', () => {
     let apiResponseErrorsValue: ApiResponseErrorsValue
@@ -29,6 +29,17 @@ describe('ApiResponseErrorsValue', () => {
         expect(errors).toEqual({
             [errorKey]: [errorMessage],
             [newErrorKey]: [newErrorMessage]
+        })
+    })
+
+    test('addError should keep earlier messages for the same key', () => {
+        apiResponseErrorsValue.addError('key1', 'Error message 1')
+        apiResponseErrorsValue.addError('key2', 'Error message 2')
+        apiResponseErrorsValue.addError('key1', 'Error message 3')
+
+        expect(apiResponseErrorsValue.getErrors()).toEqual({
+            key1: ['Error message 1', 'Error message 3'],
+            key2: ['Error message 2']
         })
     })
 

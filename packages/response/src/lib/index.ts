@@ -1,5 +1,8 @@
 export * from './response'
-export * from './apiResponseErrorsValue'
+export {
+    /** @deprecated Import `ApiResponseErrorsValue` from `@qnx/errors` instead. */
+    ApiResponseErrorsValue
+} from '@qnx/errors'
 export * from './handler'
 export * from './apiResponse'
 export * from './errorResponse'
