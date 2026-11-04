@@ -37,18 +37,14 @@
     "format": "npm run format:scripts"
   },
   "devDependencies": {
-    "@types/jest": "^30.0.0",
     "@types/node": "^26.6.6",
     "@typescript-eslint/eslint-plugin": "^8.72.1",
     "@typescript-eslint/parser": "^8.72.1",
     "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.7",
-    "jest": "^30.5.2",
     "lint-staged": "^17.6.0",
     "prettier": "^3.9.10",
-    "ts-jest": "^29.4.15",
-    "ts-node": "^10.9.2",
     "vite": "^8.3.5"
   }
 }
