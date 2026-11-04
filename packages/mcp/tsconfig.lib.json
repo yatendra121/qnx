@@ -2,6 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": ".",
+    "paths": {
+      "@qnx/crypto": ["../crypto/src/index.ts"],
+      "@qnx/errors": ["../errors/src/index.ts"],
+      "@qnx/response": ["../response/src/index.ts"],
+      "@qnx/winston": ["../winston/src/index.ts"]
+    },
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
