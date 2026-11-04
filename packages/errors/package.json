@@ -31,7 +31,7 @@
   "jsdelivr": "./dist/errors.iife.js",
   "scripts": {
     "dev": "vite --host",
-    "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
+    "build": "tsc -p tsconfig.lib.json --noEmit && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint:scripts": "eslint . --ext .ts",
