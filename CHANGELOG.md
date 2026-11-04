@@ -1,3 +1,15 @@
+## 0.8.10 (2026-10-29)
+
+### 🩹 Fixes
+
+- chore: republish packages (0.8.9 failed to publish to npm); includes the 0.8.9 log and errors fixes ([](https://github.com/yatendra121/qnx/commit/))
+
+## 0.8.9 (2026-10-29)
+
+### 🩹 Fixes
+
+- fix(log): prevent consoleLog crash on empty or unknown type and add six color-coded levels; fix(errors): set name on all error classes and trim constructor frames from stack traces ([](https://github.com/yatendra121/qnx/commit/))
+
 ## 0.8.8 (2026-06-13)
 
 ### 🩹 Fixes
