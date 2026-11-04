@@ -1,17 +1,17 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite'
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
-import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin'
+import { workspaceTestAlias } from '../../vite.config.base'
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin'
 
 export default defineConfig({
+    plugins: [nxReadySignal()],
+    resolve: {
+        tsconfigPaths: true
+    },
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/app',
-    plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
-    // Uncomment this if you are using workers.
-    // worker: {
-    //  plugins: [ nxViteTsPaths() ],
-    // },
     test: {
+        alias: workspaceTestAlias,
         watch: false,
         globals: true,
         environment: 'happy-dom', // crypto not worked with jsdom. reference https://github.com/jsdom/jsdom/issues/3711#issuecomment-2096255351

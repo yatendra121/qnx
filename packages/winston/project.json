@@ -7,6 +7,7 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/packages/winston/dist"],
       "options": {
         "commands": [
           {
@@ -16,14 +17,13 @@
         ],
         "cwd": "packages/winston",
         "outputPath": "packages/winston/dist"
-      },
-      "outputs": ["{workspaceRoot}/packages/winston/dist"]
+      }
     },
     "build-nx": {
-      "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/{options.outDir}", "{projectRoot}/dist"],
       "options": {
-        "outputPath": "dist/packages/winston"
+        "outDir": "../../dist/packages/winston"
       }
     },
     "publish": {
@@ -33,17 +33,14 @@
       }
     },
     "test": {
-      "executor": "@nx/vitest:test",
+      "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/packages/winston"],
       "options": {
-        "config": "packages/winston/vite.config.ts",
+        "command": "vitest run",
+        "cwd": "packages/winston",
         "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/packages/winston"
+        "coverage.reportsDirectory": "../../coverage/packages/winston"
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
     }
   }
 }

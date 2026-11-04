@@ -2,7 +2,7 @@ import { collectViteConfig } from '../../vite.config.base'
 import packageJson from './package.json'
 
 const option = {
-    rollupOptions: {
+    rolldownOptions: {
         external: ['chalk']
     }
 }

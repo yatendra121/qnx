@@ -7,6 +7,7 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/packages/errors/dist"],
       "options": {
         "commands": [
           {
@@ -16,8 +17,7 @@
         ],
         "cwd": "packages/errors",
         "outputPath": "packages/errors/dist"
-      },
-      "outputs": ["{workspaceRoot}/packages/errors/dist"]
+      }
     },
     "publish": {
       "executor": "nx:run-commands",
@@ -25,17 +25,14 @@
         "command": "tsx tools/scripts/publish.ts errors "
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "test": {
-      "executor": "@nx/vitest:test",
+      "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/packages/errors"],
       "options": {
-        "config": "packages/errors/vite.config.ts",
+        "command": "vitest run",
+        "cwd": "packages/errors",
         "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/packages/errors"
+        "coverage.reportsDirectory": "../../coverage/packages/errors"
       }
     },
     "vitest": {

@@ -6,23 +6,8 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "target": "node",
-        "compiler": "tsc",
-        "outputPath": "dist/packages/app",
-        "main": "packages/app/src/main.ts",
-        "tsConfig": "packages/app/tsconfig.app.json",
-        "assets": ["packages/app/src/assets"],
-        "isolatedConfig": true,
-        "webpackConfig": "packages/app/webpack.config.js"
-      },
-      "configurations": {
-        "development": {},
-        "production": {}
-      }
+      "outputs": ["{workspaceRoot}/dist/packages/app"],
+      "defaultConfiguration": "production"
     },
     "serve": {
       "executor": "@nx/js:node",
@@ -39,15 +24,13 @@
         }
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "test": {
-      "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{projectRoot}/{options.coverage.reportsDirectory}",
+        "{workspaceRoot}/coverage/packages/app"
+      ],
       "options": {
-        "reportsDirectory": "../../coverage/packages/app"
+        "coverage.reportsDirectory": "../../coverage/packages/app"
       }
     }
   }

@@ -1,17 +1,44 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
-import { copyReadme, external, generatePackageJson, packageJson, qnxDependencies } from './vite.config'
+import {
+    copyReadme,
+    external,
+    generatePackageJson,
+    packageJson,
+    qnxDependencies
+} from './vite.config'
 
-const { name, version, description, author, license, funding, homepage, keywords, repository, dependencies } = packageJson
+const {
+    name,
+    version,
+    description,
+    author,
+    license,
+    funding,
+    homepage,
+    keywords,
+    repository,
+    dependencies
+} = packageJson
 const resolvedDependencies = { ...dependencies, ...qnxDependencies }
 
 export default defineConfig({
+    resolve: {
+        tsconfigPaths: true
+    },
     plugins: [
-        nxViteTsPaths(),
         copyReadme(),
         generatePackageJson({
-            name, version, description, author, license, funding, homepage, keywords, repository, dependencies: resolvedDependencies,
+            name,
+            version,
+            description,
+            author,
+            license,
+            funding,
+            homepage,
+            keywords,
+            repository,
+            dependencies: resolvedDependencies,
             type: 'module',
             main: './main.js'
         })
@@ -23,7 +50,7 @@ export default defineConfig({
             formats: ['es'],
             fileName: () => 'main.js'
         },
-        rollupOptions: {
+        rolldownOptions: {
             external,
             output: {
                 banner: '#!/usr/bin/env node'

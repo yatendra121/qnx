@@ -51,6 +51,6 @@ export const external = (id: string) =>
     externalLibs.some((lib) => id === lib || id.startsWith(`${lib}/`))
 
 const viteConfig = collectViteConfig(packageJson, __dirname, {
-    rollupOptions: { external }
+    rolldownOptions: { external }
 })
 export default viteConfig

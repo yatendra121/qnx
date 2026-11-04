@@ -7,6 +7,7 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/packages/client/dist"],
       "options": {
         "commands": [
           {
@@ -16,8 +17,7 @@
         ],
         "cwd": "packages/client",
         "outputPath": "packages/client/dist"
-      },
-      "outputs": ["{workspaceRoot}/packages/client/dist"]
+      }
     },
     "publish": {
       "executor": "nx:run-commands",
@@ -25,17 +25,14 @@
         "command": "tsx tools/scripts/publish.ts client "
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "test": {
-      "executor": "@nx/vitest:test",
+      "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/packages/client"],
       "options": {
-        "config": "packages/client/vite.config.ts",
+        "command": "vitest run",
+        "cwd": "packages/client",
         "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/packages/client"
+        "coverage.reportsDirectory": "../../coverage/packages/client"
       }
     },
     "vitest": {

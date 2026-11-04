@@ -34,6 +34,7 @@ yarn-error.log
 testem.log
 /typings
 /logs
+packages/app/logs
 
 # System Files
 .DS_Store
@@ -48,3 +49,4 @@ packages/mcp/http
 
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
+.nx/migrate-runs

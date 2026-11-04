@@ -134,7 +134,11 @@ export class ApiResponse<T = unknown> {
     response(response: ExResponse) {
         if (response.headersSent) return response
         if (this.errors) this.error = this.errors[Object.keys(this.errors)?.[0]]?.[0]
-        return response.status(this.#statusCode).send({ ...this.#additionalData, ...this })
+        // Class fields exist on the instance even when unset, so skip undefined values to keep them from overriding additional data.
+        const fields = Object.entries(this).filter(([, value]) => value !== undefined)
+        return response
+            .status(this.#statusCode)
+            .send({ ...this.#additionalData, ...Object.fromEntries(fields) })
     }
 }
 
