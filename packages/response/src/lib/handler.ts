@@ -36,7 +36,17 @@ export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) 
                 throw new TypeError('Provided parameter value is not a function.')
             }
 
-            const apiRes = await func(req as T, res, next)
+            // The wrapped function may call next() itself. Without tracking, the fallback
+            // below would advance the Express chain a second time, running later handlers
+            // while an earlier async middleware (e.g. an auth check) is still deciding.
+            let nextCalled = false
+            const onceNext: NextFunction = (err?: unknown) => {
+                if (nextCalled) return
+                nextCalled = true
+                next(err)
+            }
+
+            const apiRes = await func(req as T, res, onceNext)
 
             if (apiRes instanceof ApiResponse) {
                 return void apiRes.response(res) // Ensure the return value is ignored
@@ -47,7 +57,10 @@ export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) 
             }
 
             if (apiRes === undefined) {
-                return next()
+                // Nothing to send. Continue the chain only if the function neither moved it
+                // on nor already responded (e.g. `res.json(...)` without a `return`).
+                if (!res.headersSent) onceNext()
+                return
             }
 
             initializeApiResponse().setData(apiRes).response(res)

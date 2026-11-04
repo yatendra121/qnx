@@ -43,8 +43,12 @@ export function errorApiResponse(
         if (errors) apiRes.setErrors(errors)
         return apiRes.setStatusCode(error.getCode()).response(response)
     } else {
+        // Loggers are typed to receive an Error and run outside this try/catch, so a thrown
+        // primitive or null must not reach one that reads `error.stack` and crash the process.
+        const loggable =
+            typeof error === 'object' && error !== null ? error : new Error(String(error))
         queueMicrotask(() => {
-            callbackObj.logger?.serverError(error)
+            callbackObj.logger?.serverError(loggable)
         })
         return serverErrorApiResponse(response, error)
     }
@@ -88,10 +92,12 @@ export function serverErrorApiResponse(response: ExResponse, error: unknown) {
  * @param error - The error to check.
  * @returns True if the error looks like a ZodError.
  */
-const isZodError = (error: Error): error is $ZodError => {
+const isZodError = (error: unknown): error is $ZodError => {
+    // Anything can be thrown or rejected, including null and undefined (`Promise.reject()`).
+    const candidate = error as Partial<$ZodError> | null | undefined
     return (
-        (error.name === 'ZodError' || error.name === '$ZodError') &&
-        Array.isArray((error as $ZodError).issues)
+        (candidate?.name === 'ZodError' || candidate?.name === '$ZodError') &&
+        Array.isArray(candidate.issues)
     )
 }
 
@@ -102,19 +108,13 @@ const isZodError = (error: Error): error is $ZodError => {
  * @returns A record of errors formatted for an API response.
  */
 const collectErrorsFromZodError = (error: $ZodError) => {
-    return error.issues.reduce(
-        (errors, item) => {
-            const path = item.path.join('.')
-
-            // Check if errors[path] exists, if not, initialize it as an array
-            if (!errors[path]) {
-                errors[path] = []
-            }
-
-            // In zod4 error will be come in 'error' key
-            errors[path].push(item.message)
-            return errors
-        },
-        {} as Record<string, string[]>
-    )
+    // Paths can come from request data (e.g. z.record keys), so a key such as "constructor"
+    // or "__proto__" must not resolve to something inherited from Object.prototype.
+    const collected = new Map<string, string[]>()
+    for (const { path, message } of error.issues) {
+        // zod types path segments as PropertyKey, and join() throws on a symbol.
+        const key = path.map(String).join('.')
+        collected.set(key, [...(collected.get(key) ?? []), message])
+    }
+    return Object.fromEntries(collected)
 }

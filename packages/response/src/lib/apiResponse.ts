@@ -103,7 +103,9 @@ export class ApiResponse<T = unknown> {
      */
     setServerError(error: unknown) {
         if (!SHOW_SERVER_ERROR) return this
-        const err = error as Error
+        // Anything can be thrown or rejected, including primitives, null and undefined.
+        const isObject = typeof error === 'object' && error !== null
+        const err = (isObject ? error : { message: String(error) }) as Partial<Error>
         this.serverError = {
             name: err.name,
             message: err.message,
