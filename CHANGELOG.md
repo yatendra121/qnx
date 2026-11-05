@@ -1,3 +1,14 @@
+## 0.8.17 (2026-11-05)
+
+### 🩹 Fixes
+
+- fix @qnx/response failing to import with @qnx/errors older than 0.8.15, correct its peer range to >=0.8.8, and remove the node engines added to crypto and log in 0.8.15 ([563fd64](https://github.com/yatendra121/qnx/commit/563fd64))
+- fix the @qnx/mcp server's parallel call failures and inaccurate tool output, and add tools for diagnosing errors, searching docs, reviewing code, guides and package discovery ([9f8500a](https://github.com/yatendra121/qnx/commit/9f8500a))
+
+### ❤️ Thank You
+
+- yatendra121
+
 ## 0.8.15 (2026-11-04)
 
 ### 🩹 Fixes
