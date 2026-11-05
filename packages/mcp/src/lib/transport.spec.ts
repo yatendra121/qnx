@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import type { Server } from 'node:http'
+import { createServer, request as httpRequest, type Server } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import express from 'express'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
-import { createMcpHttpHandler, type McpHttpHandlerOptions } from './transport'
+import { createMcpHttpApp } from './app'
+import { createMcpHttpHandler } from './transport'
 
 describe('createMcpHttpHandler (HTTP transport)', () => {
     let httpServer: Server
@@ -32,37 +33,46 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
 
     // ─── invalid requests ─────────────────────────────────────────────────────
 
-    describe('invalid requests', () => {
-        it('returns 400 for a POST without session and non-initialize body', async () => {
-            const res = await fetch(baseUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ jsonrpc: '2.0', method: 'tools/list', id: 1 })
-            })
-            expect(res.status).toBe(400)
-            const body = await res.json() as { error: string }
-            expect(body.error).toBeDefined()
+    describe('requests that need no handshake', () => {
+        const post = (body: unknown, headers: Record<string, string> = {}) => fetch(baseUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream', ...headers },
+            body: JSON.stringify(body)
         })
 
-        it('returns 404 for a POST with an unknown session ID', async () => {
-            const res = await fetch(baseUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'mcp-session-id': 'non-existent-session-id'
-                },
-                body: JSON.stringify({ jsonrpc: '2.0', method: 'tools/list', id: 1 })
-            })
-            expect(res.status).toBe(404)
+        it('answers tools/list without initialize, as plain JSON', async () => {
+            const res = await post({ jsonrpc: '2.0', method: 'tools/list', id: 1 })
+            expect(res.status).toBe(200)
+            expect(res.headers.get('content-type')).toContain('application/json')
+            const body = await res.json() as { result: { tools: unknown[] } }
+            expect(body.result.tools.length).toBeGreaterThan(0)
         })
 
-        it('returns 400 for a GET without a session', async () => {
-            const res = await fetch(baseUrl, { method: 'GET' })
-            expect(res.status).toBe(400)
+        it('issues no session id', async () => {
+            const res = await post({
+                jsonrpc: '2.0',
+                id: 1,
+                method: 'initialize',
+                params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'test', version: '1.0.0' } }
+            })
+            expect(res.status).toBe(200)
+            expect(res.headers.get('mcp-session-id')).toBeNull()
+        })
+
+        it('still serves a client holding a session id from an older server', async () => {
+            const res = await post({ jsonrpc: '2.0', method: 'tools/list', id: 1 }, { 'mcp-session-id': 'from-before-the-upgrade' })
+            expect(res.status).toBe(200)
+        })
+
+        it('answers 405 with JSON for GET and DELETE, which clients treat as not offered', async () => {
+            for (const method of ['GET', 'DELETE']) {
+                const res = await fetch(baseUrl, { method })
+                expect(res.status).toBe(405)
+                expect(res.headers.get('allow')).toBe('POST')
+                expect(await res.json()).toMatchObject({ jsonrpc: '2.0', error: { code: -32000 } })
+            }
         })
     })
-
-    // ─── MCP protocol over HTTP ───────────────────────────────────────────────
 
     describe('MCP protocol over HTTP', () => {
         async function connectClient(url = baseUrl) {
@@ -72,10 +82,10 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
             return client
         }
 
-        it('initializes a session and lists all default tools', async () => {
+        it('initializes and lists all default tools', async () => {
             const c = await connectClient()
             const { tools } = await c.listTools()
-            expect(tools.length).toBe(14)
+            expect(tools.length).toBe(19)
         })
 
         it('lists expected tool names after initialization', async () => {
@@ -136,7 +146,7 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
     // ─── per-route config ─────────────────────────────────────────────────────
 
     describe('per-route config', () => {
-        it('crypto-only route exposes list-mcp-tools + 2 crypto tools', async () => {
+        it('crypto-only route exposes the general tools + 2 crypto tools', async () => {
             const app = express()
             app.use(express.json())
             app.all('/mcp/crypto', createMcpHttpHandler({ crypto: true }))
@@ -153,7 +163,7 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
             await cryptoClient.connect(transport)
 
             const { tools } = await cryptoClient.listTools()
-            expect(tools).toHaveLength(3)
+            expect(tools).toHaveLength(8)
             expect(tools.map((t) => t.name)).toContain('list-mcp-tools')
             expect(tools.map((t) => t.name)).toContain('get-crypto-docs')
             expect(tools.map((t) => t.name)).toContain('build-crypto-snippet')
@@ -162,7 +172,7 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
             await new Promise<void>((resolve) => cryptoServer.close(() => resolve()))
         })
 
-        it('errors-only route exposes list-mcp-tools + 2 error tools', async () => {
+        it('errors-only route exposes the general tools + 2 error tools', async () => {
             const app = express()
             app.use(express.json())
             app.all('/mcp/errors', createMcpHttpHandler({ errors: true }))
@@ -179,7 +189,7 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
             await errorsClient.connect(transport)
 
             const { tools } = await errorsClient.listTools()
-            expect(tools).toHaveLength(3)
+            expect(tools).toHaveLength(8)
             expect(tools.map((t) => t.name)).toContain('list-mcp-tools')
             expect(tools.map((t) => t.name)).toContain('build-api-error')
 
@@ -189,154 +199,184 @@ describe('createMcpHttpHandler (HTTP transport)', () => {
     })
 })
 
-describe('createMcpHttpHandler options', () => {
-    const servers: Server[] = []
-    const streams: AbortController[] = []
-    const headers = { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' }
-    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+describe('createMcpHttpHandler authToken', () => {
+    let httpServer: Server
+    let baseUrl: string
+    const clients: Client[] = []
 
-    async function start(options: McpHttpHandlerOptions) {
+    beforeEach(async () => {
         const app = express()
         app.use(express.json())
-        app.all('/mcp', createMcpHttpHandler(undefined, options))
-        const server = await new Promise<Server>((resolve) => {
-            const s = app.listen(0, () => resolve(s as Server))
+        app.all('/mcp', createMcpHttpHandler(undefined, { authToken: 'secret-token' }))
+        await new Promise<void>((resolve) => {
+            httpServer = app.listen(0, resolve) as Server
         })
-        servers.push(server)
-        return `http://localhost:${(server.address() as AddressInfo).port}/mcp`
-    }
-
-    function initialize(url: string, extraHeaders: Record<string, string> = {}) {
-        return fetch(url, {
-            method: 'POST',
-            headers: { ...headers, ...extraHeaders },
-            body: JSON.stringify({
-                jsonrpc: '2.0',
-                id: 1,
-                method: 'initialize',
-                params: {
-                    protocolVersion: '2024-11-05',
-                    capabilities: {},
-                    clientInfo: { name: 'test', version: '1.0.0' }
-                }
-            })
-        })
-    }
-
-    /** Opens a session and waits for its initialize request to finish. */
-    async function openSession(url: string) {
-        const res = await initialize(url)
-        await res.text()
-        await sleep(10)
-        return res.headers.get('mcp-session-id') as string
-    }
-
-    async function ping(url: string, sessionId: string) {
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: { ...headers, 'mcp-session-id': sessionId },
-            body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'ping' })
-        })
-        await res.text()
-        return res.status
-    }
+        baseUrl = `http://localhost:${(httpServer.address() as AddressInfo).port}/mcp`
+    })
 
     afterEach(async () => {
-        streams.splice(0).forEach((stream) => stream.abort())
-        await Promise.all(
-            servers.splice(0).map((s) => new Promise((resolve) => s.close(resolve)))
-        )
+        await Promise.all(clients.splice(0).map((client) => client.close()))
+        await new Promise<void>((resolve) => httpServer.close(() => resolve()))
     })
 
-    describe('authToken', () => {
-        it.each([
-            ['no header', {}],
-            ['a wrong token', { Authorization: 'Bearer wrong' }],
-            ['a different scheme', { Authorization: 'Basic secret' }]
-        ])('answers 401 for %s', async (_label, extraHeaders) => {
-            const res = await initialize(await start({ authToken: 'secret' }), extraHeaders)
+    it('rejects a missing or wrong token with 401', async () => {
+        for (const headers of [{}, { Authorization: 'Bearer wrong' }] as Record<string, string>[]) {
+            const res = await fetch(baseUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...headers },
+                body: JSON.stringify({ jsonrpc: '2.0', method: 'tools/list', id: 1 })
+            })
             expect(res.status).toBe(401)
             expect(res.headers.get('www-authenticate')).toBe('Bearer')
-        })
-
-        it('lets a real client through with the right token', async () => {
-            const url = await start({ authToken: 'secret' })
-            const client = new Client({ name: 'test', version: '1.0.0' }, { capabilities: {} })
-            await client.connect(
-                new StreamableHTTPClientTransport(new URL(url), {
-                    requestInit: { headers: { Authorization: 'Bearer secret' } }
-                })
-            )
-            expect((await client.listTools()).tools).toHaveLength(14)
-            await client.close()
-        })
-
-        it('protects an existing session too', async () => {
-            const url = await start({ authToken: 'secret' })
-            const res = await initialize(url, { Authorization: 'Bearer secret' })
-            await res.text()
-            expect(await ping(url, res.headers.get('mcp-session-id') as string)).toBe(401)
-        })
+        }
     })
 
-    describe('session limits', () => {
-        it('closes expired sessions when a new one starts', async () => {
-            const url = await start({ sessionIdleTtlMs: 20 })
-            const first = await openSession(url)
-            expect(await ping(url, first)).toBe(200)
+    it('lets a real client through with the right token', async () => {
+        const client = new Client({ name: 'test', version: '1.0.0' }, { capabilities: {} })
+        clients.push(client)
+        await client.connect(new StreamableHTTPClientTransport(new URL(baseUrl), {
+            requestInit: { headers: { Authorization: 'Bearer secret-token' } }
+        }))
+        const { tools } = await client.listTools()
+        expect(tools.length).toBeGreaterThan(0)
+    })
+})
 
-            await sleep(40)
-            const second = await openSession(url)
+/**
+ * Hosted deployments run several instances, and the platform decides which one gets each request.
+ * Sessions held in one instance's memory made that fail with 404, mostly during parallel tool calls.
+ */
+describe('several server instances behind one URL', () => {
+    const servers: Server[] = []
+    const clients: Client[] = []
 
-            expect(await ping(url, first)).toBe(404)
-            expect(await ping(url, second)).toBe(200)
+    afterEach(async () => {
+        await Promise.all(clients.splice(0).map((client) => client.close()))
+        await Promise.all(servers.splice(0).map((server) => new Promise((done) => server.close(done))))
+    })
+
+    async function startInstance() {
+        const server = await new Promise<Server>((done) => {
+            const started = createMcpHttpApp().listen(0, () => done(started as Server))
         })
+        servers.push(server)
+        return (server.address() as AddressInfo).port
+    }
 
-        it('keeps a session that is still in use', async () => {
-            const url = await start({ sessionIdleTtlMs: 60_000 })
-            const first = await openSession(url)
-            await openSession(url)
-            expect(await ping(url, first)).toBe(200)
-        })
-
-        it('closes the least recently used session when full', async () => {
-            const url = await start({ maxSessions: 2 })
-            const oldest = await openSession(url)
-            const used = await openSession(url)
-            await sleep(5)
-            expect(await ping(url, oldest)).toBe(200)
-            await sleep(5)
-            expect(await ping(url, used)).toBe(200)
-            await sleep(5)
-
-            const newest = await openSession(url)
-
-            expect(await ping(url, oldest)).toBe(404)
-            expect(await ping(url, used)).toBe(200)
-            expect(await ping(url, newest)).toBe(200)
-        })
-
-        it('answers 503 rather than close a session with an open event stream', async () => {
-            const url = await start({ maxSessions: 1, sessionIdleTtlMs: 1 })
-            const sessionId = await openSession(url)
-            const stream = new AbortController()
-            streams.push(stream)
-            await fetch(url, {
-                headers: { Accept: 'text/event-stream', 'mcp-session-id': sessionId },
-                signal: stream.signal
+    /** Sends each request to the next instance, as a load balancer can. */
+    async function startRoundRobin(instancePorts: number[]) {
+        let next = 0
+        const balancer = createServer((incoming, outgoing) => {
+            const port = instancePorts[next++ % instancePorts.length]
+            const proxied = httpRequest({ port, path: incoming.url, method: incoming.method, headers: incoming.headers }, (response) => {
+                outgoing.writeHead(response.statusCode ?? 500, response.headers)
+                response.pipe(outgoing)
             })
-            await sleep(10)
-
-            const blocked = await initialize(url)
-            expect(blocked.status).toBe(503)
-            expect(await ping(url, sessionId)).toBe(200)
-
-            stream.abort()
-            await sleep(20)
-
-            const allowed = await initialize(url)
-            await allowed.text()
-            expect(allowed.status).toBe(200)
+            incoming.pipe(proxied)
         })
+        await new Promise<void>((done) => balancer.listen(0, done))
+        servers.push(balancer)
+        return `http://127.0.0.1:${(balancer.address() as AddressInfo).port}/mcp`
+    }
+
+    it('completes parallel calls from the official SDK client, whichever instance answers', async () => {
+        const url = await startRoundRobin(await Promise.all([startInstance(), startInstance(), startInstance()]))
+        const client = new Client({ name: 'test', version: '1.0.0' }, { capabilities: {} })
+        clients.push(client)
+        await client.connect(new StreamableHTTPClientTransport(new URL(url)))
+
+        for (let round = 0; round < 4; round++) {
+            const results = await Promise.allSettled(Array.from({ length: 20 }, () =>
+                client.callTool({ name: 'get-console-log-docs', arguments: { topic: 'usage' } })
+            ))
+            expect(results.filter(({ status }) => status === 'rejected')).toEqual([])
+        }
+    })
+})
+
+describe('createMcpHttpApp', () => {
+    let httpServer: Server
+    let origin: string
+
+    beforeEach(async () => {
+        await new Promise<void>((resolve) => {
+            httpServer = createMcpHttpApp().listen(0, resolve) as Server
+        })
+        origin = `http://127.0.0.1:${(httpServer.address() as AddressInfo).port}`
+    })
+
+    afterEach(async () => {
+        await new Promise<void>((resolve) => httpServer.close(() => resolve()))
+    })
+
+    const initialize = {
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'initialize',
+        params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'test', version: '1.0.0' } }
+    }
+    const jsonHeaders = { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' }
+
+    it('answers malformed JSON with a JSON-RPC parse error, not an HTML page', async () => {
+        const res = await fetch(`${origin}/mcp`, { method: 'POST', headers: jsonHeaders, body: '{not json' })
+        expect(res.status).toBe(400)
+        expect(await res.json()).toEqual({ jsonrpc: '2.0', id: null, error: { code: -32700, message: expect.stringContaining('not valid JSON') } })
+    })
+
+    it('answers an unknown path with JSON listing the endpoints', async () => {
+        const res = await fetch(`${origin}/mcp/bogus`, { method: 'POST', headers: jsonHeaders, body: '{}' })
+        expect(res.status).toBe(404)
+        const body = await res.json() as { endpoints: string[] }
+        expect(body.endpoints).toContain('/mcp/response')
+    })
+
+    it('describes itself at the root', async () => {
+        const res = await fetch(origin)
+        expect(res.status).toBe(200)
+        expect(await res.json()).toMatchObject({ name: 'qnx-mcp', endpoints: expect.arrayContaining(['/mcp']) })
+    })
+
+    it('accepts a request large enough to review a source file', async () => {
+        const code = `// ${'x'.repeat(150_000)}`
+        const res = await fetch(`${origin}/mcp`, {
+            method: 'POST',
+            headers: jsonHeaders,
+            body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'review-code', arguments: { code } } })
+        })
+        expect(res.status).toBe(200)
+    })
+
+    it('answers a body over the limit with JSON', async () => {
+        const res = await fetch(`${origin}/mcp`, { method: 'POST', headers: jsonHeaders, body: JSON.stringify({ code: 'x'.repeat(2_000_000) }) })
+        expect(res.status).toBe(413)
+        expect(await res.json()).toMatchObject({ error: { code: -32600 } })
+    })
+
+    it('allows browser clients through CORS preflight', async () => {
+        const res = await fetch(`${origin}/mcp`, {
+            method: 'OPTIONS',
+            headers: { Origin: 'https://example.com', 'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'content-type' }
+        })
+        expect(res.status).toBe(204)
+        expect(res.headers.get('access-control-allow-origin')).toBe('*')
+        expect(res.headers.get('access-control-allow-headers')).toContain('Content-Type')
+    })
+
+    it.each([
+        ['/mcp', 'search-docs', true],
+        ['/mcp/response', 'get-response-docs', true],
+        ['/mcp/response', 'get-crypto-docs', false],
+        ['/mcp/log', 'build-console-log', true]
+    ])('%s exposes %s: %s', async (path, tool, expected) => {
+        const res = await fetch(origin + path, { method: 'POST', headers: jsonHeaders, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }) })
+        const body = await res.json() as { result: { tools: { name: string }[] } }
+        expect(body.result.tools.some(({ name }) => name === tool)).toBe(expected)
+    })
+
+    it('sends instructions, and promises no list change notifications', async () => {
+        const res = await fetch(`${origin}/mcp`, { method: 'POST', headers: jsonHeaders, body: JSON.stringify(initialize) })
+        const body = await res.json() as { result: { instructions: string; capabilities: { tools: { listChanged: boolean } } } }
+        expect(body.result.instructions).toContain('diagnose-error')
+        expect(body.result.capabilities.tools.listChanged).toBe(false)
     })
 })

@@ -23,6 +23,7 @@
     "build:stdio": "rm -rf stdio && vite build --config vite.config.stdio.ts && chmod +x stdio/stdio.js",
     "build:http": "rm -rf http && vite build --config vite.config.http.ts && chmod +x http/main.js",
     "test": "vitest",
+    "e2e": "node e2e/run.mjs",
     "lint:scripts": "eslint . --ext .ts",
     "format:scripts": "prettier . --write",
     "format": "npm run format:scripts",

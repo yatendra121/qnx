@@ -1,9 +1,10 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
+import { readOnlyTool, textResult } from './shared'
 
 const topics = ['usage', 'types', 'patterns', 'all'] as const
 
-const docs: Record<Exclude<typeof topics[number], 'all'>, string> = {
+export const consoleLogDocs: Record<Exclude<typeof topics[number], 'all'>, string> = {
     usage: `## Usage
 
 **Installation**
@@ -43,8 +44,17 @@ consoleLog('This is an informational message')
 
 **Signature**
 \`\`\`ts
-consoleLog(message: string, { type }: { type?: 'info' | 'success' | 'warn' | 'warning' | 'error' | 'debug' | 'trace' } = {}): void
+consoleLog(message: unknown, { type }: { type?: 'info' | 'success' | 'warn' | 'warning' | 'error' | 'debug' | 'trace' } = {}): void
 \`\`\`
+
+**What \`message\` can be**
+
+| Value | Printed as |
+| --- | --- |
+| A string | The string |
+| An \`Error\` | Its stack trace, dimmed, followed by each \`cause\` |
+| An object | Indented JSON |
+| Anything else | \`String(value)\` |
 
 > Output is colorized in the terminal via [Chalk](https://www.npmjs.com/package/chalk). No file output — console only.`,
 
@@ -71,7 +81,8 @@ try {
     await riskyOperation()
     consoleLog('Operation completed', { type: 'success' })
 } catch (err) {
-    consoleLog(\`Operation failed: \${err.message}\`, { type: 'error' })
+    // Passing the Error prints its stack trace and cause chain
+    consoleLog(err, { type: 'error' })
 }
 \`\`\`
 
@@ -86,28 +97,16 @@ export function registerConsoleLogDocsTool(server: McpServer) {
     server.registerTool(
         'get-console-log-docs',
         {
+            ...readOnlyTool('@qnx/log docs'),
             description: 'Get documentation for @qnx/log — lightweight colorized terminal output for development, CLI scripts, and startup messages. Use instead of @qnx/winston when you need visible terminal feedback without file persistence. Pass "all" for the full reference.',
             inputSchema: {
                 topic: z.enum(topics).describe('usage | types | patterns | all')
             }
         },
-        async ({ topic }) => {
-            let text: string
-
-            if (topic === 'all') {
-                text = [
-                    '# `@qnx/log` Reference\n',
-                    docs.usage,
-                    docs.types,
-                    docs.patterns
-                ].join('\n\n---\n\n')
-            } else {
-                text = docs[topic]
-            }
-
-            return {
-                content: [{ type: 'text', text }]
-            }
-        }
+        async ({ topic }) => textResult(
+            topic === 'all'
+                ? ['# `@qnx/log` Reference\n', ...Object.values(consoleLogDocs)].join('\n\n---\n\n')
+                : consoleLogDocs[topic]
+        )
     )
 }

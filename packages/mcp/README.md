@@ -1,6 +1,6 @@
 # `@qnx/mcp`
 
-`@qnx/mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server that exposes the qnx ecosystem as AI-callable tools. Connect once and get instant access to docs, code generators, and migration helpers for every `@qnx/*` package.
+`@qnx/mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server that brings the qnx ecosystem into your AI coding assistant. It answers questions, explains errors, checks your code and generates snippets for every `@qnx/*` package. "QNX" here means these Node.js and TypeScript packages, not the QNX operating system.
 
 **Hosted endpoint:**
 
@@ -10,53 +10,66 @@ https://qnx-mcp-server.vercel.app/mcp
 
 ## ✨ Features
 
+- 🩺 `diagnose-error` — paste an error message or stack trace to get its cause and fix
+- 🔎 `search-docs` — free-text search across all docs, guides and known errors
+- 🧐 `review-code` — check your code for known `@qnx/*` mistakes, with line numbers and fixes
+- 🔄 `transform-to-async-handler` — migrate your Express routes, keeping their status codes
+- 🧭 `get-guide` — tested end-to-end guides and a production checklist
+- 🔨 Build tools — previews that run the real libraries, and snippets that are tested against them
 - 📚 Docs tools — queryable documentation for every `@qnx/*` package
-- 🔨 Build tools — generate real code snippets and preview output with actual values
-- 🔄 Migration tools — before/after examples for migrating to `@qnx/*` patterns
 - 🌐 Supports both **HTTP (Streamable HTTP)** and **stdio** transports
 - 🎯 Scoped endpoints — connect to a single package to keep the tool list focused
-- 🛠️ `list-mcp-tools` — call this first to discover everything available
 
 ## 🧰 Tool Reference
 
-> Call `list-mcp-tools` first to get the full tool list grouped by package.
+**Start here** (available on every endpoint)
+
+| Tool | Use it when |
+| ---- | ----------- |
+| `diagnose-error` | You have an error message, stack trace or surprising response. Says so when it doesn't recognise the error, rather than guessing |
+| `search-docs` | You have a question. Searches docs, guides and known errors |
+| `review-code` | You have code. Checks it for known mistakes. It uses pattern matching, so check its findings against your code |
+| `get-guide` | You are building a feature. Covers `crud-api`, `server-and-client`, `auth-session` and `production-checklist` |
+| `get-package-info` | You are choosing or installing a package: what exists, install commands, and every public export |
+| `list-mcp-tools` | You want the tools on this endpoint, grouped by task and package |
+
+`@qnx/core-helpers`, `@qnx/interfaces` and `@qnx/message` are small enough to be fully covered by `get-package-info`.
 
 **`@qnx/errors`**
 
 | Tool | Type | Purpose |
 | ---- | ---- | ------- |
-| `get-error-class-docs` | docs | Constructor signature, methods, examples, and when to use each error class |
-| `build-api-error` | build | Instantiate an error class with real values — preview resolved code + errorResponse |
+| `get-error-class-docs` | docs | Constructor signature, methods, examples, and what each error class sends to the client |
+| `build-api-error` | build | Instantiate a real error class: see its code, errorResponse and HTTP response |
 
 **`@qnx/response`**
 
 | Tool | Type | Purpose |
 | ---- | ---- | ------- |
-| `get-response-docs` | docs | Code examples for handler setup, success, validation errors, Zod, unauthenticated, resource routes |
-| `build-api-response` | build | Show HTTP status code, response body shape, and which @qnx/response function produces it |
-| `transform-to-async-handler` | migration | Before/after migration from callback-style Express routes to asyncValidatorHandler |
+| `get-response-docs` | docs | Handler setup, return values, success, validation, Zod, server errors, resource routes, API reference |
+| `build-api-response` | build | Run the real code: see the HTTP status, response body, and the function that produces it |
+| `transform-to-async-handler` | migration | Pass your route for line-by-line conversions, or a pattern for a tested before and after. Lists the behaviour changes to check |
 
 **`@qnx/client`**
 
 | Tool | Type | Purpose |
 | ---- | ---- | ------- |
-| `get-client-docs` | docs | ApiResponse, ApiSuccessResponse, ApiErrorResponse classes, TypeScript types, and usage patterns |
-| `build-client-response` | build | Instantiate a response class with real values — see what each method returns |
+| `get-client-docs` | docs | Detecting failures reliably, response classes, TypeScript types, and usage patterns |
+| `build-client-response` | build | See what each getter returns for your values |
 
 **`@qnx/crypto`**
 
 | Tool | Type | Purpose |
 | ---- | ---- | ------- |
-| `get-crypto-docs` | docs | JWT, JWE, auth token helpers, key helpers, and supported algorithms |
-| `build-crypto-snippet` | build | Generate a TypeScript snippet for jwt-sign, jwt-verify, jwe-encrypt, jwe-decrypt, auth-token-generate, auth-token-decrypt |
+| `get-crypto-docs` | docs | Key setup, JWT, JWE, auth tokens, key helpers, algorithms, and troubleshooting |
+| `build-crypto-snippet` | build | Generate a snippet for jwt-sign, jwt-verify, jwe-encrypt, jwe-decrypt, auth-token-generate, auth-token-decrypt. Combinations that would throw at runtime are rejected |
 
 **`@qnx/winston`** (file logger)
 
 | Tool | Type | Purpose |
 | ---- | ---- | ------- |
-| `get-file-logger-docs` | docs | Usage, log levels, file output format, configuration, and patterns |
-| `build-file-log-entry` | build | Preview the JSON log entry written to file for a given level, message, and metadata |
-| `log-message` | action | Write a log entry directly via the Winston logger |
+| `get-file-logger-docs` | docs | Usage, levels, logging errors, file output format, configuration, and patterns |
+| `build-file-log-entry` | build | Preview the JSON a logger call writes to the file |
 
 **`@qnx/log`** (console logger)
 
@@ -65,16 +78,7 @@ https://qnx-mcp-server.vercel.app/mcp
 | `get-console-log-docs` | docs | Usage, message types (info/success/warn/error/debug/trace), and patterns |
 | `build-console-log` | build | Preview console output and get the consoleLog() call |
 
----
-
-**Tool types:**
-
-| Type | When to use |
-| ---- | ----------- |
-| `docs` | Get documentation, examples, and API reference for a package |
-| `build` | Generate with real values — preview output or get a ready-to-paste code snippet |
-| `migration` | Before/after examples for migrating existing code to a `@qnx/*` pattern |
-| `action` | Perform a live action (e.g. write a log entry) |
+All tools are read-only. A call that fails its checks, such as a missing required field, returns `isError: true` with what to change.
 
 ## 🤖 AI Client Configuration
 
@@ -108,46 +112,24 @@ Or use a scoped endpoint to keep the tool list focused:
 
 **Supported scopes:** `errors` · `response` · `client` · `crypto` · `winston` · `log`
 
-#### HTTP handshake (for raw HTTP / curl usage)
+#### Calling it directly (raw HTTP / curl)
 
-The MCP HTTP transport requires a 3-step sequence before any tool call:
-
-**Step 1 — initialize**
+The server is stateless, so there is no handshake or session to manage. Send JSON-RPC requests with `POST`. MCP clients still call `initialize` first, and that works as usual.
 
 ```bash
 curl -X POST https://qnx-mcp-server.vercel.app/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"my-client","version":"1.0.0"}}}'
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"diagnose-error","arguments":{"error":"JWT private key is not found in environment variables."}}}'
 ```
 
-Copy the `mcp-session-id` value from the response headers.
+Responses are JSON. `GET` and `DELETE` respond `405`, because there is no event stream to open or session to close.
 
-**Step 2 — confirm initialization**
-
-```bash
-curl -X POST https://qnx-mcp-server.vercel.app/mcp \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: <session-id>" \
-  -d '{"jsonrpc":"2.0","method":"notifications/initialized"}'
-```
-
-**Step 3 — call a tool**
-
-```bash
-curl -X POST https://qnx-mcp-server.vercel.app/mcp \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: <session-id>" \
-  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list-mcp-tools","arguments":{}}}'
-```
-
-> **SSL note:** if your HTTP client rejects the certificate, pass `-k` (curl) or the equivalent `rejectUnauthorized: false` option. This is a Vercel infrastructure certificate — the connection is still encrypted.
+> **TLS note:** the server has a standard, publicly trusted certificate, so you shouldn't need to turn off verification. If your client rejects it, a TLS-inspecting corporate proxy is the likely cause: add that proxy's certificate to your trust store rather than using `-k`.
 
 #### Self-hosting the HTTP server
 
-Each endpoint keeps at most 1000 sessions. A session closes after 30 minutes with no traffic and no open request, and the least recently used idle session closes first when an endpoint is full. A request for a closed session gets a `404`, which MCP clients answer by starting a new session. If every session has an open request, new sessions get a `503`.
+The server keeps no state between requests, so it runs on any number of instances, including serverless platforms, with no shared store or sticky sessions.
 
 The server is open by default. Set `MCP_AUTH_TOKEN` to require `Authorization: Bearer <token>` on every request. Anything else gets a `401`.
 
@@ -184,6 +166,14 @@ Or scoped to a specific package:
 ```
 
 **Supported scopes:** `errors` · `response` · `client` · `crypto` · `winston` · `log`
+
+## 🧪 Testing an endpoint as a consumer
+
+`e2e/run.mjs` tests any endpoint the way a developer would. It installs the published packages in a temporary project, runs the install commands and code the endpoint returns, compiles that code with `tsc --strict`, and reproduces real errors to check the diagnosis. Run it from the repository after each deployment:
+
+```bash
+pnpm --filter @qnx/mcp e2e https://qnx-mcp-server.vercel.app/mcp
+```
 
 ## 🤝 Contributing
 

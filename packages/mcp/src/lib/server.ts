@@ -15,6 +15,11 @@ import { registerTransformHandlerTool } from './tools/transform-handler.tool'
 // import { registerLogMessageTool } from './tools/log-message.tool'
 import { registerBuildApiResponseTool } from './tools/build-api-response.tool'
 import { registerResponsePatternTool } from './tools/response-pattern.tool'
+import { registerSearchDocsTool } from './tools/search-docs.tool'
+import { registerDiagnoseErrorTool } from './tools/diagnose-error.tool'
+import { registerReviewCodeTool } from './tools/review-code.tool'
+import { registerGuideTool } from './tools/guide.tool'
+import { registerPackageInfoTool } from './tools/package-info.tool'
 
 export interface McpServerConfig {
     crypto?: boolean
@@ -26,6 +31,9 @@ export interface McpServerConfig {
     client?: boolean
 }
 
+/** The packages a server can be scoped to. */
+export const packageScopes: (keyof McpServerConfig)[] = ['crypto', 'response', 'errors', 'client', 'winston', 'log']
+
 const defaultConfig: McpServerConfig = {
     crypto: true,
     response: true,
@@ -36,13 +44,27 @@ const defaultConfig: McpServerConfig = {
     client: true
 }
 
-export function createMcpServer(config: McpServerConfig = defaultConfig) {
-    const server = new McpServer({
-        name: 'qnx-mcp',
-        version: packageJson.version
-    })
+function buildInstructions(config: McpServerConfig) {
+    const packages = packageScopes.filter((scope) => config[scope]).map((scope) => `@qnx/${scope}`)
+    return [
+        `Documentation and code tools for the ${packages.join(', ')} Node.js and TypeScript package${packages.length === 1 ? '' : 's'}, not the QNX operating system. They have no UI components or composables. Content matches release ${packageJson.version}.`,
+        'Choose by task: which package, how to install it or what it exports → get-package-info. An error or surprising response → diagnose-error. A question → search-docs. Existing code → review-code. Moving an Express route → transform-to-async-handler. A new feature → get-guide. A specific API → the get-*-docs tools. Previewing output or generating code → the build-* tools.',
+        'A tool call that fails its checks returns isError with what to change.'
+    ].join('\n\n')
+}
 
-    registerListMcpToolsTool(server)
+export function createMcpServer(config: McpServerConfig = defaultConfig) {
+    const server = new McpServer(
+        { name: 'qnx-mcp', version: packageJson.version },
+        { instructions: buildInstructions(config) }
+    )
+
+    registerListMcpToolsTool(server, config)
+    registerDiagnoseErrorTool(server, config)
+    registerSearchDocsTool(server, config)
+    registerReviewCodeTool(server, config)
+    registerGuideTool(server, config)
+    registerPackageInfoTool(server)
 
     if (config.crypto) {
         registerCryptoDocsTool(server)
@@ -74,6 +96,9 @@ export function createMcpServer(config: McpServerConfig = defaultConfig) {
         registerClientDocsTool(server)
         registerBuildClientResponseTool(server)
     }
+
+    // The tool list never changes at runtime, so don't promise change notifications.
+    server.server.registerCapabilities({ tools: { listChanged: false } })
 
     return server
 }

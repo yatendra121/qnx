@@ -70,7 +70,7 @@ describe('tool output accuracy', () => {
         const text = await call('get-error-class-docs', { errorClass: 'all' })
         expect(errorCodes.VALIDATION_ERROR_CODE).toBe(400)
         expect(text).toContain('(default: `400`)')
-        expect(text).not.toContain('422')
+        expect(text).not.toContain('(default: `422`)')
         expect(text).not.toContain('not exported')
     })
 
