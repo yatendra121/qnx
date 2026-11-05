@@ -1,5 +1,6 @@
 import { ApiResponse } from './apiResponse'
-import { ApiResponseErrors, ApiResponseErrorsValue, ValidationError, errorCodes } from '@qnx/errors'
+import { ApiResponseErrors, ValidationError, errorCodes } from '@qnx/errors'
+import { ApiResponseErrorsValue } from './apiResponseErrorsValue'
 import type { Response as ExResponse } from 'express'
 
 /**
