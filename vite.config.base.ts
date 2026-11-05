@@ -12,6 +12,16 @@ export const workspaceTestAlias = Object.fromEntries(
     ])
 )
 
+/**
+ * Vitest's default module cache is one folder shared by the whole workspace, which it deletes when a
+ * project's lockfile hash differs from the stored one. Nx runs each project's tests as a separate
+ * process, so one process could delete the folder while another was writing to it, failing with
+ * ENOTEMPTY. A folder per project means a process can only ever delete its own.
+ */
+export function vitestModuleCachePath(project: string) {
+    return resolve(__dirname, 'node_modules/.vitest-module-cache', project)
+}
+
 export function collectViteConfig(packageJson: any, dirName: string, option = {}) {
     const { rolldownOptions } = option as any
     const getPackageName = (): string => {
@@ -50,6 +60,7 @@ export function collectViteConfig(packageJson: any, dirName: string, option = {}
         },
         test: {
             alias: workspaceTestAlias,
+            fsModuleCachePath: vitestModuleCachePath(getPackageName()),
             globals: true,
             // cache: {
             //     dir: '../node_modules/.vitest'

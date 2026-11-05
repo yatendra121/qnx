@@ -1,6 +1,6 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite'
-import { workspaceTestAlias } from '../../vite.config.base'
+import { vitestModuleCachePath, workspaceTestAlias } from '../../vite.config.base'
 import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin'
 
 export default defineConfig({
@@ -12,6 +12,7 @@ export default defineConfig({
     cacheDir: '../../node_modules/.vite/packages/app',
     test: {
         alias: workspaceTestAlias,
+        fsModuleCachePath: vitestModuleCachePath('app'),
         watch: false,
         globals: true,
         environment: 'happy-dom', // crypto not worked with jsdom. reference https://github.com/jsdom/jsdom/issues/3711#issuecomment-2096255351
