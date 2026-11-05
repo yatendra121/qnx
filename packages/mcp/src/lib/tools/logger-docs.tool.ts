@@ -1,9 +1,10 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
+import { readOnlyTool, textResult } from './shared'
 
-const topics = ['usage', 'levels', 'output', 'configuration', 'patterns', 'all'] as const
+const topics = ['usage', 'levels', 'output', 'logging-errors', 'configuration', 'patterns', 'all'] as const
 
-const docs: Record<Exclude<typeof topics[number], 'all'>, string> = {
+export const loggerDocs: Record<Exclude<typeof topics[number], 'all'>, string> = {
     usage: `## Usage
 
 **Installation**
@@ -20,11 +21,12 @@ import { logger } from '@qnx/winston'
 \`\`\`ts
 logger.info('Server started on port 3000')
 logger.warn('Deprecated endpoint called')
-logger.error('Something went wrong', { error: err })
+logger.error('Something went wrong', err) // pass an Error as the second argument: see logging-errors
 logger.debug('User data', { user })
 \`\`\`
 
-> The logger is a pre-configured singleton — import and use it directly with no additional setup required.`,
+> The logger is a pre-configured singleton — import and use it directly with no additional setup required.
+> Importing it creates a \`logs\` directory under the current working directory. If that can't be created, such as on a read-only filesystem, the import itself throws.`,
 
     levels: `## Log Levels
 
@@ -41,12 +43,12 @@ Winston uses the following levels in order of severity (lowest → highest):
 | \`error\` | \`logger.error()\` | Failures that need attention |
 
 **Active level**
-\`debug\` and above are logged in every environment. \`NODE_ENV\` is not consulted.
+\`debug\` and above are logged in every environment. \`NODE_ENV\` is not consulted, and \`silly\` entries are never written.
 
 **Passing metadata**
 \`\`\`ts
 logger.info('User created', { userId: 42, email: 'user@example.com' })
-logger.error('DB connection failed', { error: err, retries: 3 })
+logger.warn('Retrying connection', { retries: 3 })
 \`\`\``,
 
     output: `## Log Output Structure
@@ -54,7 +56,7 @@ logger.error('DB connection failed', { error: err, retries: 3 })
 Logs are written to a daily rotated file. There is no console transport.
 
 ### File (daily rotated)
-- Format: **JSON** with timestamp and stack trace on errors
+- Format: **JSON**, with keys in alphabetical order. A stack trace is included only when you log an Error as the second argument: see logging-errors
 - Location: \`logs/YYYY-MM-DD.log\`
 - Rotation: daily, zipped archive, max \`20mb\` per file, kept for \`14 days\`
 
@@ -69,8 +71,8 @@ Logs are written to a daily rotated file. There is no console transport.
 \`\`\`json
 {
   "level": "error",
-  "message": "Unexpected failure",
-  "stack": "Error: Unexpected failure\\n    at ...",
+  "message": "Payment failed card declined",
+  "stack": "Error: card declined\\n    at ...",
   "timestamp": "2025-07-28T10:01:00.000Z"
 }
 \`\`\`
@@ -82,6 +84,33 @@ logs/
 ├── 2025-07-28.log      ← today's active log
 └── 2025-07-29.log
 \`\`\``,
+
+    'logging-errors': `## Logging Errors
+
+**Pass the Error as the second argument.** It's the only form that keeps both the message and the stack.
+
+| Call | Written to the file |
+| --- | --- |
+| ✅ \`logger.error('Payment failed', err)\` | \`message: "Payment failed card declined"\` and \`stack\` |
+| ❌ \`logger.error('Payment failed', { error: err })\` | \`error: {}\`, so **no error message and no stack** |
+| ❌ \`logger.error(err)\` | **No message and no stack** |
+
+Winston appends the Error's message to yours, and copies any extra properties, such as \`code\`, onto the entry.
+
+**To add metadata**, copy the Error's fields into it. Winston only reads one such argument:
+
+\`\`\`ts
+import { logger } from '@qnx/winston'
+
+try {
+    await chargeCard(order)
+} catch (err) {
+    const error = err as Error
+    logger.error('Payment failed', { orderId: order.id, errorMessage: error.message, stack: error.stack })
+}
+\`\`\`
+
+**Uncaught exceptions** are also written, and the process keeps running because \`exitOnError\` is \`false\`. They can leave your app in a bad state, so decide whether you want to exit in your own handler.`,
 
     configuration: `## Configuration
 
@@ -113,7 +142,7 @@ export const logger = createLogger({
             datePattern: 'YYYY-MM-DD',
             maxSize: '50m',
             maxFiles: '30d',
-            format: format.combine(format.timestamp(), format.json())
+            format: format.combine(format.errors({ stack: true }), format.timestamp(), format.json())
         })
     ]
 })
@@ -141,7 +170,7 @@ import { logger } from '@qnx/winston'
 try {
     await riskyOperation()
 } catch (error) {
-    logger.error('Operation failed', { error })
+    logger.error('Operation failed', error as Error)
 }
 \`\`\`
 
@@ -173,32 +202,18 @@ export function registerLoggerDocsTool(server: McpServer) {
     server.registerTool(
         'get-file-logger-docs',
         {
-            description: 'Get documentation for @qnx/winston — zero-config Winston logger that writes structured JSON to daily-rotating files. Use when you need persistent, production-grade file logging with automatic retention and archiving. Pass "all" for the full reference.',
+            ...readOnlyTool('@qnx/winston docs'),
+            description: 'Get documentation for @qnx/winston — zero-config Winston logger that writes structured JSON to daily-rotating files. Use when you need persistent, production-grade file logging with automatic retention and archiving. Read logging-errors before logging an Error: the common { error: err } form loses it. Pass "all" for the full reference.',
             inputSchema: {
                 topic: z.enum(topics).describe(
-                    'usage | levels | output | configuration | patterns | all'
+                    'usage | levels | output | logging-errors | configuration | patterns | all'
                 )
             }
         },
-        async ({ topic }) => {
-            let text: string
-
-            if (topic === 'all') {
-                text = [
-                    '# `@qnx/winston` Reference\n',
-                    docs.usage,
-                    docs.levels,
-                    docs.output,
-                    docs.configuration,
-                    docs.patterns
-                ].join('\n\n---\n\n')
-            } else {
-                text = docs[topic]
-            }
-
-            return {
-                content: [{ type: 'text', text }]
-            }
-        }
+        async ({ topic }) => textResult(
+            topic === 'all'
+                ? ['# `@qnx/winston` Reference\n', ...Object.values(loggerDocs)].join('\n\n---\n\n')
+                : loggerDocs[topic]
+        )
     )
 }

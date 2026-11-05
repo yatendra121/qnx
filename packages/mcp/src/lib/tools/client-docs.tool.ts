@@ -1,9 +1,68 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
+import { readOnlyTool, textResult } from './shared'
 
-const topics = ['classes', 'api-response', 'success-response', 'error-response', 'types', 'patterns', 'all'] as const
+const topics = ['install', 'handling-responses', 'classes', 'api-response', 'success-response', 'error-response', 'types', 'patterns', 'all'] as const
 
-const docs: Record<Exclude<typeof topics[number], 'all'>, string> = {
+export const clientDocs: Record<Exclude<typeof topics[number], 'all'>, string> = {
+    install: `## Install
+
+\`\`\`bash
+npm install @qnx/client
+\`\`\`
+
+It has no dependencies and runs in browsers and Node.js.`,
+
+    'handling-responses': `## Handling Real Responses
+
+**Check \`response.ok\` or the status to detect failure.** The response classes only read fields, and no single field is present on every failure or every success.
+
+What \`@qnx/response\` really sends, and what each common check concludes:
+
+| Response | Body | \`if (res.getError())\` | \`if (!raw.data)\` | \`response.ok\` |
+| --- | --- | --- | --- | --- |
+| 200 with data | \`{ data }\` | Success ✅ | Success ✅ | ✅ |
+| 200 message only, such as a delete | \`{ message }\` | Success ✅ | **Error ❌** | ✅ |
+| 400 validation | \`{ errors, error }\` | Error ✅ | Error ✅ | ✅ |
+| 401 unauthenticated | \`{ errorCode, message }\` | **Success ❌** | Error ✅ | ✅ |
+| 409 \`ApiError\` | \`{ message }\` | **Success ❌** | Error ✅ | ✅ |
+| 500 \`ServerError\` | \`{ message }\` | **Success ❌** | Error ✅ | ✅ |
+| 500 unexpected | \`{ serverError }\` | **Success ❌** | Error ✅ | ✅ |
+| 404 from a handler that returned nothing | HTML, not JSON | \`response.json()\` throws | \`response.json()\` throws | ✅ |
+
+**A helper that handles all of them**
+\`\`\`ts
+import { ApiResponse } from '@qnx/client'
+import type { ApiResponseValue } from '@qnx/client'
+
+async function apiRequest<T>(path: string, init?: RequestInit) {
+  const response = await fetch(path, {
+    ...init,
+    // Without this, express.json() leaves req.body empty and validation fails
+    headers: { 'Content-Type': 'application/json', ...init?.headers }
+  })
+  // A route that returned nothing responds with an HTML 404
+  const raw: ApiResponseValue<T> = await response.json().catch(() => ({}))
+  const res = new ApiResponse<T>(raw)
+
+  if (response.ok) {
+    return { ok: true as const, data: res.getData(), message: res.getMessage() }
+  }
+  return {
+    ok: false as const,
+    status: response.status,
+    // error on validation responses, message on 401, ApiError and ServerError
+    message: res.getError() ?? res.getMessage() ?? 'Something went wrong.',
+    fieldErrors: res.getErrors(),
+    errorCode: res.getErrorCode()
+  }
+}
+\`\`\`
+
+**With axios**, a non-2xx status rejects the promise, so read the body from \`err.response.data\` in a catch block.
+
+**\`serverError\`** has no getter, and it holds a stack trace. Read \`raw.serverError\` only to debug, and never show it to users.`,
+
     classes: `## Classes Overview
 
 \`@qnx/client\` exports three response wrapper classes. Choose based on what the response contains:
@@ -20,7 +79,8 @@ import { ApiResponse, ApiSuccessResponse, ApiErrorResponse } from '@qnx/client'
 \`\`\`
 
 > Use \`ApiResponse\` when wrapping a raw fetch/axios response before checking its shape.
-> Use \`ApiSuccessResponse\` / \`ApiErrorResponse\` only after you have confirmed the response type.`,
+> Use \`ApiSuccessResponse\` / \`ApiErrorResponse\` only after you have confirmed the response type with \`response.ok\`. See handling-responses.
+> None of them validate their input. The required fields are compile-time types only.`,
 
     'api-response': `## \`ApiResponse<T>\`
 
@@ -89,10 +149,10 @@ new ApiSuccessResponse<T>(response: ApiSuccessResponseValue<T>)
 **Methods**
 | Method | Returns | Description |
 | --- | --- | --- |
-| \`getData()\` | \`T\` | The response payload (always defined) |
-| \`getMessage()\` | \`string\` | The success message (always defined) |
+| \`getData()\` | \`T\` | The response payload |
+| \`getMessage()\` | \`string\` | The success message |
 
-> Unlike \`ApiResponse\`, both methods here return non-optional values — safe to use without null checks.
+> Both are typed as non-optional, but nothing checks that at runtime. A raw return value from a handler responds \`{ data }\` with no message, so \`getMessage()\` returns \`undefined\`, and a message-only response makes \`getData()\` return \`undefined\`.
 
 **Example**
 \`\`\`ts
@@ -107,11 +167,11 @@ res.getData()    // { id: 1, name: 'Item' }
 res.getMessage() // 'Item created successfully.'
 \`\`\`
 
-> **Important:** Only use \`ApiSuccessResponse\` after confirming the response has no error. If \`data\` or \`message\` may be absent, use \`ApiResponse\` instead.`,
+> **Important:** Only use \`ApiSuccessResponse\` after confirming the response succeeded with \`response.ok\`. If \`data\` or \`message\` may be absent, use \`ApiResponse\` instead.`,
 
     'error-response': `## \`ApiErrorResponse\`
 
-Wrapper for confirmed error responses. \`error\` and \`errors\` are required; \`errorCode\` is optional.
+Wrapper for validation error responses, the only ones with both \`error\` and \`errors\`. On a real 401, 409 or 500, \`getError()\` and \`getErrors()\` return \`undefined\` and this class has no \`getMessage()\`, so use \`ApiResponse\` for those.
 
 **Constructor**
 \`\`\`ts
@@ -122,7 +182,7 @@ new ApiErrorResponse(response: ApiErrorResponseValue)
 **Methods**
 | Method | Returns | Description |
 | --- | --- | --- |
-| \`getError()\` | \`string\` | Top-level error message (always defined) |
+| \`getError()\` | \`string\` | Top-level error message. Typed as a string, but \`undefined\` if the response has none |
 | \`getErrors()\` | \`Record<string, string[]> | undefined\` | Field-level validation errors |
 | \`getErrorCode()\` | \`string | undefined\` | Machine-readable error code |
 
@@ -172,6 +232,10 @@ interface ApiResponseValue<T = any> {
 }
 \`\`\`
 
+\`serverError\` has no getter on the classes. Read it from the raw response, and only to debug.
+
+\`ApiErrors\`, \`ApiErrorCode\`, \`ApiMessage\`, \`ApiError\` (a string alias, not the error class) and the \`ApiResponseInterface\`, \`ApiSuccessResponseInterface\` and \`ApiErrorResponseInterface\` types can also be imported from the package.
+
 ### \`ApiSuccessResponseValue<T>\`
 Strict success shape. Both \`data\` and \`message\` are required.
 
@@ -207,11 +271,12 @@ type ApiErrorResponseValue = Pick<Required<ApiResponseValue>, 'errors' | 'error'
 \`\`\`ts
 import { ApiResponse } from '@qnx/client'
 
-const raw = await fetch('/api/users/1').then(r => r.json())
-const res = new ApiResponse(raw)
+const response = await fetch('/api/users/1')
+const res = new ApiResponse(await response.json())
 
-if (res.getError()) {
-  console.error(res.getError())
+// getError() alone isn't enough: it's undefined on 401, 409 and 500 responses
+if (!response.ok) {
+  console.error(res.getError() ?? res.getMessage())
   console.error(res.getErrors()) // field-level detail if available
 } else {
   console.log(res.getData())
@@ -224,8 +289,15 @@ if (res.getError()) {
 import { ApiResponse } from '@qnx/client'
 import axios from 'axios'
 
-const { data } = await axios.get('/api/users/1')
-const res = new ApiResponse(data)
+try {
+  const { data } = await axios.get('/api/users/1')
+  const res = new ApiResponse(data)
+  console.log(res.getData())
+} catch (err) {
+  // axios rejects on a non-2xx status
+  const res = new ApiResponse(axios.isAxiosError(err) ? err.response?.data : undefined)
+  console.error(res.getError() ?? res.getMessage())
+}
 \`\`\`
 
 ### Using typed success response
@@ -235,13 +307,15 @@ import { ApiSuccessResponse } from '@qnx/client'
 type User = { id: number; name: string }
 
 async function createUser(payload: unknown) {
-  const raw = await fetch('/api/users', {
+  const response = await fetch('/api/users', {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
-  }).then(r => r.json())
+  })
+  if (!response.ok) throw new Error(\`Request failed: \${response.status}\`)
 
-  const res = new ApiSuccessResponse<User>(raw)
-  return res.getData()  // typed as User — no undefined check needed
+  const res = new ApiSuccessResponse<User>(await response.json())
+  return res.getData()  // typed as User
 }
 \`\`\`
 
@@ -249,11 +323,14 @@ async function createUser(payload: unknown) {
 \`\`\`ts
 import { ApiErrorResponse } from '@qnx/client'
 
-const raw = await fetch('/api/users', { method: 'POST', body: JSON.stringify(payload) })
-  .then(r => r.json())
+const response = await fetch('/api/users', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload)
+})
 
-if (!raw.data) {
-  const err = new ApiErrorResponse(raw)
+if (response.status === 400) {
+  const err = new ApiErrorResponse(await response.json())
   const fieldErrors = err.getErrors()
 
   if (fieldErrors?.email) {
@@ -281,33 +358,18 @@ export function registerClientDocsTool(server: McpServer) {
     server.registerTool(
         'get-client-docs',
         {
-            description: 'Get documentation for @qnx/client — TypeScript classes for consuming @qnx/response-shaped API responses. Gives type-safe access to data, messages, and field errors on the client side via ApiResponse, ApiSuccessResponse, and ApiErrorResponse. Pass "all" for the full reference.',
+            ...readOnlyTool('@qnx/client docs'),
+            description: 'Get documentation for @qnx/client — TypeScript classes for consuming @qnx/response-shaped API responses. Gives type-safe access to data, messages, and field errors on the client side via ApiResponse, ApiSuccessResponse, and ApiErrorResponse. Read handling-responses first: it shows how to detect failures reliably. Pass "all" for the full reference.',
             inputSchema: {
                 topic: z.enum(topics).describe(
-                    'classes | api-response | success-response | error-response | types | patterns | all'
+                    'install | handling-responses | classes | api-response | success-response | error-response | types | patterns | all'
                 )
             }
         },
-        async ({ topic }) => {
-            let text: string
-
-            if (topic === 'all') {
-                text = [
-                    '# `@qnx/client` Reference\n',
-                    docs.classes,
-                    docs['api-response'],
-                    docs['success-response'],
-                    docs['error-response'],
-                    docs.types,
-                    docs.patterns
-                ].join('\n\n---\n\n')
-            } else {
-                text = docs[topic]
-            }
-
-            return {
-                content: [{ type: 'text', text }]
-            }
-        }
+        async ({ topic }) => textResult(
+            topic === 'all'
+                ? ['# `@qnx/client` Reference\n', ...Object.values(clientDocs)].join('\n\n---\n\n')
+                : clientDocs[topic]
+        )
     )
 }
