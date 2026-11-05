@@ -29,26 +29,52 @@ describe('createMcpServer (via InMemoryTransport / stdio-equivalent)', () => {
     // ─── tool registration ────────────────────────────────────────────────────
 
     describe('tool registration', () => {
-        it('registers all 14 tools with default config', async () => {
+        const generalTools = ['list-mcp-tools', 'diagnose-error', 'search-docs', 'review-code']
+
+        it('registers all 19 tools with default config', async () => {
             const c = await connectClient()
             const { tools } = await c.listTools()
-            expect(tools).toHaveLength(14)
+            expect(tools).toHaveLength(19)
         })
 
-        it('registers list-mcp-tools + 2 crypto tools when only crypto is enabled', async () => {
+        it('marks every tool read-only with a title', async () => {
+            const c = await connectClient()
+            const { tools } = await c.listTools()
+            for (const tool of tools) {
+                expect(tool.title, tool.name).toBeTruthy()
+                expect(tool.annotations, tool.name).toMatchObject({ readOnlyHint: true, destructiveHint: false, openWorldHint: false })
+            }
+        })
+
+        it('tells the client what the server is for', async () => {
+            const c = await connectClient({ crypto: true })
+            expect(c.getInstructions()).toContain('@qnx/crypto')
+            expect(c.getInstructions()).not.toContain('@qnx/log')
+        })
+
+        it('list-mcp-tools lists only what a scoped server exposes', async () => {
+            const c = await connectClient({ crypto: true })
+            const result = await c.callTool({ name: 'list-mcp-tools', arguments: {} })
+            const { text } = result.content[0] as { text: string }
+            expect(text).toContain('get-crypto-docs')
+            expect(text).not.toContain('get-response-docs')
+        })
+
+        it('registers the general tools + 2 crypto tools when only crypto is enabled', async () => {
             const c = await connectClient({ crypto: true })
             const { tools } = await c.listTools()
-            expect(tools).toHaveLength(3)
+            expect(tools.map((t) => t.name)).toEqual(expect.arrayContaining(generalTools))
+            expect(tools).toHaveLength(8)
             const names = tools.map((t) => t.name)
             expect(names).toContain('list-mcp-tools')
             expect(names).toContain('get-crypto-docs')
             expect(names).toContain('build-crypto-snippet')
         })
 
-        it('registers list-mcp-tools + 2 error tools when only errors is enabled', async () => {
+        it('registers the general tools + 2 error tools when only errors is enabled', async () => {
             const c = await connectClient({ errors: true })
             const { tools } = await c.listTools()
-            expect(tools).toHaveLength(3)
+            expect(tools).toHaveLength(8)
             const names = tools.map((t) => t.name)
             expect(names).toContain('list-mcp-tools')
             expect(names).toContain('build-api-error')
@@ -104,6 +130,7 @@ describe('createMcpServer (via InMemoryTransport / stdio-equivalent)', () => {
 
             const content = result.content[0] as { type: string; text: string }
             expect(content.text).toMatch(/requires at least one entry/i)
+            expect(result.isError).toBe(true)
         })
 
         it('build-api-error returns UnauthenticatedUserError response', async () => {
