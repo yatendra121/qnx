@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { quote } from './quote'
+import { jsonResult, readOnlyTool, toolError } from './shared'
 
 const responseClasses = ['ApiResponse', 'ApiSuccessResponse', 'ApiErrorResponse'] as const
 
@@ -10,12 +11,28 @@ const paramRequirements: Record<typeof responseClasses[number], string> = {
     ApiErrorResponse: 'Requires: error + errors. errorCode is optional.'
 }
 
+const SUCCESS_CHECK_NOTE = 'These classes only read fields. They can\'t tell success from failure: check response.ok or the status. See get-client-docs { "topic": "handling-responses" }.'
+
+const show = (value: unknown) => (typeof value === 'string' ? quote(value) : JSON.stringify(value) ?? 'undefined')
+
+/** Splits getters by what they return. JSON has no undefined, and showing null would misstate the real return value. */
+function describeGetters(getters: Record<string, unknown>) {
+    const entries = Object.entries(getters)
+    return {
+        methods: Object.fromEntries(entries.filter(([, value]) => value !== undefined)),
+        returnUndefined: entries.filter(([, value]) => value === undefined).map(([name]) => name),
+        comments: entries.map(([name, value]) => `res.${name}() // ${show(value)}`)
+    }
+}
+
 export function registerBuildClientResponseTool(server: McpServer) {
     server.registerTool(
         'build-client-response',
         {
+            ...readOnlyTool('Preview a client response class'),
             description: [
-                'Instantiate a @qnx/client response class with real values and show what each method returns.',
+                'Show what each getter of a @qnx/client response class returns for the values you give it.',
+                'For how to detect failures in real responses, use get-client-docs with topic handling-responses.',
                 '',
                 'Required fields per responseClass:',
                 '  ApiResponse        → all fields optional (data, message, error, errors, errorCode)',
@@ -46,72 +63,52 @@ export function registerBuildClientResponseTool(server: McpServer) {
         async ({ responseClass, data, message, error, errors, errorCode }) => {
             if (responseClass === 'ApiSuccessResponse') {
                 if (data === undefined) {
-                    return {
-                        content: [{ type: 'text', text: `Error: ApiSuccessResponse requires "data". ${paramRequirements.ApiSuccessResponse}` }]
-                    }
+                    return toolError(`Error: ApiSuccessResponse requires "data". ${paramRequirements.ApiSuccessResponse}`)
                 }
                 if (!message) {
-                    return {
-                        content: [{ type: 'text', text: `Error: ApiSuccessResponse requires "message". ${paramRequirements.ApiSuccessResponse}` }]
-                    }
+                    return toolError(`Error: ApiSuccessResponse requires "message". ${paramRequirements.ApiSuccessResponse}`)
                 }
 
-                const result = {
+                const { methods, returnUndefined, comments } = describeGetters({ getData: data, getMessage: message })
+                return jsonResult({
                     responseClass,
                     input: { data, message },
-                    methods: {
-                        getData: data,
-                        getMessage: message
-                    },
+                    methods,
+                    returnUndefined,
                     snippet: [
                         `import { ApiSuccessResponse } from '@qnx/client'`,
                         ``,
                         `const res = new ApiSuccessResponse({ data: ${JSON.stringify(data)}, message: ${quote(message)} })`,
                         ``,
-                        `res.getData()    // ${JSON.stringify(data)}`,
-                        `res.getMessage() // '${message}'`
-                    ].join('\n')
-                }
-
-                return {
-                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
-                }
+                        ...comments
+                    ].join('\n'),
+                    notes: ['The constructor doesn\'t validate its input. A real response without a message, such as an auto-wrapped return value, makes getMessage() return undefined even though its type says string.', SUCCESS_CHECK_NOTE]
+                })
             }
 
             if (responseClass === 'ApiErrorResponse') {
                 if (!error) {
-                    return {
-                        content: [{ type: 'text', text: `Error: ApiErrorResponse requires "error". ${paramRequirements.ApiErrorResponse}` }]
-                    }
+                    return toolError(`Error: ApiErrorResponse requires "error". ${paramRequirements.ApiErrorResponse}`)
                 }
                 if (!errors) {
-                    return {
-                        content: [{ type: 'text', text: `Error: ApiErrorResponse requires "errors". ${paramRequirements.ApiErrorResponse}` }]
-                    }
+                    return toolError(`Error: ApiErrorResponse requires "errors". ${paramRequirements.ApiErrorResponse}`)
                 }
 
-                const result = {
+                const { methods, returnUndefined, comments } = describeGetters({ getError: error, getErrors: errors, getErrorCode: errorCode })
+                return jsonResult({
                     responseClass,
-                    input: { error, errors, errorCode: errorCode ?? undefined },
-                    methods: {
-                        getError: error,
-                        getErrors: errors,
-                        getErrorCode: errorCode ?? undefined
-                    },
+                    input: { error, errors, ...(errorCode && { errorCode }) },
+                    methods,
+                    returnUndefined,
                     snippet: [
                         `import { ApiErrorResponse } from '@qnx/client'`,
                         ``,
                         `const res = new ApiErrorResponse(${JSON.stringify({ error, errors, ...(errorCode ? { errorCode } : {}) }, null, 2)})`,
                         ``,
-                        `res.getError()     // '${error}'`,
-                        `res.getErrors()    // ${JSON.stringify(errors)}`,
-                        `res.getErrorCode() // ${errorCode ? `'${errorCode}'` : 'undefined'}`
-                    ].join('\n')
-                }
-
-                return {
-                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
-                }
+                        ...comments
+                    ].join('\n'),
+                    notes: ['Only validation responses have "error" and "errors". On a real 401, 409 or 500, getError() and getErrors() return undefined, and this class has no getMessage().', SUCCESS_CHECK_NOTE]
+                })
             }
 
             // ApiResponse — all fields optional
@@ -122,33 +119,28 @@ export function registerBuildClientResponseTool(server: McpServer) {
                 ...(errors && { errors }),
                 ...(errorCode && { errorCode })
             }
+            const { methods, returnUndefined, comments } = describeGetters({
+                getData: data,
+                getMessage: message,
+                getError: error,
+                getErrors: errors,
+                getErrorCode: errorCode
+            })
 
-            const result = {
+            return jsonResult({
                 responseClass,
                 input,
-                methods: {
-                    getData: data ?? null,
-                    getMessage: message ?? null,
-                    getError: error ?? null,
-                    getErrors: errors ?? null,
-                    getErrorCode: errorCode ?? null
-                },
+                methods,
+                returnUndefined,
                 snippet: [
                     `import { ApiResponse } from '@qnx/client'`,
                     ``,
                     `const res = new ApiResponse(${JSON.stringify(input, null, 2)})`,
                     ``,
-                    `res.getData()      // ${data !== undefined ? JSON.stringify(data) : 'undefined'}`,
-                    `res.getMessage()   // ${message ? `'${message}'` : 'undefined'}`,
-                    `res.getError()     // ${error ? `'${error}'` : 'undefined'}`,
-                    `res.getErrors()    // ${errors ? JSON.stringify(errors) : 'undefined'}`,
-                    `res.getErrorCode() // ${errorCode ? `'${errorCode}'` : 'undefined'}`
-                ].join('\n')
-            }
-
-            return {
-                content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
-            }
+                    ...comments
+                ].join('\n'),
+                notes: [SUCCESS_CHECK_NOTE]
+            })
         }
     )
 }
