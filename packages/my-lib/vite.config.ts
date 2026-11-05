@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 
 import dts from 'vite-plugin-dts'
 import { joinPathFragments } from '@nx/devkit'
+import { vitestModuleCachePath } from '../../vite.config.base'
 
 export default defineConfig({
     resolve: {
@@ -47,6 +48,7 @@ export default defineConfig({
 
     test: {
         globals: true,
+        fsModuleCachePath: vitestModuleCachePath('my-lib'),
         cache: {
             dir: '../../node_modules/.vitest'
         },
