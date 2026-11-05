@@ -26,6 +26,9 @@ export interface McpServerConfig {
     client?: boolean
 }
 
+/** The packages a server can be scoped to. */
+export const packageScopes: (keyof McpServerConfig)[] = ['crypto', 'response', 'errors', 'client', 'winston', 'log']
+
 const defaultConfig: McpServerConfig = {
     crypto: true,
     response: true,
