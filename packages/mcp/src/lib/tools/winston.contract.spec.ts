@@ -15,7 +15,10 @@ await vi.hoisted(async () => {
 describe('@qnx/winston previews match the real file output (B2, B10)', () => {
     const readEntries = (): Record<string, unknown>[] => {
         const file = readdirSync('logs').find((name) => name.endsWith('.log'))
-        return file ? readFileSync(join('logs', file), 'utf8').trim().split('\n').map((line) => JSON.parse(line)) : []
+        if (!file) return []
+        // The logger writes in the background, so the file can be empty or end mid-line. Only finished lines count.
+        const lines = readFileSync(join('logs', file), 'utf8').split('\n').slice(0, -1)
+        return lines.map((line) => JSON.parse(line))
     }
 
     const written = async (run: () => void, predicate: (entry: Record<string, unknown>) => boolean) => {
