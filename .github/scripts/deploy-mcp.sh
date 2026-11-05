@@ -17,7 +17,7 @@ export GIT_TERMINAL_PROMPT=0
 remote="https://x-access-token:${DEPLOY_REPO_TOKEN}@github.com/${DEPLOY_REPO}"
 
 git ls-remote "$remote" >/dev/null ||
-    fail "Cannot read the deployment repository. DEPLOY_REPO_TOKEN may have expired or lack access to it, or DEPLOY_REPO may be wrong."
+    fail "Cannot read the deployment repository. Authentication failed above means DEPLOY_REPO_TOKEN was rejected. Repository not found means it has no access to the repository, DEPLOY_REPO is wrong, or the checkout saved its own token."
 
 git clone "$remote" deploy-repo
 cp -r packages/mcp/http/. deploy-repo/
