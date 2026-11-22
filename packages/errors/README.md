@@ -215,6 +215,8 @@ try {
 
 Throw any of these errors inside `asyncValidatorHandler`, and [`@qnx/response`](https://github.com/yatendra121/qnx/tree/main/packages/response) sends the HTTP response for you. See [how thrown errors become responses](https://github.com/yatendra121/qnx/tree/main/packages/response#how-thrown-errors-become-responses) for the status and body of each class.
 
+`@qnx/response` recognises these errors even when it loads a different copy of `@qnx/errors` from your code, such as the CJS build while your code uses the ESM one. Each class carries a marker that `@qnx/response` reads when `instanceof` fails. Your own subclasses inherit it.
+
 ```ts
 import { asyncValidatorHandler } from '@qnx/response'
 import { InvalidValueError } from '@qnx/errors'

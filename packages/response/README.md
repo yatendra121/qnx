@@ -57,6 +57,7 @@ router.post('/users', asyncValidatorHandler(async (req) => {
   - [How thrown errors become responses](#how-thrown-errors-become-responses)
   - [CRUD routes with resourceRoute](#crud-routes-with-resourceroute)
   - [Log unexpected errors](#log-unexpected-errors)
+  - [Hide unexpected errors from clients](#hide-unexpected-errors-from-clients)
   - [Change the default status codes](#change-the-default-status-codes)
   - [Typed requests](#typed-requests)
 - [Migrating Existing Routes](#-migrating-existing-routes)
@@ -97,9 +98,9 @@ bun install @qnx/response
 
 | Package       | Version  |
 | ------------- | -------- |
-| `@qnx/errors` | `>=0.8.0` |
+| `@qnx/errors` | `>=0.8.8` |
 | `express`     | `4.x` or `5.x` |
-| `zod`         | `4.x`    |
+| `zod`         | `4.x`, optional. Only needed if you validate with zod |
 
 ```bash
 npm install @qnx/errors express zod
@@ -262,9 +263,11 @@ If a response has already been sent, later responses are ignored, so `ERR_HTTP_H
 - The message passed to `UnauthenticatedUserError` is not sent. The response always says `Unauthenticated`.
 - A `ValidationError` needs at least one field. With `errRes: {}` the body is `{}`, and with `errors: {}` it's `{ "errors": {} }`, so the client gets no message.
 - Your own classes that extend `ApiError` are handled the same way as `ApiError`.
+- Errors are recognised even when your app and `@qnx/response` load different copies of `@qnx/errors`, for example the ESM build in your code and the CJS build in `@qnx/response`. `instanceof` fails across copies, so with older versions of `@qnx/errors` such an error was answered as a 500.
+- If the error response can't be sent, for example because Express rejects an `ApiError` status code outside 100-999, the error is passed to `next()`, so your Express error handler runs.
 - Only the last row calls the [`setCallback`](#log-unexpected-errors) logger, so log the original error yourself before replacing it with a `ServerError`.
 
-> ⚠️ **Unexpected errors reach the client.** The last row includes the error's message and stack trace in the response, in every environment, and it can't be turned off. Throw `ServerError` or `ApiError` when the message is safe to show, and catch errors that could contain sensitive details, such as database connection strings.
+> ⚠️ **Unexpected errors reach the client by default.** The last row includes the error's message and stack trace in the response, in every environment. Turn this off in production with [`setResponseOptions`](#hide-unexpected-errors-from-clients), and throw `ServerError` or `ApiError` when the message is safe to show.
 
 ### CRUD routes with resourceRoute
 
@@ -319,8 +322,27 @@ setCallback({
 
 - It's called only for the "anything else" row in [the table above](#how-thrown-errors-become-responses), not for validation, authentication, `ApiError` or `ServerError` errors.
 - It runs just after the response is sent, without being awaited.
-- Anything can be thrown in JavaScript, so `error` isn't always an `Error` at runtime.
+- Anything can be thrown in JavaScript. A thrown value that isn't an object is passed to the logger as an `Error` whose message is that value. Other objects are passed as they are, so `error` isn't always an `Error` at runtime.
+- If the logger throws or returns a rejected promise, that error is ignored, so a failing logger can't stop the process.
 - Calling `serverErrorApiResponse` yourself doesn't call the logger.
+
+### Hide unexpected errors from clients
+
+Call `setResponseOptions` once at startup to stop sending the name, message and stack of unexpected errors:
+
+```ts
+import { setResponseOptions } from '@qnx/response'
+
+setResponseOptions({ exposeServerError: process.env.NODE_ENV !== 'production' })
+```
+
+The status is still 500, and the body becomes `{ "message": "Internal Server Error" }`. Log the details with [`setCallback`](#log-unexpected-errors).
+
+| Option              | Default | Effect |
+| ------------------- | ------- | ------ |
+| `exposeServerError` | `true`  | Whether `serverError` with the error's `name`, `message` and `stack` is sent. It also applies to `serverErrorApiResponse` and `.setServerError()` |
+
+Errors from `@qnx/errors` and zod are not affected, because their messages are meant for clients.
 
 ### Change the default status codes
 
@@ -465,6 +487,10 @@ Registers CRUD routes on an Express router from an object of optional functions.
 
 Sets the logger for unexpected errors. See [Log unexpected errors](#log-unexpected-errors). The current value is available as `callbackObj`.
 
+### `setResponseOptions({ exposeServerError })`
+
+Changes whether unexpected errors are sent to clients. See [Hide unexpected errors from clients](#hide-unexpected-errors-from-clients).
+
 ### `initializeApiResponse()`
 
 Creates a chainable response builder. Return the result from inside `asyncValidatorHandler`. It's a shorthand for `ApiResponse.getInstance()` or `new ApiResponse()`.
@@ -494,7 +520,7 @@ The response body can contain any of these fields. Fields you don't set are left
 | `.setError(message)`    | Sets a top-level error message. If `errors` is also set, the first field's first message replaces it | `.setError('Internal Server Error')`           |
 | `.setErrors(errors)`    | Sets field-level errors              | `.setErrors({ email: ['Invalid format'] })`    |
 | `.setErrorCode(code)`   | Sets a custom error code string      | `.setErrorCode('E123')`                        |
-| `.setServerError(err)`  | Sets `serverError` to the error's `name`, `message` and `stack`. These reach the client, so don't use it with sensitive errors | `.setServerError(err)`                         |
+| `.setServerError(err)`  | Sets `serverError` to the error's `name`, `message` and `stack`. These reach the client unless you [turn that off](#hide-unexpected-errors-from-clients). Then it sets the message to `Internal Server Error` instead, if none is set | `.setServerError(err)`                         |
 
 #### 📦 Additional Meta
 

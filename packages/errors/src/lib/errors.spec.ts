@@ -160,3 +160,31 @@ describe('Error code capture timing', () => {
         expect(newError.getCode()).toBe(422)
     })
 })
+
+describe('Error kind for @qnx/response', () => {
+    const kindOf = (error: object) => (error as Record<symbol, unknown>)[Symbol.for('@qnx/errors/kind')]
+
+    it('marks each class, and subclasses inherit the mark', () => {
+        class EmailTakenError extends ValidationError {}
+
+        expect(kindOf(new ApiError('x', 409))).toBe('api')
+        expect(kindOf(new ServerError('x'))).toBe('api')
+        expect(kindOf(new ValidationError('x', { errRes: {} }))).toBe('validation')
+        expect(kindOf(new InvalidValueError('x', { key: 'k' }))).toBe('validation')
+        expect(kindOf(new EmailTakenError('x', { errRes: {} }))).toBe('validation')
+        expect(kindOf(new UnauthenticatedUserError('x'))).toBe('unauthenticated')
+        expect(kindOf(new Error('x'))).toBeUndefined()
+    })
+
+    it('does not change what JSON.stringify, Object.keys and spread produce', () => {
+        const error = new InvalidValueError('Bad email', { key: 'email' })
+
+        expect(JSON.parse(JSON.stringify(error))).toEqual({
+            name: 'InvalidValueError',
+            errorCode: 400,
+            errorResponse: { errors: { email: ['Bad email'] } }
+        })
+        expect(Object.keys(error).sort()).toEqual(['errorCode', 'errorResponse', 'name'])
+        expect(Object.getOwnPropertySymbols({ ...error })).toEqual([])
+    })
+})

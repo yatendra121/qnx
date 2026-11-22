@@ -270,6 +270,7 @@ resourceRoute(router, {
 | \`resourceRoute(router, controller)\` | Registers CRUD routes: see resource-route |
 | \`initializeApiResponse()\` / \`ApiResponse.getInstance()\` | Starts a response |
 | \`setCallback({ logger })\` | Registers \`logger.serverError(error)\`, called for unexpected errors only |
+| \`setResponseOptions({ exposeServerError })\` | From 0.8.18. \`false\` sends unexpected errors as 500 \`{ message: "Internal Server Error" }\`, without \`serverError\` |
 | \`errorApiResponse(res, error)\` | Sends the response for any error, the way the handler does. Use it in plain Express code or error middleware |
 | \`invalidApiResponse(res, errors, statusCode?)\` | Sends a validation response without throwing |
 | \`unauthenticateApiResponse(res)\` | Sends the 401 response |

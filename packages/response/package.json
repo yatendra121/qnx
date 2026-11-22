@@ -46,5 +46,10 @@
     "express": "4.x || 5.x",
     "@qnx/errors": ">=0.8.8",
     "zod": "4.x"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    }
   }
 }
