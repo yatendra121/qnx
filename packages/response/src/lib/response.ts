@@ -28,24 +28,17 @@ export const setCallback = ({ logger }: Partial<CallbackObj>) => {
  * @returns The API response appropriate for the given error type.
  */
 export function errorApiResponse(response: ExResponse, error: unknown) {
-    const kind = errorKindOf(error)
-    if (kind === 'validation') {
-        const validationError = error as ValidationError
-        return invalidApiResponse(
-            response,
-            validationError.getErrorResponse()?.errors,
-            validationError.getCode()
-        )
-    } else if (kind === 'unauthenticated') {
+    if (error instanceof ValidationError) {
+        return invalidApiResponse(response, error.getErrorResponse()?.errors, error.getCode())
+    } else if (error instanceof UnauthenticatedUserError) {
         return unauthenticateApiResponse(response)
     } else if (isZodError(error)) {
         return invalidApiResponse(response, collectErrorsFromZodError(error))
-    } else if (kind === 'api') {
-        const apiError = error as ApiError
-        const apiRes = ApiResponse.getInstance().setMessage(apiError.message)
-        const errors = apiError.getErrorResponse()?.errors
+    } else if (error instanceof ApiError) {
+        const apiRes = ApiResponse.getInstance().setMessage(error.message)
+        const errors = error.getErrorResponse()?.errors
         if (errors) apiRes.setErrors(errors)
-        return apiRes.setStatusCode(apiError.getCode()).response(response)
+        return apiRes.setStatusCode(error.getCode()).response(response)
     } else {
         // Loggers are typed to receive an Error and run outside this try/catch, so a thrown
         // primitive or null must not reach one that reads `error.stack` and crash the process.
@@ -61,29 +54,6 @@ export function errorApiResponse(response: ExResponse, error: unknown) {
             .catch(() => undefined)
         return serverErrorApiResponse(response, error)
     }
-}
-
-/** Matches the symbol that @qnx/errors sets on its classes' prototypes. */
-const errorKindSymbol = Symbol.for('@qnx/errors/kind')
-
-type ErrorKind = 'validation' | 'unauthenticated' | 'api'
-
-/**
- * Finds out which @qnx/errors class an error belongs to. `instanceof` fails when the error comes
- * from another copy of @qnx/errors, for example when the app imports the ESM build and this package
- * loaded the CJS one, so the kind that newer versions of @qnx/errors set on their prototypes is
- * used then. Without it, a ValidationError would be answered as a 500 with its stack trace.
- *
- * @param error - The caught value.
- * @returns The kind of error, or undefined if it isn't from @qnx/errors.
- */
-function errorKindOf(error: unknown): ErrorKind | undefined {
-    if (error instanceof ValidationError) return 'validation'
-    if (error instanceof UnauthenticatedUserError) return 'unauthenticated'
-    if (error instanceof ApiError) return 'api'
-    if (typeof error !== 'object' || error === null) return undefined
-    const kind = (error as { [errorKindSymbol]?: unknown })[errorKindSymbol]
-    return kind === 'validation' || kind === 'unauthenticated' || kind === 'api' ? kind : undefined
 }
 
 /**

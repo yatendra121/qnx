@@ -263,7 +263,6 @@ If a response has already been sent, later responses are ignored, so `ERR_HTTP_H
 - The message passed to `UnauthenticatedUserError` is not sent. The response always says `Unauthenticated`.
 - A `ValidationError` needs at least one field. With `errRes: {}` the body is `{}`, and with `errors: {}` it's `{ "errors": {} }`, so the client gets no message.
 - Your own classes that extend `ApiError` are handled the same way as `ApiError`.
-- Errors are recognised even when your app and `@qnx/response` load different copies of `@qnx/errors`, for example the ESM build in your code and the CJS build in `@qnx/response`. `instanceof` fails across copies, so with older versions of `@qnx/errors` such an error was answered as a 500.
 - If the error response can't be sent, for example because Express rejects an `ApiError` status code outside 100-999, the error is passed to `next()`, so your Express error handler runs.
 - Only the last row calls the [`setCallback`](#log-unexpected-errors) logger, so log the original error yourself before replacing it with a `ServerError`.
 

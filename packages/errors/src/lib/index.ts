@@ -7,21 +7,6 @@ type ErrorWithCapture = {
 }
 
 /**
- * Tells @qnx/response which kind of error this is when `instanceof` fails because the error came
- * from another copy of this package, such as the ESM build when @qnx/response loaded the CJS one.
- * Symbol.for returns the same symbol in every copy. It is set on the prototypes, so subclasses
- * inherit it and it never shows up in JSON.stringify, Object.keys or object spread.
- */
-const errorKind = Symbol.for('@qnx/errors/kind')
-
-function setErrorKind(
-    errorClass: { prototype: object },
-    kind: 'api' | 'validation' | 'unauthenticated'
-) {
-    Object.defineProperty(errorClass.prototype, errorKind, { value: kind })
-}
-
-/**
  * Used for create custom error instance
  */
 export class ApiError extends Error {
@@ -132,7 +117,3 @@ export class ServerError extends ApiError {
         this.name = 'ServerError'
     }
 }
-
-setErrorKind(ApiError, 'api')
-setErrorKind(ValidationError, 'validation')
-setErrorKind(UnauthenticatedUserError, 'unauthenticated')

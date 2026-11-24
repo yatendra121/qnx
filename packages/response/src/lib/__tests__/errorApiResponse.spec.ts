@@ -2,7 +2,7 @@ import express from 'express'
 import type { NextFunction, Request, Response } from 'express'
 import request from 'supertest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, UnauthenticatedUserError, ValidationError } from '@qnx/errors'
+import { ApiError } from '@qnx/errors'
 import { asyncValidatorHandler } from '../handler'
 import { ApiResponse, setResponseOptions } from '../apiResponse'
 import { errorApiResponse, serverErrorApiResponse, setCallback } from '../response'
@@ -25,89 +25,6 @@ function fakeRes() {
     }
     return { res: res as unknown as Response, sent }
 }
-
-const kindSymbol = Symbol.for('@qnx/errors/kind')
-
-/**
- * Builds a class like one from another copy of @qnx/errors: instanceof the imported classes fails,
- * but it carries the same kind, copied from the real class so the two packages can't drift apart.
- */
-function foreignClass(real: { prototype: object }) {
-    class Foreign extends Error {
-        constructor(
-            message: string,
-            private code: number,
-            private errRes?: { errors?: Record<string, string[]> }
-        ) {
-            super(message)
-        }
-        getCode() {
-            return this.code
-        }
-        getErrorResponse() {
-            return this.errRes
-        }
-    }
-    const kind = (real.prototype as Record<symbol, unknown>)[kindSymbol]
-    Object.defineProperty(Foreign.prototype, kindSymbol, { value: kind })
-    return Foreign
-}
-
-describe('errors from another copy of @qnx/errors', () => {
-    it('answers a ValidationError with its status and errors, not a 500', () => {
-        const Foreign = foreignClass(ValidationError)
-        const error = new Foreign('Bad email', 422, { errors: { email: ['Bad email'] } })
-        expect(error).not.toBeInstanceOf(ValidationError)
-        const { res, sent } = fakeRes()
-
-        errorApiResponse(res, error)
-
-        expect(sent).toEqual({
-            status: 422,
-            body: { error: 'Bad email', errors: { email: ['Bad email'] } }
-        })
-    })
-
-    it('answers an UnauthenticatedUserError with the usual 401 body', () => {
-        const Foreign = foreignClass(UnauthenticatedUserError)
-        const { res, sent } = fakeRes()
-
-        errorApiResponse(res, new Foreign('Token expired', 401))
-
-        expect(sent).toEqual({
-            status: 401,
-            body: { errorCode: 'unauthenticated', message: 'Unauthenticated' }
-        })
-    })
-
-    it('answers an ApiError with its message and status', () => {
-        const Foreign = foreignClass(ApiError)
-        const { res, sent } = fakeRes()
-
-        errorApiResponse(res, new Foreign('Already exists', 409))
-
-        expect(sent).toEqual({ status: 409, body: { message: 'Already exists' } })
-    })
-
-    it.each([
-        [
-            'a ValidationError from another library',
-            Object.assign(new Error('x'), { name: 'ValidationError' })
-        ],
-        [
-            'an object with getCode but no kind',
-            Object.assign(new Error('x'), { getCode: () => 400 })
-        ],
-        ['an unknown kind', Object.assign(new Error('x'), { [kindSymbol]: 'other' })]
-    ])('still answers %s as a server error', (_label, error) => {
-        const { res, sent } = fakeRes()
-
-        errorApiResponse(res, error)
-
-        expect(sent.status).toBe(500)
-        expect(sent.body?.serverError).toBeDefined()
-    })
-})
 
 describe('server error logger', () => {
     const escaped = vi.fn()
