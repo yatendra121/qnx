@@ -77,3 +77,21 @@ describe('ApiResponseErrorsValue', () => {
         expect(errors).toEqual({ [errorKey]: [errorMessage] })
     })
 })
+
+describe('ApiResponseErrorsValue with keys that exist on Object.prototype', () => {
+    // Field names can come from request data, so these must be treated as ordinary keys.
+    test.each(['constructor', 'toString', 'hasOwnProperty', 'valueOf', '__proto__'])(
+        'addError keeps "%s" as its own field after another field',
+        (key) => {
+            const value = ApiResponseErrorsValue.getInstance()
+                .addError('email', 'first')
+                .addError(key, 'second')
+                .addError(key, 'third')
+
+            const errors = value.getErrors() ?? {}
+            expect(Object.keys(errors)).toEqual(['email', key])
+            expect(Object.getOwnPropertyDescriptor(errors, key)?.value).toEqual(['second', 'third'])
+            expect(({} as Record<string, unknown>)['second']).toBeUndefined()
+        }
+    )
+})

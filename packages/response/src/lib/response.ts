@@ -1,17 +1,23 @@
 import { errorCodes } from '@qnx/errors'
 import { ApiError, ValidationError, UnauthenticatedUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
+import { responseOptions } from './options'
 import { invalidApiResponse } from './errorResponse'
 import type { $ZodError } from 'zod/v4/core'
 import type { Response as ExResponse } from 'express'
 
-type CallbackObj = { logger?: { serverError: (error: Error) => void | undefined } }
+// unknown, not void: TypeScript rejects `(error) => logger.error(..., error)` against a `void | undefined` return when the method returns a value, as winston's does.
+type CallbackObj = { logger?: { serverError: (error: Error) => unknown } }
 export const callbackObj: CallbackObj = {
     logger: undefined
 }
 
 /**
  * Sets a callback object with optional logger for server errors.
+ *
+ * @deprecated Pass a function to `setResponseOptions` instead. It is called with the same errors,
+ * and is used instead of this logger when both are set:
+ * `setResponseOptions({ onServerError: (error) => logger.error('API Handler:', error) })`
  *
  * @param logger - An optional logger object with a serverError method.
  */
@@ -24,13 +30,10 @@ export const setCallback = ({ logger }: Partial<CallbackObj>) => {
  * This function should be used in a catch block to handle and respond to various types of errors.
  *
  * @param response - The Express response object to send the response with.
- * @param error - The error to handle, which can be a ValidationError, UnauthenticatedUserError, or generic Error.
+ * @param error - The caught value. Anything can be thrown, so any value is accepted.
  * @returns The API response appropriate for the given error type.
  */
-export function errorApiResponse(
-    response: ExResponse,
-    error: ValidationError | UnauthenticatedUserError | Error
-) {
+export function errorApiResponse(response: ExResponse, error: unknown) {
     if (error instanceof ValidationError) {
         return invalidApiResponse(response, error.getErrorResponse()?.errors, error.getCode())
     } else if (error instanceof UnauthenticatedUserError) {
@@ -46,10 +49,19 @@ export function errorApiResponse(
         // Loggers are typed to receive an Error and run outside this try/catch, so a thrown
         // primitive or null must not reach one that reads `error.stack` and crash the process.
         const loggable =
-            typeof error === 'object' && error !== null ? error : new Error(String(error))
-        queueMicrotask(() => {
-            callbackObj.logger?.serverError(loggable)
-        })
+            typeof error === 'object' && error !== null
+                ? (error as Error)
+                : new Error(String(error))
+        // A logger that throws or rejects would otherwise be an uncaught exception or an
+        // unhandled rejection, which stops the process. Like queueMicrotask, this runs it after
+        // the response has been sent.
+        Promise.resolve()
+            .then(() =>
+                responseOptions.onServerError
+                    ? responseOptions.onServerError(loggable)
+                    : callbackObj.logger?.serverError(loggable)
+            )
+            .catch(() => undefined)
         return serverErrorApiResponse(response, error)
     }
 }

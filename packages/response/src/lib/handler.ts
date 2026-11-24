@@ -31,19 +31,19 @@ function isFunction(value: unknown): boolean {
  */
 export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) {
     const handler = async (req: ExRequest, res: ExResponse, next: NextFunction): Promise<void> => {
+        // The wrapped function may call next() itself. Without tracking, the fallback
+        // below would advance the Express chain a second time, running later handlers
+        // while an earlier async middleware (e.g. an auth check) is still deciding.
+        let nextCalled = false
+        const onceNext: NextFunction = (err?: unknown) => {
+            if (nextCalled) return
+            nextCalled = true
+            next(err)
+        }
+
         try {
             if (!isFunction(func)) {
                 throw new TypeError('Provided parameter value is not a function.')
-            }
-
-            // The wrapped function may call next() itself. Without tracking, the fallback
-            // below would advance the Express chain a second time, running later handlers
-            // while an earlier async middleware (e.g. an auth check) is still deciding.
-            let nextCalled = false
-            const onceNext: NextFunction = (err?: unknown) => {
-                if (nextCalled) return
-                nextCalled = true
-                next(err)
             }
 
             const apiRes = await func(req as T, res, onceNext)
@@ -65,7 +65,14 @@ export function asyncValidatorHandler<T extends ExRequest>(func: ExecuteFun<T>) 
 
             initializeApiResponse().setData(apiRes).response(res)
         } catch (error: unknown) {
-            errorApiResponse(res, error as Error)
+            try {
+                errorApiResponse(res, error)
+            } catch (sendError: unknown) {
+                // The error response itself failed, e.g. Express rejects an ApiError status code
+                // outside 100-999. Express 5 would pass a rejected promise to next(); Express 4
+                // ignores it and the process gets an unhandled rejection. Do what Express 5 does.
+                onceNext(sendError)
+            }
         }
     }
 

@@ -1,7 +1,6 @@
 import type { Response as ExResponse } from 'express'
 import type { ApiResponseErrors } from '@qnx/errors'
-
-const SHOW_SERVER_ERROR = true
+import { responseOptions } from './options'
 
 /**
  * Class for sending API responses.
@@ -34,8 +33,7 @@ export class ApiResponse<T = unknown> {
      * @param data - The data to be included in the response.
      * @returns The current ApiResponse instance.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setData(data: any) {
+    setData(data: T) {
         this.data = data
         return this
     }
@@ -96,13 +94,18 @@ export class ApiResponse<T = unknown> {
     }
 
     /**
-     * Sets a server error for the response. The server error will only be included if SHOW_SERVER_ERROR is true.
+     * Sets a server error for the response. When `exposeServerError` has been turned off with
+     * `setResponseOptions`, the error is left out and the message is "Internal Server Error",
+     * unless a message has already been set.
      *
      * @param error - The server error to be included in the response.
      * @returns The current ApiResponse instance.
      */
     setServerError(error: unknown) {
-        if (!SHOW_SERVER_ERROR) return this
+        if (!responseOptions.exposeServerError) {
+            this.message ??= 'Internal Server Error'
+            return this
+        }
         // Anything can be thrown or rejected, including primitives, null and undefined.
         const isObject = typeof error === 'object' && error !== null
         const err = (isObject ? error : { message: String(error) }) as Partial<Error>

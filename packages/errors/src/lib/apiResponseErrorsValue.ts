@@ -1,5 +1,7 @@
 import type { ApiResponseErrors, ErrorResponse } from './types'
 
+const hasOwn = (object: object, key: string) => Object.prototype.hasOwnProperty.call(object, key)
+
 /**
  * Class for collecting and setting errors for API response errors.
  */
@@ -16,7 +18,8 @@ export class ApiResponseErrorsValue {
     }
 
     /**
-     * Sets an error message for a specific error key.
+     * Replaces every error collected so far, for all keys, with this single error.
+     * Use `addError` to keep the others.
      *
      * @param errorKey - The key associated with the error.
      * @param errorMessage - The error message to be associated with the key.
@@ -35,7 +38,8 @@ export class ApiResponseErrorsValue {
      * @returns The current ApiResponseErrorsValue instance.
      */
     addError(errorKey: string, errorMessage: string) {
-        const existing = this.errors?.[errorKey] ?? []
+        // Keys can come from request data, and a key such as "constructor" must not read Object.prototype.
+        const existing = this.errors && hasOwn(this.errors, errorKey) ? this.errors[errorKey] : []
         this.errors = { ...this.errors, [errorKey]: [...existing, errorMessage] }
         return this
     }

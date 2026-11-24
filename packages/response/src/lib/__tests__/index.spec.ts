@@ -8,6 +8,7 @@ describe('ApiResponseErrorsValue', () => {
             const value = Value.getInstance()
             const empty = value.hasErrors()
             value.addError('email', 'first').addError('email', 'second').addError('name', 'third')
+            value.addError('constructor', 'fourth').addError('constructor', 'fifth')
             const added = value.getErrors()
             const response = value.getErrorResponse()
             value.setError('email', 'replaced')

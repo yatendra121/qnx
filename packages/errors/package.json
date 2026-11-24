@@ -15,7 +15,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yatendra121/qnx.git"
+    "url": "https://github.com/yatendra121/qnx.git",
+    "directory": "packages/errors"
   },
   "main": "./dist/errors.cjs",
   "module": "./dist/errors.mjs",
