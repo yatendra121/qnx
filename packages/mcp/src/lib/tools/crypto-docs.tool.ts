@@ -80,12 +80,23 @@ openssl ec -in jwt-private.pem -pubout -out jwt-public.pem
 
 For HMAC, a random secret works: \`openssl rand -base64 48\`.
 
+### Or with the @qnx/crypto command (from 0.8.19)
+
+\`npx @qnx/crypto generate-keys\` asks for the algorithms and file names, with the recommended choice as each default, then writes the \`.env\` lines and, if you want, a public JWKS. In scripts and CI it asks nothing:
+
+\`\`\`bash
+npx @qnx/crypto generate-keys --yes --out .env.keys --jwks jwks.json
+\`\`\`
+
+The JWKS has both public keys, each with a \`kid\` (its RFC 7638 thumbprint), \`use\` and \`alg\`, and never private keys. Options: \`--jwt-alg\` (ES256, ES384, ES512, EdDSA), \`--jwe-alg\` (ECDH-ES+A128KW, ECDH-ES+A256KW), \`--out\`, \`--jwks\`, \`--no-jwks\`, \`--force\`, \`--yes\`. In code, \`generateAuthKeys({ jwtAlg, jweAlg })\` returns \`{ env, jwks }\`, and \`formatAuthKeyEnv(env)\` turns \`env\` into those lines. The allowed values are exported as \`authTokenSigningAlgorithms\` and \`authTokenEncryptionAlgorithms\`, recommended first.
+
 ### Environment variables
 
 | Variable | Used by |
 | --- | --- |
 | \`JWT_PRIVATE_KEY\`, \`JWE_PUBLIC_KEY\` | \`generateAuthToken\` |
 | \`JWT_PUBLIC_KEY\`, \`JWE_PRIVATE_KEY\` | \`decryptAuthToken\` |
+| \`JWT_ALG\`, \`JWE_ALG\` | Both, from 0.8.19. Optional: default \`ES256\` and \`ECDH-ES+A128KW\` |
 
 The keys are read on first use and then cached, so load \`.env\` before that first call.
 

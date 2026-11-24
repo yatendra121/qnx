@@ -1090,3 +1090,22 @@ try {
         expect(output.limits).toMatch(/Pattern matching/)
     })
 })
+
+describe('search-docs finds each export by name', () => {
+    // The same queries e2e/consumer.mjs (E2) sends to the live server. A long section can push a
+    // match out of the snippet, so check the text that is returned, not only the section found.
+    it.each([
+        ['setCallback', 'setCallback'],
+        ['errorApiResponse', 'errorApiResponse'],
+        ['hasErrors', 'hasErrors'],
+        ['setError replaces', 'setError'],
+        ['asyncSubArrayGenerator', 'asyncSubArrayGenerator'],
+        ['requiredField', 'requiredField'],
+        ['typed req.user', 'user'],
+        ['setResponseOptions', 'setResponseOptions'],
+        ['generateAuthKeys', 'generateAuthKeys']
+    ])('"%s"', async (query, expected) => {
+        const { text } = await callTool('search-docs', { query })
+        expect(text).toContain(expected)
+    })
+})

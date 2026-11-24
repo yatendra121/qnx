@@ -1,7 +1,11 @@
 import type { McpServerConfig } from '../server'
 import { clientDocs } from '../tools/client-docs.tool'
 import { consoleLogDocs } from '../tools/console-log-docs.tool'
-import { errorClassDocs, errorCodesDocs, errorSummaryDocs } from '../tools/create-error-instance.tool'
+import {
+    errorClassDocs,
+    errorCodesDocs,
+    errorSummaryDocs
+} from '../tools/create-error-instance.tool'
 import { cryptoDocs } from '../tools/crypto-docs.tool'
 import { guides } from '../tools/guide.tool'
 import { loggerDocs } from '../tools/logger-docs.tool'
@@ -21,24 +25,38 @@ const fromTool = (
     tool: string,
     param: string,
     docs: Record<string, string>
-): DocSection[] => Object.entries(docs).map(([topic, text]) => ({
-    package: `@qnx/${name}`,
-    source: `${tool} { "${param}": "${topic}" }`,
-    title: text.match(/^#+\s+(.+)$/m)?.[1] ?? topic,
-    text
-}))
+): DocSection[] =>
+    Object.entries(docs).map(([topic, text]) => ({
+        package: `@qnx/${name}`,
+        source: `${tool} { "${param}": "${topic}" }`,
+        title: text.match(/^#+\s+(.+)$/m)?.[1] ?? topic,
+        text
+    }))
 
 function sectionsFor(config: McpServerConfig): DocSection[] {
     const sections: DocSection[] = []
     if (config.crypto) sections.push(...fromTool('crypto', 'get-crypto-docs', 'topic', cryptoDocs))
-    if (config.response) sections.push(...fromTool('response', 'get-response-docs', 'pattern', responseDocs))
+    if (config.response)
+        sections.push(...fromTool('response', 'get-response-docs', 'pattern', responseDocs))
     if (config.client) sections.push(...fromTool('client', 'get-client-docs', 'topic', clientDocs))
-    if (config.winston) sections.push(...fromTool('winston', 'get-file-logger-docs', 'topic', loggerDocs))
-    if (config.log) sections.push(...fromTool('log', 'get-console-log-docs', 'topic', consoleLogDocs))
+    if (config.winston)
+        sections.push(...fromTool('winston', 'get-file-logger-docs', 'topic', loggerDocs))
+    if (config.log)
+        sections.push(...fromTool('log', 'get-console-log-docs', 'topic', consoleLogDocs))
     if (config.errors) {
         sections.push(...fromTool('errors', 'get-error-class-docs', 'errorClass', errorClassDocs))
-        sections.push({ package: '@qnx/errors', source: 'get-error-class-docs { "errorClass": "all" }', title: 'Error class summary', text: errorSummaryDocs })
-        sections.push({ package: '@qnx/errors', source: 'get-error-class-docs { "errorClass": "all" }', title: 'Customizing error codes', text: errorCodesDocs })
+        sections.push({
+            package: '@qnx/errors',
+            source: 'get-error-class-docs { "errorClass": "all" }',
+            title: 'Error class summary',
+            text: errorSummaryDocs
+        })
+        sections.push({
+            package: '@qnx/errors',
+            source: 'get-error-class-docs { "errorClass": "all" }',
+            title: 'Customizing error codes',
+            text: errorCodesDocs
+        })
     }
 
     for (const info of packages) {
@@ -76,14 +94,60 @@ function sectionsFor(config: McpServerConfig): DocSection[] {
                 package: `@qnx/${known.package}`,
                 source: 'diagnose-error',
                 title: `Error: ${known.title}`,
-                text: [known.title, known.patterns.map((pattern) => pattern.source).join(' '), known.cause, known.fix, known.code ?? ''].join('\n')
+                text: [
+                    known.title,
+                    known.patterns.map((pattern) => pattern.source).join(' '),
+                    known.cause,
+                    known.fix,
+                    known.code ?? ''
+                ].join('\n')
             })
         }
     }
     return sections
 }
 
-const STOP_WORDS = new Set(['a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'can', 'do', 'does', 'for', 'from', 'how', 'i', 'in', 'is', 'it', 'me', 'my', 'of', 'on', 'or', 'should', 'that', 'the', 'this', 'to', 'use', 'using', 'what', 'when', 'where', 'which', 'why', 'with', 'you', 'your', 'qnx'])
+const STOP_WORDS = new Set([
+    'a',
+    'an',
+    'and',
+    'are',
+    'as',
+    'at',
+    'be',
+    'by',
+    'can',
+    'do',
+    'does',
+    'for',
+    'from',
+    'how',
+    'i',
+    'in',
+    'is',
+    'it',
+    'me',
+    'my',
+    'of',
+    'on',
+    'or',
+    'should',
+    'that',
+    'the',
+    'this',
+    'to',
+    'use',
+    'using',
+    'what',
+    'when',
+    'where',
+    'which',
+    'why',
+    'with',
+    'you',
+    'your',
+    'qnx'
+])
 
 const tokenize = (text: string) => text.toLowerCase().match(/[a-z0-9_@$][a-z0-9_$-]*/g) ?? []
 
@@ -92,6 +156,27 @@ function matcher(term: string) {
     if (term.length <= 4) return (token: string) => token === term || token === `${term}s`
     const stem = term.slice(0, term.length >= 7 ? term.length - 3 : 5)
     return (token: string) => token.startsWith(stem)
+}
+
+const isTable = (text: string) => text.split('\n').every((line) => line.startsWith('|'))
+
+/**
+ * Shortens a table by dropping rows rather than cutting it off, so a matching row near the bottom
+ * is still shown. Keeps the header, every matching row, then other rows while they fit, all in
+ * their original order.
+ */
+function fitTable(table: string, matches: (token: string) => boolean, maxLength: number) {
+    const [heading, separator, ...rows] = table.split('\n')
+    if (separator === undefined) return table
+    const matching = rows.filter((row) => tokenize(row).some(matches))
+    const kept = new Set(matching)
+    let length = [heading, separator, ...matching].join('\n').length
+    for (const row of rows) {
+        if (kept.has(row) || length + row.length + 1 > maxLength) continue
+        kept.add(row)
+        length += row.length + 1
+    }
+    return [heading, separator, ...rows.filter((row) => kept.has(row))].join('\n')
 }
 
 function excerpt(text: string, matches: (token: string) => boolean, maxLength = 700) {
@@ -109,6 +194,7 @@ function excerpt(text: string, matches: (token: string) => boolean, maxLength = 
     let output = paragraphs[best]
     // Keeps a code block or table with the sentence that introduces it.
     if (output.endsWith(':') && paragraphs[best + 1]) output += `\n\n${paragraphs[best + 1]}`
+    if (output.length > maxLength && isTable(output)) output = fitTable(output, matches, maxLength)
     if (output.length > maxLength) output = `${output.slice(0, maxLength).trimEnd()}…`
     // A paragraph break inside a code block can leave one fence behind, which would swallow what follows.
     const fences = output.match(/^```.*$/gm) ?? []
