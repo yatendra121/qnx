@@ -833,6 +833,9 @@ describe('diagnose-error recognises what the libraries really throw', () => {
         ['pem-corrupt', () => toPKCS8Secret('-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----', 'ES256')],
         ['aes-key-length', () => jweEncrypt('hi', toSymmetricSecret('short'), { alg: 'A256KW', enc: 'A256GCM' })],
         ['curve-mismatch', async () => jwtSign({}, await toPKCS8Secret(ecPair('P-384').privateKey, 'ES256'))],
+        ['curve-mismatch', async () => toPKCS8Secret(privateKey, 'ES384')],
+        ['key-type-mismatch', async () => toPKCS8Secret(privateKey, 'EdDSA')],
+        ['jwe-encrypt-private-key', async () => jweEncrypt('hi', await toPKCS8Secret(privateKey, 'ECDH-ES+A128KW'))],
         ['symmetric-secret-without-alg', () => jwtSign({}, secret)],
         ['imported-key-without-alg', async () => jwtSign({}, await toPKCS8Secret(rsaPair().privateKey, 'RS256'))],
         ['alg-not-supported', () => jwtSign({}, secret, { alg: 'none' })],
@@ -890,7 +893,9 @@ describe('diagnose-error recognises what the libraries really throw', () => {
         ['interfaces-request-type', `a.ts(5,41): error TS2344: Type 'AuthRequest' does not satisfy the constraint 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.`],
         ['ts-jwe-options', `error TS2345: Argument of type '{ enc: string; }' is not assignable. Property 'alg' is missing in type '{ enc: string; }'`],
         ['headers-already-sent', 'Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client'],
-        ['mcp-session-not-found', '{"error":"Session not found. The mcp-session-id header is present"}']
+        ['mcp-session-not-found', '{"error":"Session not found. The mcp-session-id header is present"}'],
+        // What npm 10 and 11 print for `npx @qnx/crypto generate-keys` with 0.8.18.
+        ['npx-no-command', 'npm error could not determine executable to run\nnpm error A complete log of this run can be found in: /Users/me/.npm/_logs/debug-0.log']
     ])('%s from a reported message', (id, text) => {
         expect(matchKnownErrors(text, ALL).map((known) => known.id)).toContain(id)
     })

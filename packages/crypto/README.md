@@ -29,20 +29,49 @@ pnpm install @qnx/crypto
 
 ### Peer Dependencies
 
+`jose` 6 and `uuid` 13 or 14:
+
 ```bash
 npm install jose uuid
 ```
 
+## ⚡ Quick Start
+
+1. Create the keys, pressing Enter for each recommended answer:
+
+   ```bash
+   npx @qnx/crypto generate-keys
+   ```
+
+2. Copy the lines from `.env.keys` into your `.env`.
+3. Create and read auth tokens:
+
+   ```ts
+   import { generateAuthToken, decryptAuthToken } from '@qnx/crypto'
+
+   const { token, dbToken } = await generateAuthToken(String(user.id))
+   const payload = await decryptAuthToken(token) // payload.sub === String(user.id)
+   ```
+
+See [Auth Token Management](#-auth-token-management) for the details.
+
 ## 🚀 Usage
 
-### Core Functions
+### Exports
 
-| Function     | Purpose                  |
-| ------------ | ------------------------ |
-| `jwtSign`    | Sign a JWT payload       |
-| `jwtVerify`  | Verify a JWT token       |
-| `jweEncrypt` | Encrypt a payload to JWE |
-| `jweDecrypt` | Decrypt a JWE token      |
+| Export | Purpose |
+| --- | --- |
+| `jwtSign` | Sign a JWT payload |
+| `jwtVerify` | Verify a JWT. Re-exported from `jose` |
+| `jweEncrypt` | Encrypt a string to a JWE |
+| `jweDecrypt` | Decrypt a JWE |
+| `generateAuthToken` | Create an encrypted auth token, with keys from the environment |
+| `decryptAuthToken` | Read an auth token |
+| `generateAuthKeys` | Create the keys for auth tokens. From 0.8.19 |
+| `formatAuthKeyEnv` | Turn those keys into `.env` lines. From 0.8.19 |
+| `authTokenSigningAlgorithms`, `authTokenEncryptionAlgorithms` | The algorithms auth tokens can use, recommended first. From 0.8.19 |
+| `toSymmetricSecret` | A string secret as bytes, for `HS256` and similar |
+| `toPKCS8Secret`, `toSPKISecret`, `toJWKSecret` | Import a private PEM, public PEM or JWK. `jose`'s `importPKCS8`, `importSPKI` and `importJWK` |
 
 ### `jwtSign`
 
@@ -70,24 +99,24 @@ const { payload } = await jwtVerify(jwt, secret)
 
 ### `jweEncrypt`
 
-Encrypts a string using JWE.
+Encrypts a string using JWE, with the **public** key.
 
 ```ts
-import { jweEncrypt, toPKCS8Secret } from '@qnx/crypto'
+import { jweEncrypt, toSPKISecret } from '@qnx/crypto'
 
-const secret = await toPKCS8Secret(process.env.ENCRYPTION_SECRET_JWE, 'ECDH-ES+A128KW')
-const jwe = await jweEncrypt('this is message.', secret)
+const publicKey = await toSPKISecret(process.env.JWE_PUBLIC_KEY ?? '', 'ECDH-ES+A128KW')
+const jwe = await jweEncrypt('this is message.', publicKey)
 ```
 
 ### `jweDecrypt`
 
-Decrypts a previously encrypted JWE string.
+Decrypts a JWE with the **private** key.
 
 ```ts
 import { jweDecrypt, toPKCS8Secret } from '@qnx/crypto'
 
-const secret = await toPKCS8Secret(process.env.ENCRYPTION_SECRET_JWE, 'ECDH-ES+A128KW')
-const { plaintext } = await jweDecrypt(jwe, secret)
+const privateKey = await toPKCS8Secret(process.env.JWE_PRIVATE_KEY ?? '', 'ECDH-ES+A128KW')
+const { plaintext } = await jweDecrypt(jwe, privateKey)
 ```
 
 ---
@@ -194,6 +223,8 @@ Both options are optional. The allowed values are in `authTokenSigningAlgorithms
 
 Creates a signed and encrypted auth token.
 
+> ⚠️ **These tokens never expire.** The payload holds only `iat`, `jti` and `sub`, with no `exp`. Store `dbToken` with an expiry time, and check it on every request: that's the only way to end a session.
+
 ```ts
 import { generateAuthToken } from '@qnx/crypto'
 
@@ -217,6 +248,16 @@ try {
   console.error('Token decryption failed:', error)
 }
 ```
+
+### Troubleshooting
+
+| Error | Cause |
+| --- | --- |
+| `JWT private key is not found in environment variables.` | The variable isn't set when the first token is created or read. Load `.env` first |
+| `Named curve mismatch` or `Invalid key type` | `JWT_ALG` or `JWE_ALG` doesn't match the keys. Generate the keys again, which writes both |
+| `CryptoKey instances for asymmetric algorithm encryption must be of type "public"` | `jweEncrypt` was given a private key. Use `toSPKISecret` with the public key |
+| `npm error could not determine executable to run` | `npx @qnx/crypto generate-keys` with 0.8.18 or earlier, which has no command. Use 0.8.19 or later |
+| `JWEDecryptionFailed` | The token was changed, or made with other keys |
 
 ---
 

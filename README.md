@@ -24,7 +24,7 @@ Welcome to the @qnx monorepository! This collection of libraries is designed to 
 
 ### @qnx/crypto
 
-[@qnx/crypto](https://github.com/yatendra121/qnx/blob/main/packages/crypto/README.md) provides utility functions to generate and decrypt JSON Web Signatures (JWS) and JSON Web Encryption (JWE) using the jose cryptography library for secure data transmission.
+[@qnx/crypto](https://github.com/yatendra121/qnx/blob/main/packages/crypto/README.md) provides utility functions to generate and decrypt JSON Web Signatures (JWS) and JSON Web Encryption (JWE) using the jose cryptography library for secure data transmission. `npx @qnx/crypto generate-keys` creates the keys for its auth tokens.
 
 **HTTP:** `https://qnx-mcp-server.vercel.app/mcp/crypto` &nbsp;|&nbsp; **stdio:** `npx @qnx/mcp crypto`
 
