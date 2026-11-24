@@ -10,7 +10,7 @@ import {
     setCallback,
     setResponseOptions
 } from '../../index'
-import type { ResponseOptions } from '../../index'
+import type { ResponseOptions, ServerErrorHandler } from '../../index'
 
 // Type-checked by vitest (typecheck in vite.config.ts) on every test run.
 describe('public types', () => {
@@ -35,7 +35,17 @@ describe('public types', () => {
 
     it('keeps the configuration functions', () => {
         expectTypeOf(setResponseOptions).parameter(0).toEqualTypeOf<ResponseOptions>()
-        expectTypeOf<ResponseOptions>().toEqualTypeOf<{ exposeServerError?: boolean }>()
+        expectTypeOf<ResponseOptions>().toEqualTypeOf<{
+            exposeServerError?: boolean
+            onServerError?: ServerErrorHandler | null
+        }>()
+        expectTypeOf<ServerErrorHandler>().toEqualTypeOf<(error: Error) => unknown>()
+        // A logger method that returns something, such as winston's, still fits.
+        const winstonLike = { error: (message: string, error: Error) => (void [message, error], winstonLike) }
+        setResponseOptions({ onServerError: (error) => winstonLike.error('API Handler:', error) })
+        setResponseOptions({ onServerError: async () => undefined })
+        // @ts-expect-error the callback receives an Error, not a string
+        setResponseOptions({ onServerError: (error: string) => void error })
         expectTypeOf(setCallback)
             .parameter(0)
             .toExtend<{ logger?: { serverError: (error: Error) => unknown } }>()

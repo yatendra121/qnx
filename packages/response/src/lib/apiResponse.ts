@@ -1,29 +1,6 @@
 import type { Response as ExResponse } from 'express'
 import type { ApiResponseErrors } from '@qnx/errors'
-
-/** Options for every response this package sends. Change them with `setResponseOptions`. */
-export interface ResponseOptions {
-    /**
-     * Whether a server error's name, message and stack are sent to the client as `serverError`.
-     * Defaults to `true`, as in earlier versions. Set it to `false` in production so unexpected
-     * errors can't leak details such as connection strings or file paths.
-     */
-    exposeServerError?: boolean
-}
-
-const responseOptions: Required<ResponseOptions> = { exposeServerError: true }
-
-/**
- * Changes the options for every response this package sends. Call it once at startup.
- * Only the options you pass are changed.
- *
- * @param options - The options to change.
- */
-export function setResponseOptions(options: ResponseOptions) {
-    if (options.exposeServerError !== undefined) {
-        responseOptions.exposeServerError = options.exposeServerError
-    }
-}
+import { responseOptions } from './options'
 
 /**
  * Class for sending API responses.

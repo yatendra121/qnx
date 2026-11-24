@@ -4,7 +4,8 @@ import request from 'supertest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '@qnx/errors'
 import { asyncValidatorHandler } from '../handler'
-import { ApiResponse, setResponseOptions } from '../apiResponse'
+import { ApiResponse } from '../apiResponse'
+import { setResponseOptions } from '../options'
 import { errorApiResponse, serverErrorApiResponse, setCallback } from '../response'
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -201,5 +202,132 @@ describe('asyncValidatorHandler when the error response cannot be sent', () => {
 
         expect(next).toHaveBeenCalledTimes(1)
         expect(next.mock.calls[0][0]).toBeUndefined()
+    })
+})
+
+describe('onServerError', () => {
+    const escaped = vi.fn()
+    beforeEach(() => {
+        escaped.mockClear()
+        process.on('uncaughtException', escaped)
+        process.on('unhandledRejection', escaped)
+    })
+    afterEach(() => {
+        process.off('uncaughtException', escaped)
+        process.off('unhandledRejection', escaped)
+        setResponseOptions({ onServerError: null })
+        setCallback({ logger: { serverError: () => undefined } })
+    })
+
+    it('is called with the error, after the response is sent', async () => {
+        const onServerError = vi.fn()
+        setResponseOptions({ onServerError })
+        const error = new TypeError('boom')
+        const { res, sent } = fakeRes()
+
+        errorApiResponse(res, error)
+
+        expect(sent.status).toBe(500)
+        expect(onServerError).not.toHaveBeenCalled()
+        await sleep(0)
+        expect(onServerError).toHaveBeenCalledWith(error)
+    })
+
+    it('gets an Error for a thrown primitive', async () => {
+        const onServerError = vi.fn()
+        setResponseOptions({ onServerError })
+
+        errorApiResponse(fakeRes().res, 'boom')
+        await sleep(0)
+
+        expect(onServerError.mock.calls[0][0]).toBeInstanceOf(Error)
+        expect(onServerError.mock.calls[0][0].message).toBe('boom')
+    })
+
+    it('is called instead of the setCallback logger', async () => {
+        const onServerError = vi.fn()
+        const serverError = vi.fn()
+        setCallback({ logger: { serverError } })
+        setResponseOptions({ onServerError })
+
+        errorApiResponse(fakeRes().res, new Error('boom'))
+        await sleep(0)
+
+        expect(onServerError).toHaveBeenCalledTimes(1)
+        expect(serverError).not.toHaveBeenCalled()
+    })
+
+    it('falls back to the setCallback logger after being removed with null', async () => {
+        const onServerError = vi.fn()
+        const serverError = vi.fn()
+        setCallback({ logger: { serverError } })
+        setResponseOptions({ onServerError })
+        setResponseOptions({ onServerError: null })
+
+        errorApiResponse(fakeRes().res, new Error('boom'))
+        await sleep(0)
+
+        expect(onServerError).not.toHaveBeenCalled()
+        expect(serverError).toHaveBeenCalledTimes(1)
+    })
+
+    it('is kept when other options change', async () => {
+        const onServerError = vi.fn()
+        setResponseOptions({ onServerError })
+        setResponseOptions({ exposeServerError: true })
+
+        errorApiResponse(fakeRes().res, new Error('boom'))
+        await sleep(0)
+
+        expect(onServerError).toHaveBeenCalledTimes(1)
+    })
+
+    it('is not called for errors from @qnx/errors or zod', async () => {
+        const onServerError = vi.fn()
+        setResponseOptions({ onServerError })
+
+        errorApiResponse(fakeRes().res, new ApiError('Already exists', 409))
+        errorApiResponse(
+            fakeRes().res,
+            Object.assign(new Error('invalid'), { name: 'ZodError', issues: [] })
+        )
+        await sleep(0)
+
+        expect(onServerError).not.toHaveBeenCalled()
+    })
+
+    it.each([
+        [
+            'throws',
+            () => {
+                throw new Error('down')
+            }
+        ],
+        ['rejects', async () => Promise.reject(new Error('down'))]
+    ])('does not crash the process when it %s', async (_label, onServerError) => {
+        setResponseOptions({ onServerError })
+        const { res, sent } = fakeRes()
+
+        errorApiResponse(res, new Error('boom'))
+        await sleep(0)
+
+        expect(sent.status).toBe(500)
+        expect(escaped).not.toHaveBeenCalled()
+    })
+
+    it('runs for errors thrown inside asyncValidatorHandler', async () => {
+        const onServerError = vi.fn()
+        setResponseOptions({ onServerError })
+        const app = express()
+        app.get(
+            '/',
+            asyncValidatorHandler(async () => {
+                throw new Error('boom')
+            })
+        )
+
+        expect((await request(app).get('/')).status).toBe(500)
+        await sleep(0)
+        expect(onServerError.mock.calls[0][0].message).toBe('boom')
     })
 })

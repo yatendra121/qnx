@@ -43,8 +43,8 @@ export const packages: PackageInfo[] = [
             fn('resourceRoute', 'resourceRoute<T extends Request>(router: Router, controller: ResourceController<T>): void'),
             cls('ApiResponse', 'class ApiResponse<T = unknown>'),
             fn('initializeApiResponse', 'initializeApiResponse(): ApiResponse'),
-            fn('setCallback', 'setCallback({ logger }: Partial<CallbackObj>): void'),
-            fn('setResponseOptions', 'setResponseOptions(options: ResponseOptions): void. From 0.8.18: { exposeServerError: false } stops sending serverError to clients'),
+            fn('setCallback', 'setCallback({ logger }: Partial<CallbackObj>): void. Deprecated from 0.8.18: use setResponseOptions({ onServerError })'),
+            fn('setResponseOptions', 'setResponseOptions(options: ResponseOptions): void. From 0.8.18: { exposeServerError: false } stops sending serverError to clients, and { onServerError: (error) => ... } is called for unexpected errors'),
             fn('errorApiResponse', 'errorApiResponse(response: Response, error: unknown): Response'),
             fn('invalidApiResponse', 'invalidApiResponse(response: Response, errors: ApiResponseErrors | undefined, statusCode?: number): Response'),
             fn('unauthenticateApiResponse', 'unauthenticateApiResponse(response: Response): Response'),
@@ -57,8 +57,9 @@ export const packages: PackageInfo[] = [
             type('ExecuteFun', 'ExecuteFun<T> = (req: T, res: Response, next: NextFunction) => Promise<unknown>'),
             type('ResourceController', 'ResourceController<T>: optional changeStatus, create, findAll, findOne, update and remove functions'),
             type('functionNames', '"changeStatus" | "create" | "findAll" | "findOne" | "update" | "remove"'),
-            type('CallbackObj', 'CallbackObj = { logger?: { serverError: (error: Error) => void } }'),
-            type('ResponseOptions', 'ResponseOptions = { exposeServerError?: boolean }. From 0.8.18'),
+            type('CallbackObj', 'CallbackObj = { logger?: { serverError: (error: Error) => unknown } }'),
+            type('ResponseOptions', 'ResponseOptions = { exposeServerError?: boolean; onServerError?: ServerErrorHandler | null }. From 0.8.18'),
+            type('ServerErrorHandler', 'ServerErrorHandler = (error: Error) => unknown. From 0.8.18'),
             type('ApiResponseErrors', 'ApiResponseErrors = Record<string, string[]>'),
             type('ErrorResponse', 'ErrorResponse = { errors?: ApiResponseErrors }')
         ]

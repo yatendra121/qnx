@@ -1,17 +1,23 @@
 import { errorCodes } from '@qnx/errors'
 import { ApiError, ValidationError, UnauthenticatedUserError } from '@qnx/errors'
 import { ApiResponse } from './apiResponse'
+import { responseOptions } from './options'
 import { invalidApiResponse } from './errorResponse'
 import type { $ZodError } from 'zod/v4/core'
 import type { Response as ExResponse } from 'express'
 
-type CallbackObj = { logger?: { serverError: (error: Error) => void | undefined } }
+// unknown, not void: TypeScript rejects `(error) => logger.error(..., error)` against a `void | undefined` return when the method returns a value, as winston's does.
+type CallbackObj = { logger?: { serverError: (error: Error) => unknown } }
 export const callbackObj: CallbackObj = {
     logger: undefined
 }
 
 /**
  * Sets a callback object with optional logger for server errors.
+ *
+ * @deprecated Pass a function to `setResponseOptions` instead. It is called with the same errors,
+ * and is used instead of this logger when both are set:
+ * `setResponseOptions({ onServerError: (error) => logger.error('API Handler:', error) })`
  *
  * @param logger - An optional logger object with a serverError method.
  */
@@ -50,7 +56,11 @@ export function errorApiResponse(response: ExResponse, error: unknown) {
         // unhandled rejection, which stops the process. Like queueMicrotask, this runs it after
         // the response has been sent.
         Promise.resolve()
-            .then(() => callbackObj.logger?.serverError(loggable))
+            .then(() =>
+                responseOptions.onServerError
+                    ? responseOptions.onServerError(loggable)
+                    : callbackObj.logger?.serverError(loggable)
+            )
             .catch(() => undefined)
         return serverErrorApiResponse(response, error)
     }
