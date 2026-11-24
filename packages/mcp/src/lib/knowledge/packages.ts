@@ -129,9 +129,19 @@ export const packages: PackageInfo[] = [
             fn('toSymmetricSecret', 'toSymmetricSecret(key: string): Uint8Array'),
             fn('toPKCS8Secret', 'toPKCS8Secret(pem: string, alg: string): Promise<CryptoKey>. jose importPKCS8'),
             fn('toSPKISecret', 'toSPKISecret(pem: string, alg: string): Promise<CryptoKey>. jose importSPKI'),
-            fn('toJWKSecret', 'toJWKSecret(jwk: JWK, alg?: string): Promise<CryptoKey | Uint8Array>. jose importJWK')
+            fn('toJWKSecret', 'toJWKSecret(jwk: JWK, alg?: string): Promise<CryptoKey | Uint8Array>. jose importJWK'),
+            fn('generateAuthKeys', 'generateAuthKeys(options?: GenerateAuthKeysOptions): Promise<GeneratedAuthKeys>. From 0.8.19: new JWT and JWE key pairs as .env values, and the public keys as a JWKS'),
+            fn('formatAuthKeyEnv', 'formatAuthKeyEnv(env: AuthKeyEnv): string. From 0.8.19: the keys as .env lines'),
+            constant('authTokenSigningAlgorithms', "authTokenSigningAlgorithms: ['ES256', 'ES384', 'ES512', 'EdDSA']. From 0.8.19, recommended first"),
+            constant('authTokenEncryptionAlgorithms', "authTokenEncryptionAlgorithms: ['ECDH-ES+A128KW', 'ECDH-ES+A256KW']. From 0.8.19, recommended first"),
+            type('GenerateAuthKeysOptions', 'GenerateAuthKeysOptions = { jwtAlg?: AuthTokenSigningAlgorithm; jweAlg?: AuthTokenEncryptionAlgorithm }'),
+            type('AuthTokenSigningAlgorithm', 'AuthTokenSigningAlgorithm = "ES256" | "ES384" | "ES512" | "EdDSA"'),
+            type('AuthTokenEncryptionAlgorithm', 'AuthTokenEncryptionAlgorithm = "ECDH-ES+A128KW" | "ECDH-ES+A256KW"'),
+            type('AuthKeyEnv', 'AuthKeyEnv = { JWT_ALG; JWT_PRIVATE_KEY; JWT_PUBLIC_KEY; JWE_ALG; JWE_PRIVATE_KEY; JWE_PUBLIC_KEY }'),
+            type('GeneratedAuthKeys', 'GeneratedAuthKeys = { env: AuthKeyEnv; jwks: PublicJwks }'),
+            type('PublicJwks', 'PublicJwks = { keys: JWK[] }. Public keys only')
         ],
-        notes: ['Start with get-crypto-docs { "topic": "setup" } to generate keys. Auth tokens never expire on their own: see get-guide { "topic": "auth-session" }.']
+        notes: ['Start with get-crypto-docs { "topic": "setup" } to generate keys. From 0.8.19, npx @qnx/crypto generate-keys does it too. Auth tokens never expire on their own: see get-guide { "topic": "auth-session" }.']
     },
     {
         name: '@qnx/winston',

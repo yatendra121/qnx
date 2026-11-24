@@ -98,9 +98,40 @@ import { generateAuthToken } from '@qnx/crypto'`,
         package: 'crypto',
         title: 'Key curve does not match the algorithm',
         patterns: [/Named curve mismatch/i],
-        cause: 'ES256 and the auth token helpers need a P-256 key. This key uses another curve, such as P-384.',
-        fix: 'Generate a P-256 key, or use the algorithm that matches the key: ES384 for P-384 or ES512 for P-521.',
-        code: 'openssl ecparam -name prime256v1 -genkey -noout | openssl pkcs8 -topk8 -nocrypt -out private-key.pem',
+        cause: 'The key\'s curve doesn\'t match the algorithm: ES256 needs P-256, ES384 needs P-384 and ES512 needs P-521. For generateAuthToken and decryptAuthToken, the algorithm is JWT_ALG (default ES256), so JWT_ALG and the keys may not match.',
+        fix: 'Generate keys for the algorithm you want, which also writes the matching JWT_ALG, or use the algorithm that matches the key.',
+        code: 'npx @qnx/crypto generate-keys --jwt-alg ES256',
+        docs: 'get-crypto-docs { "topic": "algorithms" }'
+    },
+    {
+        id: 'key-type-mismatch',
+        package: 'crypto',
+        title: 'Key type does not suit the algorithm',
+        patterns: [/Invalid key type/i],
+        cause: 'The key is a different type from what the algorithm needs, such as an EC P-256 key with EdDSA, which needs Ed25519. For the auth token helpers, JWT_ALG or JWE_ALG doesn\'t match the keys.',
+        fix: 'Generate keys for that algorithm, which also writes the matching JWT_ALG and JWE_ALG, or remove JWT_ALG and JWE_ALG to use the defaults with P-256 keys.',
+        code: 'npx @qnx/crypto generate-keys --jwt-alg EdDSA',
+        docs: 'get-crypto-docs { "topic": "algorithms" }'
+    },
+    {
+        id: 'jwe-encrypt-private-key',
+        package: 'crypto',
+        title: 'jweEncrypt was given a private key',
+        patterns: [/asymmetric algorithm encryption must be of type "public"/i],
+        cause: 'JWE encrypts with the public key and decrypts with the private key. This call passed the private key, from toPKCS8Secret, to jweEncrypt.',
+        fix: 'Import the public key with toSPKISecret for jweEncrypt, and keep the private key for jweDecrypt.',
+        code: `const publicKey = await toSPKISecret(process.env.JWE_PUBLIC_KEY ?? '', 'ECDH-ES+A128KW')
+const jwe = await jweEncrypt('message', publicKey)`,
+        docs: 'get-crypto-docs { "topic": "jwe" }'
+    },
+    {
+        id: 'npx-no-command',
+        package: 'crypto',
+        title: 'npx found no command in the package',
+        patterns: [/could not determine executable to run/i],
+        cause: 'The installed version of the package has no command. @qnx/crypto has generate-keys from 0.8.19, so npx @qnx/crypto generate-keys fails with 0.8.18 or earlier, including a copy already in your project. Of the other @qnx packages, only @qnx/mcp has a command.',
+        fix: 'Run the command from @qnx/crypto 0.8.19 or later. Until you can, generate the keys with the Node.js script in the setup topic.',
+        code: 'npx @qnx/crypto@latest generate-keys',
         docs: 'get-crypto-docs { "topic": "setup" }'
     },
     {

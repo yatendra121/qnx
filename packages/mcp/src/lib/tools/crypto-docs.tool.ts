@@ -16,7 +16,7 @@ npm install @qnx/crypto jose uuid
 
 \`jose\` 6 and \`uuid\` 13 or 14 are peer dependencies. npm installs them automatically by default, but not with \`--legacy-peer-deps\` or other package managers configured not to, and the import then fails with \`ERR_MODULE_NOT_FOUND\`.
 
-Next, generate your keys: see the setup topic.
+Next, generate your keys with \`npx @qnx/crypto generate-keys\` (0.8.19 or later), or see the setup topic for other ways.
 
 **Two usage levels**
 
@@ -34,6 +34,8 @@ import {
   jweEncrypt, jweDecrypt,
   // Auth token (high-level)
   generateAuthToken, decryptAuthToken,
+  // Key generation (0.8.19 or later)
+  generateAuthKeys, formatAuthKeyEnv, authTokenSigningAlgorithms, authTokenEncryptionAlgorithms,
   // Key helpers
   toSymmetricSecret, toPKCS8Secret, toSPKISecret, toJWKSecret
 } from '@qnx/crypto'
@@ -43,9 +45,55 @@ import {
 
     setup: `## Key Setup
 
-\`generateAuthToken\` and \`decryptAuthToken\` need two P-256 key pairs: one to sign the JWT and one to encrypt the JWE.
+\`generateAuthToken\` and \`decryptAuthToken\` need two key pairs: one to sign the JWT and one to encrypt the JWE. By default both are P-256.
 
-### Generate keys with Node.js
+### Generate keys with the command (recommended, 0.8.19 or later)
+
+Run it in your project and press Enter to take each recommended answer:
+
+\`\`\`bash
+npx @qnx/crypto generate-keys
+\`\`\`
+
+\`\`\`text
+  qnx-crypto  Keys for auth tokens
+
+  ✔ Signing       ES256
+  ✔ Encryption    ECDH-ES+A128KW
+  ✔ Save keys to  .env.keys
+  ✔ Public JWKS   jwks.json
+
+  ✔ Keys created (ES256, ECDH-ES+A128KW)
+
+    .env.keys  private keys, copy them into your .env
+    jwks.json  public keys, safe to share
+\`\`\`
+
+Then copy the lines from \`.env.keys\` into your \`.env\`. They are \`JWT_ALG\`, \`JWT_PRIVATE_KEY\`, \`JWT_PUBLIC_KEY\`, \`JWE_ALG\`, \`JWE_PRIVATE_KEY\` and \`JWE_PUBLIC_KEY\`, each in double quotes with real line breaks.
+
+- \`.env.keys\` is readable only by you, and the command warns if git doesn't ignore it.
+- It asks before overwriting a file, and Ctrl+C writes nothing.
+- The JWKS has both public keys, each with a \`kid\` (its RFC 7638 thumbprint), \`use\` and \`alg\`, and never private keys, so you can publish it.
+
+In scripts and CI it asks nothing. Flags choose the rest:
+
+\`\`\`bash
+npx @qnx/crypto generate-keys --yes --out .env.keys --jwks jwks.json
+\`\`\`
+
+| Flag | Default | Values |
+| --- | --- | --- |
+| \`--jwt-alg\` | \`ES256\` | \`ES256\`, \`ES384\`, \`ES512\`, \`EdDSA\` |
+| \`--jwe-alg\` | \`ECDH-ES+A128KW\` | \`ECDH-ES+A128KW\`, \`ECDH-ES+A256KW\` |
+| \`--out\` | printed | A file name, or \`-\` to print |
+| \`--jwks\` | none | A file name for the public JWKS |
+| \`--no-jwks\`, \`--force\`, \`--yes\` | | Skip the JWKS, overwrite files, ask nothing |
+
+In code, \`generateAuthKeys({ jwtAlg, jweAlg })\` returns \`{ env, jwks }\`, and \`formatAuthKeyEnv(env)\` turns \`env\` into the same lines. The allowed values are exported as \`authTokenSigningAlgorithms\` and \`authTokenEncryptionAlgorithms\`, recommended first.
+
+On 0.8.18 or earlier, \`npx @qnx/crypto generate-keys\` fails with \`could not determine executable to run\`, because the command doesn't exist yet. Upgrade, or use one of the ways below. They make the default P-256 keys.
+
+### Without the command: Node.js
 
 Save as \`generate-keys.mjs\`, then run \`node generate-keys.mjs >> .env\`. Keep \`.env\` out of git.
 
@@ -69,7 +117,7 @@ console.log(line('JWE_PRIVATE_KEY', jwe.privateKey))
 console.log(line('JWE_PUBLIC_KEY', jwe.publicKey))
 \`\`\`
 
-### Or with OpenSSL
+### Without the command: OpenSSL
 
 Run this once for \`jwt\` and once for \`jwe\`. The \`pkcs8\` step matters: \`BEGIN EC PRIVATE KEY\` output can't be imported.
 
@@ -86,6 +134,7 @@ For HMAC, a random secret works: \`openssl rand -base64 48\`.
 | --- | --- |
 | \`JWT_PRIVATE_KEY\`, \`JWE_PUBLIC_KEY\` | \`generateAuthToken\` |
 | \`JWT_PUBLIC_KEY\`, \`JWE_PRIVATE_KEY\` | \`decryptAuthToken\` |
+| \`JWT_ALG\`, \`JWE_ALG\` | Both, from 0.8.19. Optional: default \`ES256\` and \`ECDH-ES+A128KW\` |
 
 The keys are read on first use and then cached, so load \`.env\` before that first call.
 
@@ -250,13 +299,15 @@ High-level helpers that combine JWT + JWE. Keys are loaded automatically from en
 
 > **These tokens never expire.** The payload holds only \`iat\`, \`jti\` and \`sub\`, with no \`exp\`, and \`generateAuthToken\` has no option to add one. \`decryptAuthToken\` accepts an old token for as long as the keys are valid. Your database check on \`jti\` is the only thing that can end a session, so store an expiry with it and check it on every request. See get-guide with topic auth-session for working code.
 
-### Environment Variables (required)
+### Environment Variables
 
 \`\`\`bash
 JWT_PRIVATE_KEY=<ES256 PKCS8 PEM>   # used to sign the JWT
 JWT_PUBLIC_KEY=<ES256 SPKI PEM>     # used to verify the JWT
 JWE_PUBLIC_KEY=<ECDH-ES+A128KW SPKI PEM>   # used to encrypt the JWE
 JWE_PRIVATE_KEY=<ECDH-ES+A128KW PKCS8 PEM> # used to decrypt the JWE
+JWT_ALG=ES256            # optional, 0.8.19 or later: ES256, ES384, ES512 or EdDSA
+JWE_ALG=ECDH-ES+A128KW   # optional, 0.8.19 or later: ECDH-ES+A128KW or ECDH-ES+A256KW
 \`\`\`
 
 ---
@@ -325,13 +376,13 @@ const userId = payload.sub   // the subject passed to generateAuthToken
 
 \`\`\`
 generateAuthToken(subject)
-  → jwtSign({}, jwtPrivateKey, { jti, subject })   // creates JWT
-  → jweEncrypt(jwt, jwePublicKey)                   // wraps JWT in JWE
+  → jwtSign({}, jwtPrivateKey, { jti, subject, alg: JWT_ALG })   // creates JWT
+  → jweEncrypt(jwt, jwePublicKey, { alg: JWE_ALG })              // wraps JWT in JWE
   → returns { token: jwe, dbToken: jti }
 
 decryptAuthToken(jwe)
-  → jweDecrypt(jwe, jwePrivateKey)                  // unwraps JWE → JWT string
-  → jwtVerify(jwt, jwtPublicKey)                    // verifies JWT
+  → jweDecrypt(jwe, jwePrivateKey)    // unwraps JWE → JWT string, only if made with JWE_ALG
+  → jwtVerify(jwt, jwtPublicKey)      // verifies JWT, only if signed with JWT_ALG
   → returns payload { sub, jti, iat }
 \`\`\``,
 
@@ -410,6 +461,17 @@ const key = await toJWKSecret({ kty: 'EC', crv: 'P-256', ... })
 
     algorithms: `## Algorithms
 
+### Auth token algorithms
+
+\`generateAuthToken\` and \`decryptAuthToken\` use \`JWT_ALG\` and \`JWE_ALG\` from the environment, 0.8.19 or later. Earlier versions always use the defaults. \`npx @qnx/crypto generate-keys\` makes keys for each of these, and writes both variables.
+
+| Variable | Values | Default |
+| --- | --- | --- |
+| \`JWT_ALG\` | \`ES256\` (P-256), \`ES384\` (P-384), \`ES512\` (P-521), \`EdDSA\` (Ed25519) | \`ES256\` |
+| \`JWE_ALG\` | \`ECDH-ES+A128KW\`, \`ECDH-ES+A256KW\`, both with a P-256 key | \`ECDH-ES+A128KW\` |
+
+The content is always encrypted with \`A256CBC-HS512\`. The keys must match the algorithm. A P-256 key with \`JWT_ALG=ES384\` fails with \`Named curve mismatch\`, and an EC key with \`EdDSA\` fails with \`Invalid key type\`.
+
 ### JWT Algorithms
 
 | Algorithm | Type | Key helper | Use when |
@@ -451,7 +513,10 @@ Paste the exact error into the \`diagnose-error\` tool for its cause and fix. Th
 | \`Invalid keyData\` | The PEM's content was cut short or changed. Copy it again |
 | \`Invalid key length\` | A JWE secret isn't exactly 16, 24 or 32 bytes for A128KW, A192KW or A256KW |
 | \`"pkcs8" must be PKCS#8 formatted string\` | The key is a public key, or \`BEGIN EC PRIVATE KEY\` rather than \`BEGIN PRIVATE KEY\` |
-| \`Named curve mismatch\` | The key's curve doesn't match the algorithm, such as a P-384 key with ES256 |
+| \`Named curve mismatch\` | The key's curve doesn't match the algorithm, such as a P-384 key with ES256, or \`JWT_ALG\` that doesn't match the keys |
+| \`Invalid key type\` | The key type doesn't suit the algorithm, such as an EC key with \`JWT_ALG=EdDSA\`. Generate keys for that algorithm |
+| \`CryptoKey instances for asymmetric algorithm encryption must be of type "public"\` | A private key was passed to \`jweEncrypt\`. Encrypt with the public key: \`toSPKISecret(process.env.JWE_PUBLIC_KEY, ...)\` |
+| \`npm error could not determine executable to run\` | \`npx @qnx/crypto generate-keys\` with 0.8.18 or earlier, which has no command. Use 0.8.19 or later, or see setup |
 | \`Key for the ES256 algorithm must be...\` | A symmetric secret without \`alg: 'HS256'\` |
 | \`CryptoKey does not support this operation\` | \`alg\` wasn't passed to \`jwtSign\`, so it used ES256 with another type of key |
 | \`JOSENotSupported\` | The algorithm doesn't suit the key helper, or isn't supported at all, such as \`none\` |

@@ -50,3 +50,6 @@ packages/mcp/http
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 .nx/migrate-runs
+# Keys from `qnx-crypto generate-keys`. .env.keys holds private keys; jwks.json is public but generated.
+.env.keys
+jwks.json

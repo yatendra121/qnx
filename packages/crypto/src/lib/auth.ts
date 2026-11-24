@@ -25,6 +25,11 @@ import { jweDecrypt, jweEncrypt, jwtSign } from './crypto'
 
 //init().then(() => console.log('@qnx/crypto initiated.'))
 
+/** Signs the JWT inside the token. Set JWT_ALG to change it, for keys made with another algorithm. */
+const jwtAlg = () => process.env['JWT_ALG'] || 'ES256'
+/** Encrypts the token. Set JWE_ALG to change it. */
+const jweAlg = () => process.env['JWE_ALG'] || 'ECDH-ES+A128KW'
+
 /**
  * KeyPair class represents a pair of cryptographic keys for JWT and JWE encryption.
  */
@@ -46,7 +51,7 @@ class KeyPair {
         const spkiJwt = process.env['JWT_PUBLIC_KEY']
         if (!spkiJwt) throw new Error('JWT public key is not found in environment variables.')
 
-        return (KeyPair.jwtPublicKey = await importSPKI(spkiJwt, 'ES256'))
+        return (KeyPair.jwtPublicKey = await importSPKI(spkiJwt, jwtAlg()))
     }
 
     /**
@@ -61,7 +66,7 @@ class KeyPair {
         const spkiJwe = process.env['JWE_PUBLIC_KEY']
         if (!spkiJwe) throw new Error('JWE public key is not found in environment variables.')
 
-        return (KeyPair.jwePublicKey = await importSPKI(spkiJwe, 'ECDH-ES+A128KW'))
+        return (KeyPair.jwePublicKey = await importSPKI(spkiJwe, jweAlg()))
     }
 
     /**
@@ -76,7 +81,7 @@ class KeyPair {
         const pkcs8Jwt = process.env['JWT_PRIVATE_KEY']
         if (!pkcs8Jwt) throw new Error('JWT private key is not found in environment variables.')
 
-        return (KeyPair.jwtPrivateKey = await importPKCS8(pkcs8Jwt, 'ES256'))
+        return (KeyPair.jwtPrivateKey = await importPKCS8(pkcs8Jwt, jwtAlg()))
     }
 
     /**
@@ -91,7 +96,7 @@ class KeyPair {
         const pkcs8Jwe = process.env['JWE_PRIVATE_KEY']
         if (!pkcs8Jwe) throw new Error('JWE private key is not found in environment variables.')
 
-        return (KeyPair.jwePrivateKey = await importPKCS8(pkcs8Jwe, 'ECDH-ES+A128KW'))
+        return (KeyPair.jwePrivateKey = await importPKCS8(pkcs8Jwe, jweAlg()))
     }
 }
 
@@ -110,8 +115,8 @@ export const generateAuthToken = async (subject: string) => {
         KeyPair.getJwePublicKey()
     ])
 
-    const jwt = await jwtSign({}, jwtKey, { jti, subject })
-    const jwe = await jweEncrypt(jwt, jweKey)
+    const jwt = await jwtSign({}, jwtKey, { jti, subject, alg: jwtAlg() })
+    const jwe = await jweEncrypt(jwt, jweKey, { alg: jweAlg(), enc: 'A256CBC-HS512' })
 
     return { token: jwe, dbToken: jti }
 }
@@ -129,8 +134,9 @@ export const decryptAuthToken = async (jwe: string) => {
         KeyPair.getJwtPublicKey(),
         KeyPair.getJwePrivateKey()
     ])
-    const { plaintext } = await jweDecrypt(jwe, jweKey)
-    const { payload } = await jwtVerify(plaintext, jwtKey)
+    // Only the configured algorithms are accepted, so a token can't pick a different one.
+    const { plaintext } = await jweDecrypt(jwe, jweKey, { keyManagementAlgorithms: [jweAlg()] })
+    const { payload } = await jwtVerify(plaintext, jwtKey, { algorithms: [jwtAlg()] })
     return payload
 }
 
