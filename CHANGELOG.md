@@ -1,3 +1,13 @@
+## 0.8.18 (2026-11-24)
+
+### 🩹 Fixes
+
+- fix(response, errors): add setResponseOptions({ onServerError }) to log unexpected errors with a plain function, stop a failing logger or an invalid status code from crashing the process, fix addError for keys such as "constructor", and add setResponseOptions({ exposeServerError }) to hide unexpected errors from clients ([59539dc](https://github.com/yatendra121/qnx/commit/59539dc))
+
+### ❤️ Thank You
+
+- yatendra121
+
 ## 0.8.17 (2026-11-05)
 
 ### 🩹 Fixes
